@@ -21,11 +21,15 @@ public class UserService {
     }
 
     public boolean validateUser(String email, String password) {
-        return users.stream().anyMatch(user -> user.match(email, password));
+        return users.stream().anyMatch(user -> user.email().equals(email) 
+                                            && user.password().equals(password)
+        );
     }
 
     public User registerUser(User newUser) {
-        if (users.stream().anyMatch(user -> user.userName().equals(newUser.userName()))) {
+        if (users.stream().anyMatch(user -> user.userName().equals(newUser.userName()) 
+                                        || user.email().equals(newUser.email())
+        )) {
             throw new IllegalArgumentException("User already exists");
         }
         users.add(newUser);
