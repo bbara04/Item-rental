@@ -3,7 +3,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,13 +14,14 @@ import hu.bme.rental.dto.RegisterRequest;
 import hu.bme.rental.model.User;
 import hu.bme.rental.tools.StringValidator;
 import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.Nonnull;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserServlet {
     private final UserService userService;
 
-    public UserServlet(final @NonNull UserService userService) {
+    public UserServlet(final @Nonnull UserService userService) {
         this.userService = userService;
     }
 
@@ -32,7 +32,7 @@ public class UserServlet {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(final @RequestBody LoginRequest loginRequest) {
         if (StringValidator.isValidEmail(loginRequest.email()) ||
             StringUtils.isNotBlank(loginRequest.password())) {
             return ResponseEntity.badRequest().body("Email and password must be provided.");
@@ -47,7 +47,7 @@ public class UserServlet {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(final @RequestBody RegisterRequest registerRequest) {
         if (!registerRequest.isValid()) {
             return ResponseEntity.badRequest().body("All fields must be provided correctly.");
         }

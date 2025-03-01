@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import hu.bme.rental.model.User;
+import jakarta.annotation.Nonnull;
 
 @Service
 public class UserService {
@@ -20,13 +21,13 @@ public class UserService {
         return users;
     }
 
-    public boolean validateUser(String email, String password) {
+    public boolean validateUser(final @Nonnull String email, final @Nonnull String password) {
         return users.stream().anyMatch(user -> user.email().equals(email) 
                                             && user.password().equals(password)
         );
     }
 
-    public User registerUser(User newUser) {
+    public User registerUser(final @Nonnull User newUser) {
         if (users.stream().anyMatch(user -> user.userName().equals(newUser.userName()) 
                                         || user.email().equals(newUser.email())
         )) {
