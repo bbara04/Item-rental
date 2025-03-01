@@ -11,7 +11,6 @@ public record User(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @JsonProperty("id") Long id,
         @JsonProperty("userName") String userName,
-        @JsonProperty("password") String password,
         @JsonProperty("email") String email,
         @JsonProperty("firstName") String firstName,
         @JsonProperty("lastName") String lastName) {

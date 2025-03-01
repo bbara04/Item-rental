@@ -17,7 +17,7 @@ const Login: FC<LoginProps> = ({ onSwitch }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/user/login", {
+      const response = await axios.post("http://localhost:8080/api/auth/login", {
         email,
         password,
       });
