@@ -1,10 +1,33 @@
-import { FC } from "react";
+import axios from "axios";
+import { FC, useState } from "react";
 
 interface RegisterProps {
   onSwitch: () => void;
 }
 
 const Register: FC<RegisterProps> = ({ onSwitch }) => {
+  const [username, setUsername] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:8080/api/user/register', {
+        username,
+        lastName,
+        firstName,
+        email,
+        password,
+      });
+      console.log('Registration successful:', response.data);
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
@@ -12,11 +35,15 @@ const Register: FC<RegisterProps> = ({ onSwitch }) => {
           Regisztráció
         </h2>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Felhasználónév</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Felhasználónév
+            </label>
             <input
               type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="Felhasználónév"
               required
@@ -25,18 +52,26 @@ const Register: FC<RegisterProps> = ({ onSwitch }) => {
 
           <div className="flex gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Vezetéknév</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Vezetéknév
+              </label>
               <input
                 type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="Vezetéknév"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Keresztnév</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Keresztnév
+              </label>
               <input
                 type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="Keresztnév"
                 required
@@ -45,9 +80,13 @@ const Register: FC<RegisterProps> = ({ onSwitch }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email cím</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Email cím
+            </label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="pelda@email.com"
               required
@@ -55,16 +94,20 @@ const Register: FC<RegisterProps> = ({ onSwitch }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Jelszó</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Jelszó
+            </label>
             <input
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="********"
               required
             />
           </div>
 
-          <button className="w-full rounded-md bg-blue-600 p-3 text-white shadow-md transition hover:bg-blue-700">
+          <button type="submit" className="w-full rounded-md bg-blue-600 p-3 text-white shadow-md transition hover:bg-blue-700">
             Regisztráció
           </button>
         </form>
