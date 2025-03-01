@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hu.bme.rental.dto.LoginRequest;
 import hu.bme.rental.dto.RegisterRequest;
 import hu.bme.rental.model.User;
+import hu.bme.rental.tools.StringValidator;
 import io.micrometer.common.util.StringUtils;
 
 @RestController
@@ -32,12 +33,12 @@ public class UserServlet {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        if (StringUtils.isNotBlank(loginRequest.username()) ||
+        if (StringValidator.isValidEmail(loginRequest.email()) ||
             StringUtils.isNotBlank(loginRequest.password())) {
-            return ResponseEntity.badRequest().body("Username and password must be provided.");
+            return ResponseEntity.badRequest().body("Email and password must be provided.");
         }
         
-        boolean isValid = userService.validateUser(loginRequest.username(), loginRequest.password());
+        boolean isValid = userService.validateUser(loginRequest.email(), loginRequest.password());
         if (isValid) {
             return ResponseEntity.ok("Login successful");
         } else {
@@ -48,7 +49,7 @@ public class UserServlet {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         if (!registerRequest.isValid()) {
-            return ResponseEntity.badRequest().body("All fields must be provided.");
+            return ResponseEntity.badRequest().body("All fields must be provided correctly.");
         }
         
         try {

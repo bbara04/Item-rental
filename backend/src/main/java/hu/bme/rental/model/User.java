@@ -6,6 +6,8 @@ import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.annotation.Nullable;
+
 public record User(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,8 +18,8 @@ public record User(
         @JsonProperty("firstName") String firstName,
         @JsonProperty("lastName") String lastName) {
 
-        public boolean match(String username, String password) {
-                return this.userName.equals(username) && this.password.equals(password);
+        public boolean match(final @Nullable String email, final @Nullable String password) {
+                return this.email.equals(email) && this.password.equals(password);
         }
 
 }

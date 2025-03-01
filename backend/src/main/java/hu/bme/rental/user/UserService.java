@@ -20,8 +20,8 @@ public class UserService {
         return users;
     }
 
-    public boolean validateUser(String username, String password) {
-        return users.stream().anyMatch(user -> user.match(username, password));
+    public boolean validateUser(String email, String password) {
+        return users.stream().anyMatch(user -> user.match(email, password));
     }
 
     public User registerUser(User newUser) {
