@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
+
 import hu.bme.rental.model.User;
 import jakarta.annotation.Nonnull;
 
@@ -13,7 +15,7 @@ public class UserService {
     private final List<User> users;
 
     public UserService() {
-        this.users = List.of(new User(0L, "user1", "password", "test1@gmail.com", "user1", "test"),
+        this.users = Lists.newArrayList(new User(0L, "user1", "password", "test1@gmail.com", "user1", "test"),
                             new User(1L, "user2", "password", "test2@gmail.com", "user2", "test"));       
     }
 

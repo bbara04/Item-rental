@@ -1,4 +1,5 @@
 package hu.bme.rental.user;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import jakarta.annotation.Nonnull;
 @RestController
 @RequestMapping("/api/user")
 public class UserServlet {
+
     private final UserService userService;
 
     public UserServlet(final @Nonnull UserService userService) {
@@ -33,11 +35,11 @@ public class UserServlet {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(final @RequestBody LoginRequest loginRequest) {
-        if (StringValidator.isValidEmail(loginRequest.email()) ||
-            StringUtils.isNotBlank(loginRequest.password())) {
+        if (!StringValidator.isValidEmail(loginRequest.email())
+                || StringUtils.isBlank(loginRequest.password())) {
             return ResponseEntity.badRequest().body("Email and password must be provided.");
         }
-        
+
         boolean isValid = userService.validateUser(loginRequest.email(), loginRequest.password());
         if (isValid) {
             return ResponseEntity.ok("Login successful");
@@ -51,16 +53,16 @@ public class UserServlet {
         if (!registerRequest.isValid()) {
             return ResponseEntity.badRequest().body("All fields must be provided correctly.");
         }
-        
+
         try {
             User newUser = userService.registerUser(
-                new User(null, registerRequest.username(), registerRequest.password(), registerRequest.email(),
-                         registerRequest.firstName(), registerRequest.lastName())
+                    new User(null, registerRequest.username(), registerRequest.password(), registerRequest.email(),
+                            registerRequest.firstName(), registerRequest.lastName())
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists or registration failed.");
         }
     }
-    
+
 }
