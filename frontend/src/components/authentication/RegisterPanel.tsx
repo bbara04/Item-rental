@@ -1,11 +1,13 @@
 import axios from "axios";
 import { FC, useState } from "react";
+import NavigationService from "../../NavigationService";
+import { User } from "../../dto/User";
 
-interface RegisterProps {
-  onSwitch: () => void;
-}
+type RegisterProps = {
+  setGlobalUser: (user: User) => void; // Function to
+};
 
-const Register: FC<RegisterProps> = ({ onSwitch }) => {
+const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
   const [username, setUsername] = useState('');
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -23,6 +25,10 @@ const Register: FC<RegisterProps> = ({ onSwitch }) => {
         passkey: password,
       });
       console.log('Registration successful:', response.data);
+
+      setGlobalUser(response.data);
+      NavigationService.goToHome();
+
     } catch (error) {
       console.error('Registration failed:', error);
     }
@@ -114,7 +120,7 @@ const Register: FC<RegisterProps> = ({ onSwitch }) => {
 
         <div className="mt-4 text-center text-sm text-gray-600">
           Már van fiókod?{" "}
-          <button onClick={onSwitch} className="text-blue-500 hover:underline">
+          <button onClick={() => NavigationService.goToLogin()} className="text-blue-500 hover:underline">
             Bejelentkezés
           </button>
         </div>

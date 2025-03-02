@@ -1,12 +1,14 @@
 import axios from "axios";
-import { FC, useState } from "react";
+import { useState } from "react";
+import { User } from "../../dto/User";
+import NavigationService from "../../NavigationService";
 import GoogleLoginComponent from "./GoogleLoginComponent";
 
-interface LoginProps {
-  onSwitch: () => void;
-}
+type LoginProps = {
+  setGlobalUser: (user: User) => void; // Function to
+};
 
-const Login: FC<LoginProps> = ({ onSwitch }) => {
+const Login = ({setGlobalUser}: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +26,10 @@ const Login: FC<LoginProps> = ({ onSwitch }) => {
       });
 
       console.log("Login successful:", response.data);
-      // Handle successful login (e.g., save token, redirect)
+
+      setGlobalUser(response.data);
+      NavigationService.goToHome();
+      
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
         setError(err.response.data?.message || "Hibás bejelentkezési adatok");
@@ -90,7 +95,7 @@ const Login: FC<LoginProps> = ({ onSwitch }) => {
 
         <div className="mt-4 text-center text-sm text-gray-600">
           Nincs még fiókod?{" "}
-          <button onClick={onSwitch} className="text-blue-500 hover:underline">
+          <button onClick={() => NavigationService.goToRegister()} className="text-blue-500 hover:underline">
             Regisztrálj itt
           </button>
         </div>
