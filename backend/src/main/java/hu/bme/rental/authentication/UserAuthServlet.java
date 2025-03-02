@@ -19,31 +19,62 @@ import io.micrometer.common.util.StringUtils;
 public class UserAuthServlet {
     
     @Autowired
-    private BasicUserAuthService userAuthService;
+    private BasicUserAuthService basicUserAuthService;
+    @Autowired
+    private GoogleUserAuthService googleUserAuthService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(final @RequestBody LoginRequest loginRequest) {
+    @PostMapping("/basic/login")
+    public ResponseEntity<?> loginByBasic(final @RequestBody LoginRequest loginRequest) {
         if (!StringValidator.isValidEmail(loginRequest.email())
-                || StringUtils.isBlank(loginRequest.password())) {
+                || StringUtils.isBlank(loginRequest.passkey())) {
             return ResponseEntity.badRequest().body("Email and password must be provided.");
         }
 
-        boolean isValid = userAuthService.validateUserByPassword(loginRequest.email(), loginRequest.password());
-        if (isValid) {
+        final User user = basicUserAuthService.validateUserByPassword(loginRequest.email(), loginRequest.passkey());
+        if (user != null) {
             return ResponseEntity.ok("Login successful");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(final @RequestBody RegisterRequest registerRequest) {
+    @PostMapping("/basic/register")
+    public ResponseEntity<?> registerByBasic(final @RequestBody RegisterRequest registerRequest) {
         if (!registerRequest.isValid()) {
             return ResponseEntity.badRequest().body("All fields must be provided correctly.");
         }
 
         try {
-            User newUser = userAuthService.registerUser(registerRequest);
+            User newUser = basicUserAuthService.registerUser(registerRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists or registration failed.");
+        }
+    }
+
+    @PostMapping("/google/login")
+    public ResponseEntity<?> loginByGoogle(final @RequestBody LoginRequest loginRequest) {
+        if (!StringValidator.isValidEmail(loginRequest.email())
+                || StringUtils.isBlank(loginRequest.passkey())) {
+            return ResponseEntity.badRequest().body("Email and passkey must be provided.");
+        }
+
+        final User user = googleUserAuthService.validateUser(loginRequest.email(), loginRequest.passkey());
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
+    }
+
+    @PostMapping("/google/register")
+    public ResponseEntity<?> registerByGoogle(final @RequestBody RegisterRequest registerRequest) {
+        if (!registerRequest.isValid()) {
+            return ResponseEntity.badRequest().body("All fields must be provided correctly.");
+        }
+
+        try {
+            User newUser = googleUserAuthService.registerUser(registerRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists or registration failed.");

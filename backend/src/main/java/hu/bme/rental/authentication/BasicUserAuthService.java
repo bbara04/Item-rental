@@ -28,8 +28,15 @@ public class BasicUserAuthService {
 
     }
 
-    public boolean validateUserByPassword(final @Nonnull String email, final @Nonnull String password) {
-        return basicUserCredentials.stream().anyMatch(userCredential -> userCredential.user().email().equals(email) && userCredential.password().equals(password)); 
+    public User validateUserByPassword(final @Nonnull String email, final @Nonnull String password) {
+        final BasicUserCredentials userCredentials = basicUserCredentials.stream()
+                                                                        .filter(userCredential -> userCredential.user().email().equals(email) && userCredential.password().equals(password))
+                                                                        .findFirst()
+                                                                        .orElse(null);
+        if (userCredentials == null) {
+            return null;
+        }
+        return userCredentials.user(); 
     }
 
     public User registerUser(final @Nonnull RegisterRequest registerRequest) {
@@ -41,7 +48,7 @@ public class BasicUserAuthService {
         }
         User newUser = new User(null, registerRequest.username(), registerRequest.email(), registerRequest.firstName(), registerRequest.lastName());
         userService.addUser(newUser);
-        basicUserCredentials.add(new BasicUserCredentials(newUser, registerRequest.password()));
+        basicUserCredentials.add(new BasicUserCredentials(newUser, registerRequest.passkey()));
         return newUser;
     }
     

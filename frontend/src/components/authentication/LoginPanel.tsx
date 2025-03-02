@@ -1,5 +1,6 @@
 import axios from "axios";
 import { FC, useState } from "react";
+import GoogleLoginComponent from "./GoogleLoginComponent";
 
 interface LoginProps {
   onSwitch: () => void;
@@ -17,9 +18,9 @@ const Login: FC<LoginProps> = ({ onSwitch }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
-        email,
-        password,
+      const response = await axios.post("http://localhost:8080/api/auth/basic/login", {
+        email: email,
+        passkey: password,
       });
 
       console.log("Login successful:", response.data);
@@ -81,6 +82,11 @@ const Login: FC<LoginProps> = ({ onSwitch }) => {
             {loading ? "Bejelentkezés..." : "Bejelentkezés"}
           </button>
         </form>
+
+        <div className="flex flex-col items-center">
+          <p>or</p>
+          <GoogleLoginComponent></GoogleLoginComponent>
+        </div>
 
         <div className="mt-4 text-center text-sm text-gray-600">
           Nincs még fiókod?{" "}
