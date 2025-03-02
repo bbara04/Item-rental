@@ -32,7 +32,7 @@ public class UserAuthServlet {
 
         final User user = basicUserAuthService.validateUserByPassword(loginRequest.email(), loginRequest.passkey());
         if (user != null) {
-            return ResponseEntity.ok("Login successful");
+            return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
