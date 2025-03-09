@@ -1,5 +1,6 @@
 import axios from "axios";
 import { DecodedGoogleToken } from "../dto/DecodedGoogleToken";
+import NavigationService from "../NavigationService";
 
 export class GoogleAuthHelper {
     static handleDecodedToken(token: DecodedGoogleToken) : void{
@@ -46,6 +47,7 @@ export class GoogleAuthHelper {
         );
         response.then((response) => {
             console.log("Successful login:", response.data);
+            NavigationService.goToHome();
         }).catch((err) => {
             console.error(err);
         });
@@ -63,6 +65,7 @@ export class GoogleAuthHelper {
         );
         response.then((response) => {
             console.log("Successful registration:", response.data);
+            NavigationService.goToHome();
         }).catch((err) => {
             console.error(err);
         });
