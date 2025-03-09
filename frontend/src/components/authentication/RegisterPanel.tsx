@@ -8,6 +8,9 @@ type RegisterProps = {
 };
 
 const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
+  const ipAddress: String = import.meta.env.SERVER_IP_ADDRESS;
+  const port: String = import.meta.env.SERVER_PORT;
+
   const [username, setUsername] = useState('');
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -17,7 +20,7 @@ const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/basic/register', {
+      const response = await axios.post(`http://${ipAddress}:${port}/api/auth/basic/register`, {
         username: username,
         lastName: lastName,
         firstName: firstName,
