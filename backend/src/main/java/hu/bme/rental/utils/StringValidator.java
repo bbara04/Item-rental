@@ -1,4 +1,4 @@
-package hu.bme.rental.tools;
+package hu.bme.rental.utils;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Nonnull;
