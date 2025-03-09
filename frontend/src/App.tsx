@@ -1,16 +1,16 @@
 // App.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate } from 'react-router-dom';
+import { useAppContext } from './AppContextProvider';
 import NavigationService from './NavigationService';
 import HomePanel from './components/HomePanel';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
-import { User } from './dto/User';
 
 const AppRoutes: React.FC = () => {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<User | null>(null);
+  const {user, setUser} = useAppContext();
 
   useEffect(() => {
     NavigationService.setNavigate(navigate);

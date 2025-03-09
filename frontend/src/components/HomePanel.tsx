@@ -4,7 +4,7 @@ import NavigationService from "../NavigationService";
 
 
 type HomePanelProps = {
-    user: User | null;
+    user: User | undefined;
 };
 
 const HomePanel = ({ user }: HomePanelProps) => {
