@@ -1,9 +1,10 @@
 import axios from "axios";
 import { DecodedGoogleToken } from "../dto/DecodedGoogleToken";
+import { User } from "../dto/User";
 import NavigationService from "../NavigationService";
 
 export class GoogleAuthHelper {
-    static handleDecodedToken(token: DecodedGoogleToken) : void{
+    static handleDecodedToken(token: DecodedGoogleToken, setGlobalUser: ( user: User ) => void) : void{
         console.log('Decoded Token:', token);
 
         const email = token.email;
@@ -26,10 +27,10 @@ export class GoogleAuthHelper {
         response.then((response) => {
             if (response.status == 200) {
                 console.log("User found:", response.data);
-                this.handleUserFound(email, uniqueId);
+                this.handleUserFound(setGlobalUser, email, uniqueId);
             } else if (response.status == 204) {
                 console.log("User not found:", response.data);
-                this.handleUserNotFound(email, uniqueId, firstName, lastName);
+                this.handleUserNotFound(setGlobalUser, email, uniqueId, firstName, lastName);
             } else {
                 console.log("Invalid status code:", response.status);
             }
@@ -38,7 +39,7 @@ export class GoogleAuthHelper {
         });
     }
 
-    private static handleUserFound(email: string, uniqueId: string) : void {
+    private static handleUserFound(setGlobalUser: (user: User) => void, email: string, uniqueId: string) : void {
         const response = axios.post("http://localhost:8080/api/auth/google/login", 
             {
                 email: email,
@@ -47,13 +48,14 @@ export class GoogleAuthHelper {
         );
         response.then((response) => {
             console.log("Successful login:", response.data);
+            setGlobalUser(response.data);
             NavigationService.goToHome();
         }).catch((err) => {
             console.error(err);
         });
     }
 
-    private static handleUserNotFound(email: string, uniqueId: string, firstName: string, lastName: string) : void {
+    private static handleUserNotFound(setGlobalUser: (user: User) => void, email: string, uniqueId: string, firstName: string, lastName: string) : void {
         const response = axios.post("http://localhost:8080/api/auth/google/register", 
             {
                 username: `${firstName}.${lastName}(google)`,
@@ -65,6 +67,7 @@ export class GoogleAuthHelper {
         );
         response.then((response) => {
             console.log("Successful registration:", response.data);
+            setGlobalUser(response.data);
             NavigationService.goToHome();
         }).catch((err) => {
             console.error(err);

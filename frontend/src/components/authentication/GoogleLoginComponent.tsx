@@ -1,12 +1,15 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
+import { useAppContext } from '../../AppContextProvider';
 import { DecodedGoogleToken } from '../../dto/DecodedGoogleToken';
 import { GoogleAuthHelper } from '../../helper/GoogleAuthHelper';
 
 const GoogleLoginComponent = () => {
 
+    const { setUser } = useAppContext();
+
     function handleDecodedToken(token: DecodedGoogleToken) {
-        GoogleAuthHelper.handleDecodedToken(token);
+        GoogleAuthHelper.handleDecodedToken(token, setUser);
     }
 
     return (

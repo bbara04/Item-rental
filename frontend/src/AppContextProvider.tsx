@@ -1,9 +1,9 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
 import { User } from "./dto/User";
 
 type AppContextType = {
     user: User | undefined;
-    setUser: (user: User) => void;
+    setUser: Dispatch<SetStateAction<User | undefined>>;
 };
 
 const AppContext = createContext<AppContextType>({ user: undefined, setUser: () => {} });

@@ -10,6 +10,8 @@ type HomePanelProps = {
 
 const HomePanel = ({ user }: HomePanelProps) => {
     
+    console.log('User:', user);
+
     useEffect(() => {
         if (!user) {
             NavigationService.goToLogin();
