@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hu.bme.rental.dto.LoginRequest;
 import hu.bme.rental.dto.RegisterRequest;
 import hu.bme.rental.model.User;
-import hu.bme.rental.tools.StringValidator;
+import hu.bme.rental.utils.StringValidator;
 import io.micrometer.common.util.StringUtils;
 
 @RestController
