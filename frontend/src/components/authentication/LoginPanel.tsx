@@ -5,12 +5,12 @@ import NavigationService from "../../NavigationService";
 import GoogleLoginComponent from "./GoogleLoginComponent";
 
 type LoginProps = {
-  setGlobalUser: (user: User) => void; // Function to
+  setGlobalUser: (user: User) => void;
 };
 
 const Login = ({setGlobalUser}: LoginProps) => {
-  const ipAddress: String = import.meta.env.SERVER_IP_ADDRESS;
-  const port: String = import.meta.env.SERVER_PORT;
+  const ipAddress = import.meta.env.VITE_SERVER_IP_ADDRESS;
+  const port = import.meta.env.VITE_SERVER_PORT;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

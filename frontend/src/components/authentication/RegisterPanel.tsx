@@ -8,8 +8,8 @@ type RegisterProps = {
 };
 
 const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
-  const ipAddress: String = import.meta.env.SERVER_IP_ADDRESS;
-  const port: String = import.meta.env.SERVER_PORT;
+  const ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
+  const port: String = import.meta.env.VITE_SERVER_PORT;
 
   const [username, setUsername] = useState('');
   const [lastName, setLastName] = useState('');

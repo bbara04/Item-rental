@@ -4,12 +4,10 @@ import { User } from "../dto/User";
 import NavigationService from "../NavigationService";
 
 export class GoogleAuthHelper {
-    private static ipAddress: String = import.meta.env.SERVER_IP_ADDRESS;
-    private static port: String = import.meta.env.SERVER_PORT;
+    private static ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
+    private static port: String = import.meta.env.VITE_SERVER_PORT;
 
     static handleDecodedToken(token: DecodedGoogleToken, setGlobalUser: (user: User) => void): void {
-        console.log('Decoded Token:', token);
-
         const email = token.email;
         const firstName = token.given_name;
         const lastName = token.family_name;
