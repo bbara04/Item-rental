@@ -5,10 +5,13 @@ import NavigationService from "../../NavigationService";
 import GoogleLoginComponent from "./GoogleLoginComponent";
 
 type LoginProps = {
-  setGlobalUser: (user: User) => void; // Function to
+  setGlobalUser: (user: User) => void;
 };
 
 const Login = ({setGlobalUser}: LoginProps) => {
+  const ipAddress = import.meta.env.VITE_SERVER_IP_ADDRESS;
+  const port = import.meta.env.VITE_SERVER_PORT;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +23,7 @@ const Login = ({setGlobalUser}: LoginProps) => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/basic/login", {
+      const response = await axios.post(`http://${ipAddress}:${port}/api/auth/basic/login`, {
         email: email,
         passkey: password,
       });

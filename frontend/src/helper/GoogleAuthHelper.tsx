@@ -4,9 +4,10 @@ import { User } from "../dto/User";
 import NavigationService from "../NavigationService";
 
 export class GoogleAuthHelper {
-    static handleDecodedToken(token: DecodedGoogleToken, setGlobalUser: ( user: User ) => void) : void{
-        console.log('Decoded Token:', token);
+    private static ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
+    private static port: String = import.meta.env.VITE_SERVER_PORT;
 
+    static handleDecodedToken(token: DecodedGoogleToken, setGlobalUser: (user: User) => void): void {
         const email = token.email;
         const firstName = token.given_name;
         const lastName = token.family_name;
@@ -17,7 +18,7 @@ export class GoogleAuthHelper {
             return;
         }
 
-        const response = axios.get("http://localhost:8080/api/users/by-email", 
+        const response = axios.get(`http://${this.ipAddress}:${this.port}/api/users/by-email`,
             {
                 params: {
                     email: token.email
@@ -39,8 +40,8 @@ export class GoogleAuthHelper {
         });
     }
 
-    private static handleUserFound(setGlobalUser: (user: User) => void, email: string, uniqueId: string) : void {
-        const response = axios.post("http://localhost:8080/api/auth/google/login", 
+    private static handleUserFound(setGlobalUser: (user: User) => void, email: string, uniqueId: string): void {
+        const response = axios.post(`http://${this.ipAddress}:${this.port}/api/auth/google/login`,
             {
                 email: email,
                 passkey: uniqueId
@@ -55,8 +56,8 @@ export class GoogleAuthHelper {
         });
     }
 
-    private static handleUserNotFound(setGlobalUser: (user: User) => void, email: string, uniqueId: string, firstName: string, lastName: string) : void {
-        const response = axios.post("http://localhost:8080/api/auth/google/register", 
+    private static handleUserNotFound(setGlobalUser: (user: User) => void, email: string, uniqueId: string, firstName: string, lastName: string): void {
+        const response = axios.post(`http://${this.ipAddress}:${this.port}/api/auth/google/register`,
             {
                 username: `${firstName}.${lastName}(google)`,
                 email: email,
