@@ -1,4 +1,4 @@
-package hu.bme.rental.user;
+package hu.bme.rental.services;
 
 import java.util.List;
 
@@ -11,11 +11,11 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 @Service
-public class UserService {
+public class UserManagementService {
 
     private final List<User> users;
 
-    public UserService() {
+    public UserManagementService() {
         this.users = Lists.newArrayList(new User(0L, "user1", "test1@gmail.com", "user1", "test"),
                             new User(1L, "user2", "test2@gmail.com", "user2", "test"),
                             new User(2L, "bbara", "bdbarni@gmail.com", "Barnabás", "Balogh"));       

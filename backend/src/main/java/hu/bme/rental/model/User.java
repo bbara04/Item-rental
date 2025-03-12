@@ -5,8 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public record User(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
