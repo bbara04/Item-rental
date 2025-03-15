@@ -1,32 +1,24 @@
-import { useEffect } from "react";
-import NavigationService from "../NavigationService";
 import { NavigationBar } from "./NavigationBar";
 import { useAppContext } from "../AppContextProvider";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 
 const MainPanel = () => {
 
     const { user } = useAppContext()
+    const navigate = useNavigate();
 
-    useEffect(() => {
+    useEffect(()=>{
         if (!user) {
-            NavigationService.goToLogin();
+            navigate('/login')
         }
-    });
-
-    if (!user) {
-        return <div>
-            <h1>Home Panel</h1>
-            <p>Not logged in</p>
-        </div>;
-    }
+    }, [user]);
 
     return (
         <div>
             <NavigationBar></NavigationBar>
-            <p>Logged in as: {user.userName}</p>
-            <p>Welcome {user.firstName} {user.lastName}!</p>
-            <p>Email address: {user.email}</p>
+            <Outlet/>
         </div>
     );
 };

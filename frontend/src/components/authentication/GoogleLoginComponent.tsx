@@ -3,13 +3,15 @@ import { jwtDecode } from "jwt-decode";
 import { useAppContext } from '../../AppContextProvider';
 import { DecodedGoogleToken } from '../../dto/DecodedGoogleToken';
 import { GoogleAuthHelper } from '../../helper/GoogleAuthHelper';
+import { useNavigate } from 'react-router-dom';
 
 const GoogleLoginComponent = () => {
 
     const { setUser } = useAppContext();
+    const navigate = useNavigate();
 
     function handleDecodedToken(token: DecodedGoogleToken) {
-        GoogleAuthHelper.handleDecodedToken(token, setUser);
+        GoogleAuthHelper.handleDecodedToken(token, setUser, () => navigate('/'));
     }
 
     return (

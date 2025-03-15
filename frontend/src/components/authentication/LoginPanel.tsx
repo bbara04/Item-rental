@@ -1,8 +1,8 @@
 import axios from "axios";
 import { FC, useState } from "react";
-import NavigationService from "../../NavigationService";
 import GoogleLoginComponent from "./GoogleLoginComponent";
 import { useAppContext } from "../../AppContextProvider";
+import { useNavigate } from "react-router-dom";
 
 
 const LoginPanel: FC = () => {
@@ -10,6 +10,7 @@ const LoginPanel: FC = () => {
   const port = import.meta.env.VITE_SERVER_PORT;
 
   const { setUser } = useAppContext();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +31,7 @@ const LoginPanel: FC = () => {
       console.log("Login successful:", response.data);
 
       setUser(response.data);
-      NavigationService.goToHome();
+      navigate('/');
       
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
@@ -97,7 +98,7 @@ const LoginPanel: FC = () => {
 
         <div className="mt-4 text-center text-sm text-gray-600">
           Nincs még fiókod?{" "}
-          <button onClick={() => NavigationService.goToRegister()} className="text-blue-500 hover:underline">
+          <button onClick={() => navigate('/register')} className="text-blue-500 hover:underline">
             Regisztrálj itt
           </button>
         </div>

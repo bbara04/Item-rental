@@ -1,7 +1,7 @@
 import axios from "axios";
 import { FC, useState } from "react";
-import NavigationService from "../../NavigationService";
 import { useAppContext } from "../../AppContextProvider";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 const RegisterPanel: FC = () => {
@@ -9,6 +9,7 @@ const RegisterPanel: FC = () => {
   const port: String = import.meta.env.VITE_SERVER_PORT;
 
   const { setUser } = useAppContext();
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [lastName, setLastName] = useState('');
@@ -29,7 +30,7 @@ const RegisterPanel: FC = () => {
       console.log('Registration successful:', response.data);
 
       setUser(response.data);
-      NavigationService.goToHome();
+      navigate('/')
 
     } catch (error) {
       console.error('Registration failed:', error);
@@ -122,7 +123,7 @@ const RegisterPanel: FC = () => {
 
         <div className="mt-4 text-center text-sm text-gray-600">
           Már van fiókod?{" "}
-          <button onClick={() => NavigationService.goToLogin()} className="text-blue-500 hover:underline">
+          <button onClick={() => navigate('/login')} className="text-blue-500 hover:underline">
             Bejelentkezés
           </button>
         </div>
