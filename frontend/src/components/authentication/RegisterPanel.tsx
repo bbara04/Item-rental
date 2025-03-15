@@ -1,15 +1,15 @@
 import axios from "axios";
 import { FC, useState } from "react";
-import NavigationService from "../../NavigationService";
-import { User } from "../../dto/User";
+import { useAppContext } from "../../AppContextProvider";
+import { Navigate, useNavigate } from "react-router-dom";
 
-type RegisterProps = {
-  setGlobalUser: (user: User) => void; // Function to
-};
 
-const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
+const RegisterPanel: FC = () => {
   const ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
   const port: String = import.meta.env.VITE_SERVER_PORT;
+
+  const { setUser } = useAppContext();
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [lastName, setLastName] = useState('');
@@ -29,8 +29,8 @@ const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
       });
       console.log('Registration successful:', response.data);
 
-      setGlobalUser(response.data);
-      NavigationService.goToHome();
+      setUser(response.data);
+      navigate('/')
 
     } catch (error) {
       console.error('Registration failed:', error);
@@ -123,7 +123,7 @@ const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
 
         <div className="mt-4 text-center text-sm text-gray-600">
           Már van fiókod?{" "}
-          <button onClick={() => NavigationService.goToLogin()} className="text-blue-500 hover:underline">
+          <button onClick={() => navigate('/login')} className="text-blue-500 hover:underline">
             Bejelentkezés
           </button>
         </div>
@@ -132,4 +132,4 @@ const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
   );
 };
 
-export default Register;
+export default RegisterPanel;
