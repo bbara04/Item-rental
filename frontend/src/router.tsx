@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import MainPanel from './components/MainPanel';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
-import { AvailableItems } from './components/renting/AvailableItems';
+import { AvailableItems } from './components/item/AvailableItems';
 
 const router = createBrowserRouter(
     [
