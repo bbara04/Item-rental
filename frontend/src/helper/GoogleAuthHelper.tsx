@@ -2,6 +2,8 @@ import axios from "axios";
 import { DecodedGoogleToken } from "../dto/DecodedGoogleToken";
 import { User } from "../dto/User"; 
 
+// TODO: Fix this mess
+
 export class GoogleAuthHelper {
     private static ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
     private static port: String = import.meta.env.VITE_SERVER_PORT;
