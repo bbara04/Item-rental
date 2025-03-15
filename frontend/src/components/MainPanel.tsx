@@ -1,16 +1,12 @@
 import { useEffect } from "react";
-import { User } from "../dto/User";
 import NavigationService from "../NavigationService";
 import { NavigationBar } from "./NavigationBar";
+import { useAppContext } from "../AppContextProvider";
 
 
-type MainPanelProps = {
-    user: User | undefined;
-};
+const MainPanel = () => {
 
-const MainPanel = ({ user }: MainPanelProps) => {
-    
-    console.log('User:', user);
+    const { user } = useAppContext()
 
     useEffect(() => {
         if (!user) {

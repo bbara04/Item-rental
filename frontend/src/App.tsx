@@ -1,7 +1,6 @@
 // App.tsx
 import React, { useEffect } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate } from 'react-router-dom';
-import { useAppContext } from './AppContextProvider';
 import NavigationService from './NavigationService';
 import MainPanel from './components/MainPanel';
 import LoginPanel from './components/authentication/LoginPanel';
@@ -9,8 +8,6 @@ import RegisterPanel from './components/authentication/RegisterPanel';
 
 const AppRoutes: React.FC = () => {
   const navigate = useNavigate();
-
-  const {user, setUser} = useAppContext();
 
   useEffect(() => {
     NavigationService.setNavigate(navigate);
@@ -21,9 +18,9 @@ const AppRoutes: React.FC = () => {
       // Redirect to auth on default
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-      <Route path="/login" element={<LoginPanel setGlobalUser={user => setUser(user)}/>} />
-      <Route path="/register" element={<RegisterPanel setGlobalUser={user => setUser(user)}/>} />
-      <Route path="/home" element={<MainPanel user={user}/>} />
+      <Route path="/login" element={<LoginPanel />} />
+      <Route path="/register" element={<RegisterPanel />} />
+      <Route path="/home" element={<MainPanel />} />
     </Routes>
   );
 };

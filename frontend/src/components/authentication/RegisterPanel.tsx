@@ -1,15 +1,14 @@
 import axios from "axios";
 import { FC, useState } from "react";
 import NavigationService from "../../NavigationService";
-import { User } from "../../dto/User";
+import { useAppContext } from "../../AppContextProvider";
 
-type RegisterProps = {
-  setGlobalUser: (user: User) => void; // Function to
-};
 
-const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
+const Register: FC = () => {
   const ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
   const port: String = import.meta.env.VITE_SERVER_PORT;
+
+  const { setUser } = useAppContext();
 
   const [username, setUsername] = useState('');
   const [lastName, setLastName] = useState('');
@@ -29,7 +28,7 @@ const Register: FC<RegisterProps> = ({ setGlobalUser }) => {
       });
       console.log('Registration successful:', response.data);
 
-      setGlobalUser(response.data);
+      setUser(response.data);
       NavigationService.goToHome();
 
     } catch (error) {

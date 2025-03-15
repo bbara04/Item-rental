@@ -1,16 +1,15 @@
 import axios from "axios";
-import { useState } from "react";
-import { User } from "../../dto/User";
+import { FC, useState } from "react";
 import NavigationService from "../../NavigationService";
 import GoogleLoginComponent from "./GoogleLoginComponent";
+import { useAppContext } from "../../AppContextProvider";
 
-type LoginProps = {
-  setGlobalUser: (user: User) => void;
-};
 
-const Login = ({setGlobalUser}: LoginProps) => {
+const Login: FC = () => {
   const ipAddress = import.meta.env.VITE_SERVER_IP_ADDRESS;
   const port = import.meta.env.VITE_SERVER_PORT;
+
+  const { setUser } = useAppContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +29,7 @@ const Login = ({setGlobalUser}: LoginProps) => {
 
       console.log("Login successful:", response.data);
 
-      setGlobalUser(response.data);
+      setUser(response.data);
       NavigationService.goToHome();
       
     } catch (err: unknown) {
