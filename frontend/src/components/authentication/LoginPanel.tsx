@@ -5,7 +5,7 @@ import GoogleLoginComponent from "./GoogleLoginComponent";
 import { useAppContext } from "../../AppContextProvider";
 
 
-const Login: FC = () => {
+const LoginPanel: FC = () => {
   const ipAddress = import.meta.env.VITE_SERVER_IP_ADDRESS;
   const port = import.meta.env.VITE_SERVER_PORT;
 
@@ -106,4 +106,4 @@ const Login: FC = () => {
   );
 };
 
-export default Login;
+export default LoginPanel;

@@ -4,7 +4,7 @@ import NavigationService from "../../NavigationService";
 import { useAppContext } from "../../AppContextProvider";
 
 
-const Register: FC = () => {
+const RegisterPanel: FC = () => {
   const ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
   const port: String = import.meta.env.VITE_SERVER_PORT;
 
@@ -131,4 +131,4 @@ const Register: FC = () => {
   );
 };
 
-export default Register;
+export default RegisterPanel;
