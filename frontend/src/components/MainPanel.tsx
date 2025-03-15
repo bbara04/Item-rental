@@ -4,11 +4,11 @@ import NavigationService from "../NavigationService";
 import { NavigationBar } from "./NavigationBar";
 
 
-type HomePanelProps = {
+type MainPanelProps = {
     user: User | undefined;
 };
 
-const HomePanel = ({ user }: HomePanelProps) => {
+const MainPanel = ({ user }: MainPanelProps) => {
     
     console.log('User:', user);
 
@@ -35,4 +35,4 @@ const HomePanel = ({ user }: HomePanelProps) => {
     );
 };
 
-export default HomePanel;
+export default MainPanel;

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate } from 'react-router-dom';
 import { useAppContext } from './AppContextProvider';
 import NavigationService from './NavigationService';
-import HomePanel from './components/HomePanel';
+import MainPanel from './components/MainPanel';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
 
@@ -23,7 +23,7 @@ const AppRoutes: React.FC = () => {
 
       <Route path="/login" element={<LoginPanel setGlobalUser={user => setUser(user)}/>} />
       <Route path="/register" element={<RegisterPanel setGlobalUser={user => setUser(user)}/>} />
-      <Route path="/home" element={<HomePanel user={user}/>} />
+      <Route path="/home" element={<MainPanel user={user}/>} />
     </Routes>
   );
 };
