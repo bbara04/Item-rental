@@ -1,0 +1,21 @@
+services:
+  db:
+    platform: 'linux/amd64'
+    image: 'mcr.microsoft.com/mssql/server:2022-latest'
+    ports:
+      - '7071:1433'
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=StrongRoot1
+      - DB_NAME=rentaldb
+      - TZ='Europe/Budapest'
+    command: /opt/mssql/bin/start.sh
+    volumes:
+      - ./start.sh:/opt/mssql/bin/start.sh
+    container_name: RentalDatabase
+    restart: unless-stopped
+    networks:
+      - rental-net
+networks:
+  rental-net:
+    name: rental-network
