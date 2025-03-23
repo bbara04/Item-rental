@@ -1,8 +1,8 @@
 import axios from "axios";
 import { FC, useState } from "react";
-import GoogleLoginComponent from "./GoogleLoginComponent";
-import { useAppContext } from "../../AppContextProvider";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContextProvider";
+import GoogleLoginComponent from "./GoogleLoginComponent";
 
 
 const LoginPanel: FC = () => {
@@ -32,7 +32,7 @@ const LoginPanel: FC = () => {
 
       setUser(response.data);
       navigate('/');
-      
+
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
         setError(err.response.data?.message || "Hibás bejelentkezési adatok");
@@ -53,13 +53,16 @@ const LoginPanel: FC = () => {
 
         {error && <p className="mb-4 text-center text-sm text-red-500">{error}</p>}
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" autoComplete="on" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email cím
             </label>
             <input
+              id="email"
+              name="username" // identify as the username/email field
               type="email"
+              autoComplete="username" // helps the browser autofill with saved usernames
               className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="pelda@email.com"
               value={email}
@@ -69,11 +72,14 @@ const LoginPanel: FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Jelszó
             </label>
             <input
+              id="password"
+              name="current-password" // identify as the current password field
               type="password"
+              autoComplete="current-password" // signals the browser that this is a password field
               className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="********"
               value={password}
@@ -90,6 +96,7 @@ const LoginPanel: FC = () => {
             {loading ? "Bejelentkezés..." : "Bejelentkezés"}
           </button>
         </form>
+
 
         <div className="flex flex-col items-center">
           <p>or</p>
