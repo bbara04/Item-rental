@@ -1,119 +1,43 @@
-import MenuIcon from '@mui/icons-material/Menu';
-import AppBar from '@mui/material/AppBar';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-import React from 'react';
+import { useRef, useState } from "react";
+import BlankProfilePic from '../assets/blank_profile_pic.png';
+import useResponsiveWidth from "../hooks/useResponsiveWidth";
 
 const pages = ['Renting', 'My Rentals', 'About Us', 'Contact Us'];
 const settings = ['Profile', 'Account', 'Logout'];
 
 export function NavigationBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
+  const width = useResponsiveWidth();
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+  const [showSettings, setShowSettings] = useState(false);
+  const [showPages, setShowPages] = useState(false);
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const settingsButton = useRef<HTMLButtonElement>(null);
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{ display: { xs: 'block', md: 'none' } }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+    <nav className="flex justify-between bg-blue-600 p-3 px-6 sm:px-16 items-center">
+      {
+        width < 640 ?
+          <>
+            <button ref={menuButton} className="text-white" onClick={() => setShowPages(!showPages)}>
+              <span className="material-icons">menu</span>
+            </button>
+            {showPages && <div className="absolute z-10 top-14 flex flex-col bg-white shadow-lg shadow-gray-400 p-3 rounded-lg">
+              {pages.map(page => <a key={page}>{page}</a>)}
+            </div>}
+          </>
+          :
+          <div className="flex gap-2 lg:gap-4">
+            {pages.map(page => <a className="text-white text-lg" key={page}>{page}</a>)}
+          </div>
+      }
+      <button ref={settingsButton} onClick={() => setShowSettings(!showSettings)}>
+        <img className="h-10 rounded-full" src={BlankProfilePic} alt="Profile" />
+      </button>
+      {showSettings && <ul className="absolute z-10 top-14 right-6 sm:right-16 bg-white shadow-lg shadow-gray-400 p-3 rounded-lg">
+        {settings.map(setting => <li key={setting}>{setting}</li>)}
+      </ul>}
+    </nav>
   );
 }
