@@ -8,18 +8,18 @@ import org.springframework.stereotype.Service;
 import hu.bme.rental.dto.RegisterRequest;
 import hu.bme.rental.model.GoogleUserCredentials;
 import hu.bme.rental.model.User;
-import hu.bme.rental.services.UserManagementService;
+import hu.bme.rental.services.usermanagement.UserManagementBusService;
 import jakarta.annotation.Nonnull;
 
 @Service
 public class GoogleUserAuthService {
 
-    private final UserManagementService userManagementService;
+    private final UserManagementBusService userManagementBusService;
     
     private final List<GoogleUserCredentials> googleUserCredentials;
 
-    public GoogleUserAuthService(final @Nonnull UserManagementService userManagementService) {
-        this.userManagementService = userManagementService;
+    public GoogleUserAuthService(final @Nonnull UserManagementBusService userManagementBusService) {
+        this.userManagementBusService = userManagementBusService;
         this.googleUserCredentials = new ArrayList<>();
     }
 
@@ -35,7 +35,7 @@ public class GoogleUserAuthService {
     }
 
     public User registerUser(final @Nonnull RegisterRequest registerRequest) {
-        List<User> users = userManagementService.getAllUsers();
+        List<User> users = userManagementBusService.getAllUsers();
         // TODO: On google authentication username is not provided so defaulting to email username eg.: email@domain -> email, 
         // If email username is already taken, by another basic user, then email is not usable for google authentication
         if (users.stream().anyMatch(user -> user.userName().equals(registerRequest.username()) 
@@ -44,7 +44,7 @@ public class GoogleUserAuthService {
             throw new IllegalArgumentException("User already exists");
         }
         User newUser = new User(null, registerRequest.username(), registerRequest.email(), registerRequest.firstName(), registerRequest.lastName());
-        userManagementService.addUser(newUser);
+        userManagementBusService.addUser(newUser);
         googleUserCredentials.add(new GoogleUserCredentials(newUser, registerRequest.passkey()));
         return newUser;
     }

@@ -1,36 +1,29 @@
 package hu.bme.rental.controllers;
 
-import hu.bme.rental.model.User;
-import hu.bme.rental.services.UserManagementService;
+import hu.bme.rental.api.rest.UserManagementApi;
+import hu.bme.rental.services.usermanagement.UserManagementBusService;
 import lombok.RequiredArgsConstructor;
+import org.openapitools.model.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+
 @RestController
-@RequestMapping("/api/users")
 @RequiredArgsConstructor
-public class UserManagementController {
+public class UserManagementController implements UserManagementApi {
 
-    private final UserManagementService userManagementService;
+    private final UserManagementBusService userManagementBusService;
 
-    @GetMapping("/all")
+
+    @Override
+    public ResponseEntity<User> findByEmail(String email) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<List<User>> getAllUsers() {
-        final List<User> users = userManagementService.getAllUsers();
-        return ResponseEntity.ok(users);
+        return null;
     }
-
-    @GetMapping("/by-email")
-    public ResponseEntity<User> findByEmail(@RequestParam("email") String email) {
-        final User user = userManagementService.findByEmail(email);
-        if (user == null) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(user);
-    }
-
 }

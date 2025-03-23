@@ -18,32 +18,17 @@
     <name>rental</name>
     <description>Bme item rental</description>
 
-
-
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
     <developers>
         <developer/>
     </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
-
 
 
     <properties>
-        <!--
-        TODO swagger nevet beállítani
-        <codegen.api.swagger.name>...</codegen.api.swagger.name>
+        <codegen.api.swagger.name>Rental-User-Management-Rest-Api-0.0.1</codegen.api.swagger.name>
+        <codegen.api.package.name>hu.bme.rental.api.rest</codegen.api.package.name>
 
-        TODO generált api interfésznek package név beállítás
-        <codegen.api.package.name>...</codegen.api.package.name>
-        -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <java.version>21</java.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -169,6 +154,18 @@
             <version>${springdoc-openapi.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core-jakarta</artifactId>
+            <version>2.2.27</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+
         <!-- db things -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -229,14 +226,13 @@
                 </configuration>
             </plugin>
 
-        <!--
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.0.1</version>
                 <executions>
                   <execution>
-                    <id>generate-api-code</id>
+                    <id>generate-rest-api-interfaces</id>
                     <goals>
                       <goal>generate</goal>
                     </goals>
@@ -274,11 +270,11 @@
                       <importMappings>
                         <importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
                       </importMappings>
+                        <enablePostProcessFile>true</enablePostProcessFile>
                     </configuration>
                   </execution>
                 </executions>
               </plugin>
-            -->
 
         </plugins>
     </build>

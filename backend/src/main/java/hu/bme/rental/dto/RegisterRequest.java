@@ -1,7 +1,7 @@
 package hu.bme.rental.dto;
 
 import hu.bme.rental.utils.StringValidator;
-import io.micrometer.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public record RegisterRequest(String username, String passkey, String email, String firstName, String lastName) {
     

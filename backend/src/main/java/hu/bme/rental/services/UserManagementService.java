@@ -1,40 +1,30 @@
 package hu.bme.rental.services;
 
+import hu.bme.rental.model.User;
+import hu.bme.rental.services.usermanagement.UserManagementBusService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
-import com.google.common.collect.Lists;
-
-import hu.bme.rental.model.User;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 @Service
+@RequiredArgsConstructor
 public class UserManagementService {
 
-    private final List<User> users;
+    private final UserManagementBusService userManagementBusService;
 
-    public UserManagementService() {
-        this.users = Lists.newArrayList(new User(0L, "user1", "test1@gmail.com", "user1", "test"),
-                            new User(1L, "user2", "test2@gmail.com", "user2", "test"),
-                            new User(2L, "bbara", "bdbarni@gmail.com", "Barnabás", "Balogh"));       
+    public ResponseEntity<User> findByEmail(@RequestParam("email") String email) {
+        final User user = userManagementBusService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(user);
     }
 
-    public List<User> getAllUsers() {
-        return users;
+    public ResponseEntity<List<User>> getAllUsers() {
+        final List<User> users = userManagementBusService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
-
-    public User findByEmail(final @Nullable String email) {
-        return users.stream().filter(user -> user.email().equals(email)).findFirst().orElse(null);
-    }
-
-    public void addUser(final @Nonnull User user) {
-        users.add(user);
-    }
-
-    public void deleteUser(final @Nonnull User user) {
-        users.remove(user);
-    }
-
 }

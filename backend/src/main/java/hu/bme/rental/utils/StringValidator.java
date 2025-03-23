@@ -1,6 +1,6 @@
 package hu.bme.rental.utils;
 
-import io.micrometer.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import jakarta.annotation.Nonnull;
 
 public class StringValidator {

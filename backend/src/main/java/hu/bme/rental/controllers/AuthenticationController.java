@@ -1,85 +1,43 @@
 package hu.bme.rental.controllers;
 
+import hu.bme.rental.api.rest.AuthenticationApi;
 import hu.bme.rental.services.authentication.BasicUserAuthService;
 import hu.bme.rental.services.authentication.GoogleUserAuthService;
-import hu.bme.rental.dto.LoginRequest;
-import hu.bme.rental.dto.RegisterRequest;
-import hu.bme.rental.model.User;
-import hu.bme.rental.utils.StringValidator;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.openapitools.model.LoginRequest;
+import org.openapitools.model.RegisterRequest;
+import org.openapitools.model.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthenticationController {
+public class AuthenticationController implements AuthenticationApi {
+
 
     private final BasicUserAuthService basicUserAuthService;
 
     private final GoogleUserAuthService googleUserAuthService;
 
-    @PostMapping("/basic/login")
-    public ResponseEntity<?> loginByBasic(final @RequestBody LoginRequest loginRequest) {
-        if (!StringValidator.isValidEmail(loginRequest.email())
-                || StringUtils.isBlank(loginRequest.passkey())) {
-            return ResponseEntity.badRequest().body("Email and password must be provided.");
-        }
 
-        final User user = basicUserAuthService.validateUserByPassword(loginRequest.email(), loginRequest.passkey());
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-        }
+    @Override
+    public ResponseEntity<User> loginByBasic(LoginRequest loginRequest) {
+        return null;
     }
 
-    @PostMapping("/basic/register")
-    public ResponseEntity<?> registerByBasic(final @RequestBody RegisterRequest registerRequest) {
-        if (!registerRequest.isValid()) {
-            return ResponseEntity.badRequest().body("All fields must be provided correctly.");
-        }
-
-        try {
-            User newUser = basicUserAuthService.registerUser(registerRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists or registration failed.");
-        }
+    @Override
+    public ResponseEntity<User> loginByGoogle(LoginRequest loginRequest) {
+        return null;
     }
 
-    @PostMapping("/google/login")
-    public ResponseEntity<?> loginByGoogle(final @RequestBody LoginRequest loginRequest) {
-        if (!StringValidator.isValidEmail(loginRequest.email())
-                || StringUtils.isBlank(loginRequest.passkey())) {
-            return ResponseEntity.badRequest().body("Email and passkey must be provided.");
-        }
-
-        final User user = googleUserAuthService.validateUser(loginRequest.email(), loginRequest.passkey());
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-        }
+    @Override
+    public ResponseEntity<User> registerByBasic(RegisterRequest registerRequest) {
+        return null;
     }
 
-    @PostMapping("/google/register")
-    public ResponseEntity<?> registerByGoogle(final @RequestBody RegisterRequest registerRequest) {
-        if (!registerRequest.isValid()) {
-            return ResponseEntity.badRequest().body("All fields must be provided correctly.");
-        }
-
-        try {
-            User newUser = googleUserAuthService.registerUser(registerRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists or registration failed.");
-        }
+    @Override
+    public ResponseEntity<User> registerByGoogle(RegisterRequest registerRequest) {
+        return null;
     }
 
 }
