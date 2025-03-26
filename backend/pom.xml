@@ -25,7 +25,9 @@
 
     <properties>
         <codegen.api.swagger.name>Rental-User-Management-Rest-Api-0.0.1</codegen.api.swagger.name>
-        <codegen.api.package.name>hu.bme.rental.api.rest</codegen.api.package.name>
+        <codegen.root.path>generated-sources/api</codegen.root.path>
+        <codegen.rest.package>hu.bme.rental.api.rest</codegen.rest.package>
+        <codegen.model.package>hu.bme.rental.api.model</codegen.model.package>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -52,6 +54,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy-agent</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -238,12 +250,13 @@
                     </goals>
                     <configuration>
                       <inputSpec>${project.basedir}/src/main/resources/api-docs/${codegen.api.swagger.name}.yaml</inputSpec>
-                      <output>${project.build.directory}/generated-sources/api</output>
+                      <output>${project.build.directory}/${codegen.root.path}</output>
                       <generateSupportingFiles>true</generateSupportingFiles>
                       <generatorName>spring</generatorName>
                       <strictSpec>true</strictSpec>
                       <generateApiTests>false</generateApiTests>
                       <generateModelTests>false</generateModelTests>
+                      <generateAliasAsModel>true</generateAliasAsModel>
                       <configOptions>
                         <library>spring-boot</library>
                         <oas3>true</oas3>
@@ -253,6 +266,7 @@
                         <interfaceOnly>true</interfaceOnly>
                         <skipDefaultInterface>true</skipDefaultInterface>
                         <useBeanValidation>true</useBeanValidation>
+                          <useEnumCaseInsensitive>true</useEnumCaseInsensitive>
                         <useClassLevelBeanValidation>false</useClassLevelBeanValidation>
                         <serializableModel>true</serializableModel>
                         <useTags>true</useTags>
@@ -261,8 +275,13 @@
                         <hideGenerationTimestamp>true</hideGenerationTimestamp>
                         <dateLibrary>java8</dateLibrary>
                         <bigDecimalAsString>true</bigDecimalAsString>
-                        <apiPackage>${codegen.api.package.name}</apiPackage>
+                          <useJakartaEe>true</useJakartaEe>
+                          <containerDefaultToNull>true</containerDefaultToNull>
+                          <generateApiUtil>false</generateApiUtil>
+                          <openApiNormalizer>RULE_1=true</openApiNormalizer>
+                        <apiPackage>${codegen.rest.package}</apiPackage>
                         <openApiNullable>false</openApiNullable>
+                          <modelPackage>${codegen.model.package}</modelPackage>
                       </configOptions>
                       <typeMappings>
                         <typeMapping>OffsetDateTime=LocalDateTime</typeMapping>

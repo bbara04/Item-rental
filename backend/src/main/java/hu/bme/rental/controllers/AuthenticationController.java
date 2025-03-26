@@ -4,9 +4,9 @@ import hu.bme.rental.api.rest.AuthenticationApi;
 import hu.bme.rental.services.authentication.BasicUserAuthService;
 import hu.bme.rental.services.authentication.GoogleUserAuthService;
 import lombok.RequiredArgsConstructor;
-import org.openapitools.model.LoginRequest;
-import org.openapitools.model.RegisterRequest;
-import org.openapitools.model.User;
+import hu.bme.rental.api.model.LoginRequest;
+import hu.bme.rental.api.model.RegisterRequest;
+import hu.bme.rental.api.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 

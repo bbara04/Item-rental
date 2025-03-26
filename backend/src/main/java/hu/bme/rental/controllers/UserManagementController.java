@@ -3,7 +3,7 @@ package hu.bme.rental.controllers;
 import hu.bme.rental.api.rest.UserManagementApi;
 import hu.bme.rental.services.usermanagement.UserManagementBusService;
 import lombok.RequiredArgsConstructor;
-import org.openapitools.model.User;
+import hu.bme.rental.api.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
