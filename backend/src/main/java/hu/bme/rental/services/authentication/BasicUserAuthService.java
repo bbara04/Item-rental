@@ -1,4 +1,4 @@
-package hu.bme.rental.authentication;
+package hu.bme.rental.services.authentication;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,20 +8,20 @@ import org.springframework.stereotype.Service;
 import hu.bme.rental.dto.RegisterRequest;
 import hu.bme.rental.model.BasicUserCredentials;
 import hu.bme.rental.model.User;
-import hu.bme.rental.user.UserService;
+import hu.bme.rental.services.usermanagement.UserManagementBusService;
 import jakarta.annotation.Nonnull;
 
 @Service
 public class BasicUserAuthService {
 
-    private final UserService userService;
+    private final UserManagementBusService userManagementBusService;
     
     private final List<BasicUserCredentials> basicUserCredentials;
 
-    public BasicUserAuthService(final @Nonnull UserService userService) {
-        this.userService = userService;
+    public BasicUserAuthService(final @Nonnull UserManagementBusService userManagementBusService) {
+        this.userManagementBusService = userManagementBusService;
         //Temporary hardcoded users
-        List<User> users = userService.getAllUsers();
+        List<User> users = userManagementBusService.getAllUsers();
         this.basicUserCredentials = users.stream()
                                          .map(user -> new BasicUserCredentials(user, "password"))
                                          .collect(Collectors.toList());
@@ -40,14 +40,14 @@ public class BasicUserAuthService {
     }
 
     public User registerUser(final @Nonnull RegisterRequest registerRequest) {
-        List<User> users = userService.getAllUsers();
+        List<User> users = userManagementBusService.getAllUsers();
         if (users.stream().anyMatch(user -> user.userName().equals(registerRequest.username()) 
                                         || user.email().equals(registerRequest.email())
         )) {
             throw new IllegalArgumentException("User already exists");
         }
         User newUser = new User(null, registerRequest.username(), registerRequest.email(), registerRequest.firstName(), registerRequest.lastName());
-        userService.addUser(newUser);
+        userManagementBusService.addUser(newUser);
         basicUserCredentials.add(new BasicUserCredentials(newUser, registerRequest.passkey()));
         return newUser;
     }
