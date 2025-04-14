@@ -8,35 +8,29 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "items")
+@Table(name = "faculties")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+public class Faculty {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "university_id", nullable = false)
+    private University university;
+
     @Column(nullable = false)
     private String name;
 
+    @Column(length = 50)
+    private String code;
+
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false, unique = true)
-    private ItemCategory category;
-
-    @Column(name = "cost_per_day")
-    private Float costPerDay;
-
-    private Integer availability;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
-    private Image image;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

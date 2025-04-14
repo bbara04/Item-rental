@@ -8,31 +8,29 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "items")
+@Table(name = "universities")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+public class University {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "uni_code", length = 15, unique = true, nullable = false)
+    private String uniCode;
+
     @Column(nullable = false)
     private String name;
 
+    private String address;
+
+    private String website;
+
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false, unique = true)
-    private ItemCategory category;
-
-    @Column(name = "cost_per_day")
-    private Float costPerDay;
-
-    private Integer availability;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")

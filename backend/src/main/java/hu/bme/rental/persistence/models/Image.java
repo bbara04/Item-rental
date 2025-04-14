@@ -8,35 +8,33 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "items")
+@Table(name = "images", indexes = {
+        @Index(name = "idx_entity", columnList = "entity_type, entity_id")
+})
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "entity_type")
+    private String entityType;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String description;
+    @Column(name = "entity_id")
+    private Long entityId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false, unique = true)
-    private ItemCategory category;
+    @Column(name = "image_data", columnDefinition = "VARBINARY(MAX)")
+    private byte[] imageData;
 
-    @Column(name = "cost_per_day")
-    private Float costPerDay;
+    @Column(name = "content_type")
+    private String contentType;
 
-    private Integer availability;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
-    private Image image;
+    @Column(name = "file_name")
+    private String fileName;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
