@@ -2,6 +2,7 @@ services:
   db:
     platform: 'linux/amd64'
     image: 'mcr.microsoft.com/mssql/server:2022-latest'
+    user: root
     ports:
       - '7071:1433'
     environment:
@@ -9,6 +10,8 @@ services:
       - SA_PASSWORD=StrongRoot1
       - DB_NAME=rentaldb
       - TZ='Europe/Budapest'
+      - MSSQL_RUN_AS_ROOT=1
+    privileged: true
     command: /opt/mssql/bin/start.sh
     volumes:
       - ./start.sh:/opt/mssql/bin/start.sh
@@ -16,6 +19,13 @@ services:
     restart: unless-stopped
     networks:
       - rental-net
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+        reservations:
+          memory: 2g
+
 networks:
   rental-net:
     name: rental-network
