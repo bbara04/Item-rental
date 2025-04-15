@@ -9,6 +9,8 @@ servers:
 tags:
   - name: Authentication
   - name: User Management
+  - name: Item Management
+  - name: Transaction Management
 
 paths:
   /users/all:
@@ -57,6 +59,96 @@ paths:
                 $ref: '#/components/schemas/User'
         '204':
           description: User not found (no content)
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+  /users/{id}:
+    get:
+      summary: Get the id's userdata
+      operationId: getUserdataById
+      tags:
+        - User Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+    patch:
+      summary: Update the id's userdata
+      operationId: updateUserdataById
+      tags:
+        - User Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+#      requestBody:
+#        description: The CustomerBalance to be created
+#        content:
+#          application/json;charset=utf-8:
+#            schema:
+#              $ref: '#/components/schemas/UserPatchRequest'
+#        required: true
+      responses:
+        '200':
+          description: User found, operation successfully commited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+    delete:
+      tags:
+        - User Management
+      description: Delete user by Id
+      operationId: deleteUserById
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User successfully deleted
+          content:
+            application/json: {}
         default:
           content:
             application/problem+json:
@@ -275,30 +367,94 @@ components:
     User:
       required:
         - id
+        - userName
+        - email
+        - firstName
+        - lastName
+        - role
+        - balance
+        - university
+        - faculty
+        - createdAt
       type: object
+      description: Represents a user in the system with all their profile information
       properties:
         id:
           type: integer
           format: int64
           minimum: 1
-          example: 1
+          example: 123456
+          description: Unique identifier for the user
+        userName:
+          type: string
+          description: User's unique username in the system
+          minLength: 3
+          maxLength: 50
+          pattern: '^[a-zA-Z0-9._-]+$'
+          example: "janos_nagy"
         email:
           type: string
           format: email
+          description: User's email address for login and notifications
           pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+          minLength: 5
+          maxLength: 255
           example: user@example.com
         firstName:
           type: string
-          minLength: 1
-          maxLength: 50
+          description: User's first name, supports Hungarian characters
+          minLength: 2
+          maxLength: 100
           pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
           example: John
         lastName:
           type: string
-          minLength: 1
-          maxLength: 50
+          description: User's last name, supports Hungarian characters
           pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
-          example: Doe
+          minLength: 2
+          maxLength: 100
+          example: "Nagy"
+        passwordHash:
+          type: string
+          description: Hashed password (typically not returned in responses)
+          format: password
+          minLength: 60
+          maxLength: 255
+          example: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+        loginType:
+          type: string
+          description: Method used for authentication
+          enum: [ "LOCAL", "GOOGLE", "FACEBOOK" ]
+          example: "LOCAL"
+        ratings:
+          type: number
+          format: float
+          description: Average rating of the user based on past transactions
+          minimum: 0
+          maximum: 5
+          example: 4.7
+        description:
+          type: string
+          description: User's description or bio
+          maxLength: 2000
+          example: "Egyetemi hallgató vagyok, és szeretek sporteszközöket kölcsönadni."
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the user account was created
+          example: "2023-09-15T13:45:30Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the user account was last updated
+          example: "2023-10-20T09:15:45Z"
+        balance:
+          $ref: '#/components/schemas/Balance'
+        university:
+          $ref: '#/components/schemas/University'
+        faculty:
+          $ref: '#/components/schemas/Faculty'
+
         role:
           type: string
           enum:
@@ -309,6 +465,91 @@ components:
           example: STUDENT
           description: User role that determines permissions
 
+######
+#   Még ellenőrizni kell
+    # Related schemas referenced in User
+    Balance:
+      type: object
+      description: Represents the financial balance of a user
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the balance record
+          example: 987654
+        balance:
+          type: number
+          format: double
+          description: Current balance amount in the system's currency
+          example: 25000.50
+          minimum: 0
+      required:
+        - id
+        - balance
+
+    University:
+      type: object
+      description: Represents a university institution
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the university
+          example: 1
+        name:
+          type: string
+          description: Name of the university
+          minLength: 2
+          maxLength: 200
+          example: "Budapesti Műszaki és Gazdaságtudományi Egyetem"
+      required:
+        - id
+        - name
+
+    Faculty:
+      type: object
+      description: Represents a faculty within a university
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the faculty
+          example: 2
+        name:
+          type: string
+          description: Name of the faculty
+          minLength: 2
+          maxLength: 200
+          example: "Villamosmérnöki és Informatikai Kar"
+      required:
+        - id
+        - name
+
+    Image:
+      type: object
+      description: Represents an image in the system
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the image
+          example: 10001
+        url:
+          type: string
+          format: uri
+          description: URL to access the image
+          example: "https://example.com/images/profile/10001.jpg"
+        mimeType:
+          type: string
+          description: MIME type of the image
+          pattern: '^image/[a-z+]+$'
+          example: "image/jpeg"
+      required:
+        - id
+
+
+
+##############
     ErrorModel:
       required:
         - status
