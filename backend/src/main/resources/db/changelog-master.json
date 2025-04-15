@@ -1,0 +1,9 @@
+{
+  "databaseChangeLog": [
+    {
+      "include": {
+        "file": "db/changelog/20250327-init-rental-api.json"
+      }
+    }
+  ]
+}

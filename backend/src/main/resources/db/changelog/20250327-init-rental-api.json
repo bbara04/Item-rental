@@ -1,0 +1,19 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "20250327-1",
+        "author": "rental-api",
+        "changes": [
+          {
+            "sqlFile": {
+              "path": "sql-files/rental-api-db-schema-init-mssql.sql",
+              "relativeToChangelogFile": true,
+              "stripComments": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

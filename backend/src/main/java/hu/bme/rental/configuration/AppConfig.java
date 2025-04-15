@@ -1,4 +1,4 @@
-package hu.bme.rental;
+package hu.bme.rental.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

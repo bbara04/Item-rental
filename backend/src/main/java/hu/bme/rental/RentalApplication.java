@@ -5,16 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Slf4j
-//TODO ezeket vissza, ha megvan a db
-//@EnableJpaRepositories("hu.bme.rental.persistence.repositories")
-//@EntityScan("hu.bme.rental.persistence.models")
+@EnableJpaRepositories("hu.bme.rental.persistence.repositories")
+@EntityScan("hu.bme.rental.persistence.models")
 @EnableConfigurationProperties
-@SpringBootApplication
-// TODO	A swagger generált kódnak a package-t majd itt	(scanBasePackages = {"hu.bme.rental", "hu.bme.rental.api"})
+@SpringBootApplication(scanBasePackages = {"hu.bme.rental", "hu.bme.rental.api"}, exclude = {QuartzAutoConfiguration.class})
 public class RentalApplication {
 
 	public static void main(String[] args) {
