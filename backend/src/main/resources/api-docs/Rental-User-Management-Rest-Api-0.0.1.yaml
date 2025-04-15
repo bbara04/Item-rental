@@ -467,7 +467,6 @@ components:
 
 ######
 #   Még ellenőrizni kell
-    # Related schemas referenced in User
     Balance:
       type: object
       description: Represents the financial balance of a user
@@ -546,10 +545,8 @@ components:
           example: "image/jpeg"
       required:
         - id
-
-
-
 ##############
+
     ErrorModel:
       required:
         - status

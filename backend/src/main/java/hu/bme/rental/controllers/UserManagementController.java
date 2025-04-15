@@ -18,12 +18,27 @@ public class UserManagementController implements UserManagementApi {
 
 
     @Override
+    public ResponseEntity<Void> deleteUserById(String id) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<User> findByEmail(String email) {
         return null;
     }
 
     @Override
     public ResponseEntity<List<User>> getAllUsers() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<User> getUserdataById(String id) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<User> updateUserdataById(String id) {
         return null;
     }
 }
