@@ -1,5 +1,6 @@
 package hu.bme.rental.controllers;
 
+import hu.bme.rental.api.model.UserPatchRequest;
 import hu.bme.rental.api.rest.UserManagementApi;
 import hu.bme.rental.services.usermanagement.UserManagementBusService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class UserManagementController implements UserManagementApi {
     }
 
     @Override
-    public ResponseEntity<User> updateUserdataById(String id) {
+    public ResponseEntity<User> updateUserdataById(String id, UserPatchRequest patchUser) {
         return null;
     }
 }

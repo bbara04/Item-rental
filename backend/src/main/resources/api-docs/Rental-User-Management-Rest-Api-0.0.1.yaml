@@ -109,13 +109,13 @@ paths:
           required: true
           schema:
             type: string
-#      requestBody:
-#        description: The CustomerBalance to be created
-#        content:
-#          application/json;charset=utf-8:
-#            schema:
-#              $ref: '#/components/schemas/UserPatchRequest'
-#        required: true
+      requestBody:
+        description: The CustomerBalance to be created
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/UserPatchRequest'
+        required: true
       responses:
         '200':
           description: User found, operation successfully commited
@@ -129,7 +129,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
-
+      x-codegen-request-body-name: PatchUser
     delete:
       tags:
         - User Management
@@ -545,6 +545,73 @@ components:
           example: "image/jpeg"
       required:
         - id
+
+    UserPatchRequest:
+      type: object
+      description: Request schema for updating user information through PATCH operation
+      properties:
+        userName:
+          type: string
+          description: User's unique username in the system
+          minLength: 3
+          maxLength: 50
+          pattern: '^[a-zA-Z0-9._-]+$'
+          example: "janos_nagy"
+        email:
+          type: string
+          format: email
+          description: User's email address for login and notifications
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+          minLength: 5
+          maxLength: 255
+          example: "nagy.janos@example.com"
+        firstName:
+          type: string
+          description: User's first name, supports Hungarian characters
+          pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ -]+$'
+          minLength: 2
+          maxLength: 100
+          example: "János"
+        lastName:
+          type: string
+          description: User's last name, supports Hungarian characters
+          pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ -]+$'
+          minLength: 2
+          maxLength: 100
+          example: "Nagy"
+        description:
+          type: string
+          description: User's self-description or bio
+          maxLength: 2000
+          example: "Egyetemi hallgató vagyok, és szeretek sporteszközöket kölcsönadni."
+        universityId:
+          type: integer
+          format: int64
+          description: ID of the university that the user is affiliated with
+          example: 1
+        facultyId:
+          type: integer
+          format: int64
+          description: ID of the faculty within the university that the user belongs to
+          example: 2
+        imageId:
+          type: integer
+          format: int64
+          description: ID of the profile image to be associated with the user
+          example: 10001
+        password:
+          type: string
+          format: password
+          description: New password for the user (will be hashed before storage)
+          minLength: 8
+          maxLength: 128
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
+          example: "StrongP@ssw0rd"
+
+      # No required fields in PATCH request since it's a partial update
+      # where any combination of fields can be updated
+      additionalProperties: false
+
 ##############
 
     ErrorModel:
