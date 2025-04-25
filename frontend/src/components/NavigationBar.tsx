@@ -5,7 +5,7 @@ import BlankProfilePic from '../assets/blank_profile_pic.png';
 import useResponsiveWidth from "../hooks/useResponsiveWidth";
 
 const pages = ['Renting', 'My Rentals', 'About Us', 'Contact Us'];
-const pageRoutes = ['/renting', '/my-rentals', '/about', '/contact'];
+const pageRoutes = ['/', '/my-rentals', '/about', '/contact'];
 const settings = ['Profile', 'Account', 'Logout'];
 const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>, setUser: ReturnType<typeof useAppContext>['setUser']) => void } = {
     'Profile': (navigate) => navigate('/profile'),

@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import AboutUsPanel from './components/AboutUsPanel';
 import ContactPanel from './components/ContactPanel';
 import MainPanel from './components/MainPanel';
@@ -18,25 +18,21 @@ const router = createBrowserRouter(
         },
         {
             path: "/",
-            element: <Navigate to="/rent" replace />
-        },
-        {
-            path: "/rent",
             element: <MainPanel />,
             children: [
                 {
-                    path: "/rent",
+                    path: "/",
                     element: <AvailableItemsContainer />
+                },
+                {
+                    path: "/contact",
+                    element: <ContactPanel />
+                },
+                {
+                    path: "/about",
+                    element: <AboutUsPanel />
                 }
             ]
-        },
-        {
-            path: "/contact",
-            element: <ContactPanel />
-        },
-        {
-            path: "/about",
-            element: <AboutUsPanel />
         }
     ]
 );
