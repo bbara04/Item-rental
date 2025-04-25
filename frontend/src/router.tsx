@@ -1,9 +1,10 @@
-import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import AboutUsPanel from './components/AboutUsPanel';
+import ContactPanel from './components/ContactPanel';
 import MainPanel from './components/MainPanel';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
-import { AvailableItems } from './components/item/AvailableItems';
+import AvailableItemsContainer from './components/item/AvailableItemsContainer';
 
 const router = createBrowserRouter(
     [
@@ -25,9 +26,17 @@ const router = createBrowserRouter(
             children: [
                 {
                     path: "/rent",
-                    element: <AvailableItems />
+                    element: <AvailableItemsContainer />
                 }
             ]
+        },
+        {
+            path: "/contact",
+            element: <ContactPanel />
+        },
+        {
+            path: "/about",
+            element: <AboutUsPanel />
         }
     ]
 );
