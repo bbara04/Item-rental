@@ -4,12 +4,12 @@ import { useAppContext } from "../AppContextProvider";
 import BlankProfilePic from '../assets/blank_profile_pic.png';
 import useResponsiveWidth from "../hooks/useResponsiveWidth";
 
-const pages = ['Renting', 'My Rentals', 'About Us', 'Contact Us'];
-const pageRoutes = ['/', '/my-rentals', '/about', '/contact'];
-const settings = ['Profile', 'Account', 'Logout'];
+const pages = ['Renting', 'About Us', 'Contact Us'];
+const pageRoutes = ['/', '/about', '/contact'];
+const settings = ['Profile', 'My Rentals', 'Logout'];
 const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>, setUser: ReturnType<typeof useAppContext>['setUser']) => void } = {
     'Profile': (navigate) => navigate('/profile'),
-    'Account': (navigate) => navigate('/account'),
+    'My Rentals': (navigate) => navigate('/my-rentals'),
     'Logout': (navigate, setUser) => {
         sessionStorage.removeItem('user');
         setUser(undefined);
