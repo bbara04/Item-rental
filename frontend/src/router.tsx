@@ -1,10 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom';
 import AboutUsPanel from './components/AboutUsPanel';
-import ContactPanel from './components/ContactPanel';
-import MainPanel from './components/MainPanel';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
+import ContactPanel from './components/ContactPanel';
 import AvailableItemsContainer from './components/item/AvailableItemsContainer';
+import MainPanel from './components/MainPanel';
+import ProfilePanel from './components/ProfilePanel';
 
 const router = createBrowserRouter(
     [
@@ -31,6 +32,10 @@ const router = createBrowserRouter(
                 {
                     path: "/about",
                     element: <AboutUsPanel />
+                },
+                {
+                    path: "/profile", // Add the new route
+                    element: <ProfilePanel />
                 }
             ]
         }

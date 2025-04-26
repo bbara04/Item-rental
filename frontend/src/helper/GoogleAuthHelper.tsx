@@ -1,12 +1,11 @@
 import axios from "axios";
 import { DecodedGoogleToken } from "../dto/DecodedGoogleToken";
-import { User } from "../dto/User"; 
+import { User } from "../dto/User";
 
 // TODO: Fix this mess
 
 export class GoogleAuthHelper {
-    private static ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
-    private static port: String = import.meta.env.VITE_SERVER_PORT;
+    private static backendAddress: string = import.meta.env.VITE_BACKEND_ADDRESS;
 
     static handleDecodedToken(token: DecodedGoogleToken, setGlobalUser: (user: User) => void, navigate: () => void): void {
         const email = token.email;
@@ -19,7 +18,7 @@ export class GoogleAuthHelper {
             return;
         }
 
-        const response = axios.get(`http://${this.ipAddress}:${this.port}/api/users/by-email`,
+        const response = axios.get(`${this.backendAddress}/api/users/by-email`,
             {
                 params: {
                     email: token.email
@@ -42,7 +41,7 @@ export class GoogleAuthHelper {
     }
 
     private static handleUserFound(setGlobalUser: (user: User) => void, navigate: () => void, email: string, uniqueId: string): void {
-        const response = axios.post(`http://${this.ipAddress}:${this.port}/api/auth/google/login`,
+        const response = axios.post(`${this.backendAddress}/api/auth/google/login`,
             {
                 email: email,
                 passkey: uniqueId
@@ -58,7 +57,7 @@ export class GoogleAuthHelper {
     }
 
     private static handleUserNotFound(setGlobalUser: (user: User) => void, navigate: () => void, email: string, uniqueId: string, firstName: string, lastName: string): void {
-        const response = axios.post(`http://${this.ipAddress}:${this.port}/api/auth/google/register`,
+        const response = axios.post(`${this.backendAddress}/api/auth/google/register`,
             {
                 username: `${firstName}.${lastName}(google)`,
                 email: email,

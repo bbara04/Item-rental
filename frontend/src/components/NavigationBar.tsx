@@ -12,7 +12,7 @@ const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>
     'Account': (navigate) => navigate('/account'),
     'Logout': (navigate, setUser) => {
         sessionStorage.removeItem('user');
-        setUser(null);
+        setUser(undefined);
         navigate('/login');
     }
 };
@@ -21,14 +21,14 @@ const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>
 export function NavigationBar() {
 
     const width = useResponsiveWidth();
-    const { user, setUser } = useAppContext();
+    const { setUser } = useAppContext();
     const navigate = useNavigate();
 
     const [showSettings, setShowSettings] = useState(false);
     const [showPages, setShowPages] = useState(false);
 
     const menuRef = useRef<HTMLDivElement>(null);
-    const settingsRef = useRef<HTMLDivElement>(null);
+    const settingsRef = useRef<HTMLUListElement>(null);
     const menuButton = useRef<HTMLButtonElement>(null);
     const settingsButton = useRef<HTMLButtonElement>(null);
 

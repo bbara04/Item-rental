@@ -1161,3 +1161,4 @@ celerybeat.pid
 >>>>>>> 42c22ff (chore: add Visual Studio Code configuration files to .gitignore)
 .env
 .history
+devtools

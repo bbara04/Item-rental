@@ -1,16 +1,7 @@
 import React from "react";
 import { PreviewRentalItem } from "../../dto/PreviewRentalItem";
 
-interface RentalItemProps {
-  imageUrl: string;
-  name: string;
-  description: string;
-  available: number;
-  rentLink: string;
-}
-
 const RentalItemCard: React.FC<PreviewRentalItem> = ({
-  id,
   imageUrl,
   name,
   description,

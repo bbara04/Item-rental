@@ -6,8 +6,7 @@ import GoogleLoginComponent from "./GoogleLoginComponent";
 
 
 const LoginPanel: FC = () => {
-  const ipAddress = import.meta.env.VITE_SERVER_IP_ADDRESS;
-  const port = import.meta.env.VITE_SERVER_PORT;
+  const backendAddress = import.meta.env.VITE_BACKEND_ADDRESS;
 
   const { setUser } = useAppContext();
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ const LoginPanel: FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`http://${ipAddress}:${port}/api/auth/basic/login`, {
+      const response = await axios.post(`${backendAddress}/api/auth/basic/login`, {
         email: email,
         passkey: password,
       });

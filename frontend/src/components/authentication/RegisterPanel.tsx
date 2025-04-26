@@ -1,12 +1,11 @@
 import axios from "axios";
 import { FC, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContextProvider";
-import { Navigate, useNavigate } from "react-router-dom";
 
 
 const RegisterPanel: FC = () => {
-  const ipAddress: String = import.meta.env.VITE_SERVER_IP_ADDRESS;
-  const port: String = import.meta.env.VITE_SERVER_PORT;
+  const backendAddress = import.meta.env.VITE_BACKEND_ADDRESS;
 
   const { setUser } = useAppContext();
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ const RegisterPanel: FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://${ipAddress}:${port}/api/auth/basic/register`, {
+      const response = await axios.post(`${backendAddress}/api/auth/basic/register`, {
         username: username,
         lastName: lastName,
         firstName: firstName,
