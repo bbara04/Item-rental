@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ExampleData } from "../../dto/ExampleData";
-import { PreviewRentalItem } from "../../dto/PreviewRentalItem";
+import { ExampleData } from "../../../dto/ExampleData";
+import { PreviewRentalItem } from "../../../dto/PreviewRentalItem";
 
 const ItemRentalPage: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();

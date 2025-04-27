@@ -1,5 +1,5 @@
 import React from "react";
-import { ExampleData } from "../../dto/ExampleData";
+import { ExampleData } from "../../../dto/ExampleData";
 import UserRentalItemCard, { UserRentalItemDetails } from "./UserRentalItemCard";
 
 // Simulate active rentals using ExampleData

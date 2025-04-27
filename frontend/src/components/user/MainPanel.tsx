@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useAppContext } from "../AppContextProvider";
-import { NavigationBar } from "./NavigationBar";
+import { useAppContext } from "../../AppContextProvider";
+import { NavigationBar } from "../NavigationBar";
 
 
 const MainPanel = () => {

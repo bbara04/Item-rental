@@ -1,13 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
-import AboutUsPanel from './components/AboutUsPanel';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
-import ContactPanel from './components/ContactPanel';
-import MainPanel from './components/MainPanel';
-import ProfilePanel from './components/ProfilePanel';
-import AvailableItemsContainer from './components/rentals/AvailableItemsContainer';
-import ItemRentalPage from './components/rentals/ItemRentalPage';
-import UserRentalsPage from './components/rentals/UserRentalsPage';
+import AboutUsPanel from './components/user/AboutUsPanel';
+import ContactPanel from './components/user/ContactPanel';
+import MainPanel from './components/user/MainPanel';
+import ProfilePanel from './components/user/ProfilePanel';
+import AvailableItemsContainer from './components/user/rentals/AvailableItemsContainer';
+import ItemRentalPage from './components/user/rentals/ItemRentalPage';
+import UserRentalsPage from './components/user/rentals/UserRentalsPage';
 
 const router = createBrowserRouter(
     [

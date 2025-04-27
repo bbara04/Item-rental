@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExampleData } from "../../dto/ExampleData";
+import { ExampleData } from "../../../dto/ExampleData";
 import CategorySelector from "./CategorySelector";
 import RentalItemSearch from "./RentalItemSearch";
 import RentalItemsResult from "./RentalItemsResult";

@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAppContext } from '../AppContextProvider';
-import BlankProfilePic from '../assets/blank_profile_pic.png'; // Assuming you have a default profile picture
+import { useAppContext } from '../../AppContextProvider';
+import BlankProfilePic from '../../assets/blank_profile_pic.png';
 
 const ProfilePanel: React.FC = () => {
   const { user } = useAppContext();
