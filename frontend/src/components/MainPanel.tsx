@@ -9,7 +9,6 @@ const MainPanel = () => {
     const { user, setUser } = useAppContext()
     const navigate = useNavigate();
 
-
     // TODO: Remove this hack and implement proper authentication
     useEffect(()=>{
         if (!user) {

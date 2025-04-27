@@ -3,9 +3,11 @@ import AboutUsPanel from './components/AboutUsPanel';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
 import ContactPanel from './components/ContactPanel';
-import AvailableItemsContainer from './components/item/AvailableItemsContainer';
 import MainPanel from './components/MainPanel';
 import ProfilePanel from './components/ProfilePanel';
+import AvailableItemsContainer from './components/rentals/AvailableItemsContainer';
+import ItemRentalPage from './components/rentals/ItemRentalPage';
+import UserRentalsPage from './components/rentals/UserRentalsPage';
 
 const router = createBrowserRouter(
     [
@@ -26,6 +28,10 @@ const router = createBrowserRouter(
                     element: <AvailableItemsContainer />
                 },
                 {
+                    path: "/rent/:itemId",
+                    element: <ItemRentalPage />
+                },
+                {
                     path: "/contact",
                     element: <ContactPanel />
                 },
@@ -34,8 +40,12 @@ const router = createBrowserRouter(
                     element: <AboutUsPanel />
                 },
                 {
-                    path: "/profile", // Add the new route
+                    path: "/profile",
                     element: <ProfilePanel />
+                },
+                {
+                    path: "/my-rentals",
+                    element: <UserRentalsPage />
                 }
             ]
         }
