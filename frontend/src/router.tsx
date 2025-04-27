@@ -1,4 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
+import AdminPanel from './components/admin/AdminPanel';
+import AdminDashboardPage from './components/admin/dashboard/AdminDashboardPage';
+import ManageItemsPage from './components/admin/items/ManageItemsPage';
+import RentalApprovalsPage from './components/admin/rentals/RentalApprovalsPage';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
 import AboutUsPanel from './components/user/AboutUsPanel';
@@ -24,28 +28,61 @@ const router = createBrowserRouter(
             element: <MainPanel />,
             children: [
                 {
-                    path: "/",
+                    index: true, // Changed from path: "/"
                     element: <AvailableItemsContainer />
                 },
                 {
-                    path: "/rent/:itemId",
+                    path: "rent/:itemId", // Removed leading "/"
                     element: <ItemRentalPage />
                 },
                 {
-                    path: "/contact",
+                    path: "contact", // Removed leading "/"
                     element: <ContactPanel />
                 },
                 {
-                    path: "/about",
+                    path: "about", // Removed leading "/"
                     element: <AboutUsPanel />
                 },
                 {
-                    path: "/profile",
+                    path: "profile", // Removed leading "/"
                     element: <ProfilePanel />
                 },
                 {
-                    path: "/my-rentals",
+                    path: "my-rentals", // Removed leading "/"
                     element: <UserRentalsPage />
+                }
+            ]
+        },
+        {
+            path: "/admin",
+            element: <AdminPanel />,
+            children: [
+                {
+                    index: true, // Changed from path: "/"
+                    element: <AdminDashboardPage />
+                },
+                {
+                    path: "dashboard", // Removed leading "/"
+                    element: <AdminDashboardPage />
+                },
+                {
+                    path: "items", // Removed leading "/"
+                    element: <ManageItemsPage />
+                },
+                {
+                    path: "approvals", // Removed leading "/"
+                    element: <RentalApprovalsPage />
+                },
+                {
+                    path: "profile", // Removed leading "/"
+                    element: <ProfilePanel />
+                },
+                {
+                    path: "users", // Removed leading "/"
+                    element: <div className="container mx-auto px-4 py-8">
+                        <h1 className="text-2xl font-bold">User Management</h1>
+                        <p className="text-gray-600 mt-4">User management functionality will be implemented here.</p>
+                    </div>
                 }
             ]
         }
