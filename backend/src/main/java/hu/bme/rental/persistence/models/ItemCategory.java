@@ -26,9 +26,6 @@ public class ItemCategory {
     @JoinColumn(name = "parent_category_id")
     private ItemCategory parentCategory;
 
-    @OneToMany(mappedBy = "parentCategory")
-    private java.util.List<ItemCategory> childCategories;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image image;

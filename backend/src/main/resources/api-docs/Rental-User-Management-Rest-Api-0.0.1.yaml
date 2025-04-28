@@ -15,8 +15,8 @@ tags:
 paths:
   /users/all:
     get:
-      summary: Get all users
-      operationId: getAllUsers
+      summary: Get all user
+      operationId: getAllUser
       tags:
         - User Management
       responses:
@@ -156,7 +156,7 @@ paths:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
 
-  /basic/login:
+  /auth/basic/login:
     post:
       tags:
         - Authentication
@@ -196,7 +196,7 @@ paths:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
   
-  /basic/register:
+  /auth/basic/register:
     post:
       tags:
         - Authentication
@@ -310,6 +310,28 @@ paths:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
 
+  /items/all:
+    get:
+      summary: Get all items
+      operationId: getAllItems
+      tags:
+        - Item Management
+      responses:
+        '200':
+          description: List of all items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
 components:
   schemas:
     LoginRequest:
@@ -375,7 +397,6 @@ components:
         - balance
         - university
         - faculty
-        - createdAt
       type: object
       description: Represents a user in the system with all their profile information
       properties:
@@ -399,14 +420,14 @@ components:
           pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
           minLength: 5
           maxLength: 255
-          example: user@example.com
+          example: "user@example.com"
         firstName:
           type: string
           description: User's first name, supports Hungarian characters
           minLength: 2
           maxLength: 100
           pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
-          example: John
+          example: "John"
         lastName:
           type: string
           description: User's last name, supports Hungarian characters
@@ -438,23 +459,12 @@ components:
           description: User's description or bio
           maxLength: 2000
           example: "Egyetemi hallgató vagyok, és szeretek sporteszközöket kölcsönadni."
-        createdAt:
-          type: string
-          format: date-time
-          description: Timestamp when the user account was created
-          example: "2023-09-15T13:45:30Z"
-        updatedAt:
-          type: string
-          format: date-time
-          description: Timestamp when the user account was last updated
-          example: "2023-10-20T09:15:45Z"
         balance:
           $ref: '#/components/schemas/Balance'
         university:
           $ref: '#/components/schemas/University'
         faculty:
           $ref: '#/components/schemas/Faculty'
-
         role:
           type: string
           enum:
@@ -465,30 +475,94 @@ components:
           example: STUDENT
           description: User role that determines permissions
 
-######
-#   Még ellenőrizni kell
+    Item:
+      required:
+        - id
+        - name
+        - description
+        - category
+        - costPerDay
+        - availability
+        - image
+      type: object
+      description: Represents an item in the system with all their information
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the user
+        name:
+          type: string
+          description: Item's name in the system
+          minLength: 3
+          maxLength: 100
+          example: "Macbook Pro 16 2019"
+        description:
+          type: string
+          description: Item's description in the system
+          minLength: 3
+          maxLength: 100
+          example: "Apple Macbook Pro 16 inch, 64gb RAM, 1TB SSD, Made in 2024"
+        categories:
+          type: array
+          items:
+            type: string
+          description: Item's categories, which is helpful for filtering
+          example: ["Laptop", "Electronics", "Computer"]
+        costPerDay:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 5.0
+          description: "A rating value between 0.0 and 5.0"
+          example: 4.5
+        availability:
+          type: integer
+          format: int64
+          description: "Number of available items"
+          minimum: 0
+          example: 5
+        image:
+          $ref: '#/components/schemas/Image'
+
     Balance:
       type: object
       description: Represents the financial balance of a user
+      required:
+        - currentValue
+        - unit
       properties:
         id:
           type: integer
           format: int64
           description: Unique identifier for the balance record
           example: 987654
-        balance:
+        userID:
+          type: integer
+          format: int64
+          description: Unique identifier for owner of the balance
+        currentValue:
           type: number
-          format: double
+          format: float
           description: Current balance amount in the system's currency
           example: 25000.50
           minimum: 0
-      required:
-        - id
-        - balance
+        unit:
+          type: string
+          description: Current balance's currency
+          example: "HUF"
+        payType:
+          type: string
+          description: Type of payment method
+          example: "card"
 
     University:
       type: object
       description: Represents a university institution
+      required:
+        - name
       properties:
         id:
           type: integer
@@ -501,13 +575,27 @@ components:
           minLength: 2
           maxLength: 200
           example: "Budapesti Műszaki és Gazdaságtudományi Egyetem"
-      required:
-        - id
-        - name
+        address:
+          type: string
+          description: Address of the university
+          example: "1111 Budadapest Irinyi utca 42."
+        description:
+          type: string
+          description: Description of the university
+          example: "Műszaki egyetem Budapesten, TOP-os"
+        website:
+          type: string
+          description: Website of the university
+          example: "bme.hu"
+        image:
+          $ref: '#/components/schemas/Image'
 
     Faculty:
       type: object
       description: Represents a faculty within a university
+      required:
+        - name
+        - code
       properties:
         id:
           type: integer
@@ -517,39 +605,65 @@ components:
         name:
           type: string
           description: Name of the faculty
-          minLength: 2
-          maxLength: 200
           example: "Villamosmérnöki és Informatikai Kar"
-      required:
-        - id
-        - name
+        code:
+          type: string
+          description: Code of the faculty
+          example: "VIK"
+        description:
+          type: string
+          description: Description of the university
+          example: "BME-nek legjobb kara"
+        university:
+          $ref: '#/components/schemas/Image'
 
     Image:
       type: object
       description: Represents an image in the system
+      required:
+        - id
+        - imageData
+        - contentType
       properties:
         id:
           type: integer
           format: int64
           description: Unique identifier for the image
           example: 10001
-        url:
+        imageData:
           type: string
-          format: uri
-          description: URL to access the image
-          example: "https://example.com/images/profile/10001.jpg"
-        mimeType:
+          format: byte
+          description: Binary representation of the image encoded as base64 string
+          example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+        contentType:
           type: string
           description: MIME type of the image
           pattern: '^image/[a-z+]+$'
           example: "image/jpeg"
-      required:
-        - id
+        fileName:
+          type: string
+          description: Original filename of the image
+          example: "product_photo.jpg"
+        entityType:
+          type: string
+          description: Type of entity this image belongs to
+          example: "item"
+        entityId:
+          type: integer
+          format: int64
+          description: ID of the entity this image is associated with
+          example: 123
 
     UserPatchRequest:
       type: object
       description: Request schema for updating user information through PATCH operation
       properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the user
         userName:
           type: string
           description: User's unique username in the system
@@ -564,41 +678,48 @@ components:
           pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
           minLength: 5
           maxLength: 255
-          example: "nagy.janos@example.com"
+          example: "user@example.com"
         firstName:
           type: string
           description: User's first name, supports Hungarian characters
-          pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ -]+$'
           minLength: 2
           maxLength: 100
-          example: "János"
+          pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
+          example: "John"
         lastName:
           type: string
           description: User's last name, supports Hungarian characters
-          pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ -]+$'
+          pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
           minLength: 2
           maxLength: 100
           example: "Nagy"
+        ratings:
+          type: number
+          format: float
+          description: Average rating of the user based on past transactions
+          minimum: 0
+          maximum: 5
+          example: 4.7
         description:
           type: string
-          description: User's self-description or bio
+          description: User's description or bio
           maxLength: 2000
           example: "Egyetemi hallgató vagyok, és szeretek sporteszközöket kölcsönadni."
-        universityId:
-          type: integer
-          format: int64
-          description: ID of the university that the user is affiliated with
-          example: 1
-        facultyId:
-          type: integer
-          format: int64
-          description: ID of the faculty within the university that the user belongs to
-          example: 2
-        imageId:
-          type: integer
-          format: int64
-          description: ID of the profile image to be associated with the user
-          example: 10001
+        balance:
+          $ref: '#/components/schemas/Balance'
+        university:
+          $ref: '#/components/schemas/University'
+        faculty:
+          $ref: '#/components/schemas/Faculty'
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - STUDENT
+            - GUEST
+            - COORDINATOR
+          example: STUDENT
+          description: User role that determines permissions
         password:
           type: string
           format: password
@@ -608,11 +729,9 @@ components:
           pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
           example: "StrongP@ssw0rd"
 
-      # No required fields in PATCH request since it's a partial update
+      # No required fields in the PATCH request since it's a partial update
       # where any combination of fields can be updated
       additionalProperties: false
-
-##############
 
     ErrorModel:
       required:

@@ -29,9 +29,10 @@ public class UserManagementController implements UserManagementApi {
     }
 
     @Override
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUser() {
         return null;
     }
+
 
     @Override
     public ResponseEntity<User> getUserdataById(String id) {

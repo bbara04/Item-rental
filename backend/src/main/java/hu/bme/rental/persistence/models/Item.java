@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "items")
@@ -25,9 +27,13 @@ public class Item {
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false, unique = true)
-    private ItemCategory category;
+    @ManyToMany
+    @JoinTable(
+            name = "item_category_mappings",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<ItemCategory> categories = new HashSet<>();
 
     @Column(name = "cost_per_day")
     private Float costPerDay;

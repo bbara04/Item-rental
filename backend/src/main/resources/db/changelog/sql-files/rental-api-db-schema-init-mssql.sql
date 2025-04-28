@@ -18,6 +18,8 @@ CREATE TABLE balances (
                         cur_value FLOAT             NULL,
                         unit NVARCHAR(255)          NULL,
                         pay_type NVARCHAR(255)      NULL,
+                        user_id BIGINT              NULL,
+
 
 
                         created_at DATETIME2        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -94,7 +96,6 @@ CREATE TABLE items (
                     id BIGINT IDENTITY(1,1) PRIMARY KEY,
                     name NVARCHAR(255)              NOT NULL,
                     description NVARCHAR(MAX)       NULL,
-                    category_id BIGINT              UNIQUE NOT NULL,
                     cost_per_day  FLOAT             NULL,
                     availability INT                NULL,
                     image_id BIGINT                 NULL,
@@ -106,6 +107,17 @@ CREATE TABLE items (
                     CONSTRAINT fk_item_category FOREIGN KEY (category_id) REFERENCES item_categories(id),
                     CONSTRAINT fk_item_image_id FOREIGN KEY (image_id) REFERENCES images(id)
 );
+
+-- kapcsolotabla (items és item_categories kozott)
+CREATE TABLE item_category_mappings (
+                    item_id BIGINT NOT NULL,
+                    category_id BIGINT NOT NULL,
+
+                    PRIMARY KEY (item_id, category_id),
+                    CONSTRAINT fk_mapping_item FOREIGN KEY (item_id) REFERENCES items(id),
+                    CONSTRAINT fk_mapping_category FOREIGN KEY (category_id) REFERENCES item_categories(id)
+);
+
 CREATE TABLE renting_transactions (
                     id BIGINT IDENTITY(1,1) PRIMARY KEY,
                     transaction_type NVARCHAR(255)      NULL,
