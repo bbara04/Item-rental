@@ -110,11 +110,11 @@ paths:
           schema:
             type: string
       requestBody:
-        description: The CustomerBalance to be created
+        description: The User to be patched
         content:
           application/json;charset=utf-8:
             schema:
-              $ref: '#/components/schemas/UserPatchRequest'
+              $ref: '#/components/schemas/UserRequest'
         required: true
       responses:
         '200':
@@ -130,6 +130,7 @@ paths:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
       x-codegen-request-body-name: PatchUser
+
     delete:
       tags:
         - User Management
@@ -147,6 +148,151 @@ paths:
       responses:
         '204':
           description: User successfully deleted
+          content:
+            application/json: {}
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+  /user/{id}/renting-transactions:
+    get:
+      summary: Get all renting transactions of the user
+      operationId: getAllUserTransactions
+      tags:
+        - Transaction Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all user's renting transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+    patch:
+      summary: Update the id's transaction, useful for update the status of transaction
+      operationId: updateUserTransaction
+      tags:
+        - Transaction Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+        - name: transactionId
+          in: query
+          description: Identifier of the Transaction
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The Transaction to be updated
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+        required: true
+      responses:
+        '200':
+          description: Item found, operation successfully commited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+      x-codegen-request-body-name: patchTransaction
+
+    post:
+      summary: Create renting transaction
+      operationId: createUserTransaction
+      tags:
+        - Transaction Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The Transaction to be created
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+        required: true
+      responses:
+        '200':
+          description: User found, operation successfully commited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+      x-codegen-request-body-name: postTransaction
+
+    delete:
+      summary: Delete the id's transaction, useful for update the status of transaction
+      operationId: deleteUserTransaction
+      tags:
+        - Transaction Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+        - name: transactionId
+          in: query
+          description: Identifier of the Transaction
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Transaction found, operation successfully commited
           content:
             application/json: {}
         default:
@@ -195,6 +341,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
+      x-codegen-request-body-name: logRequestedUser
   
   /auth/basic/register:
     post:
@@ -207,7 +354,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterRequest'
+              $ref: '#/components/schemas/User'
       responses:
         '201':
           description: User created successfully
@@ -235,6 +382,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
+      x-codegen-request-body-name: regRequestedUser
   
   /auth/google/login:
     post:
@@ -269,6 +417,7 @@ paths:
               schema:
                 type: string
                 example: Invalid username or password
+      x-codegen-request-body-name: logRequestedUser
   
   /auth/google/register:
     post:
@@ -281,7 +430,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterRequest'
+              $ref: '#/components/schemas/UserRequest'
       responses:
         '201':
           description: User created successfully
@@ -309,6 +458,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
+      x-codegen-request-body-name: regRequestedUser
 
   /items/all:
     get:
@@ -324,7 +474,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/Item'
         default:
           content:
             application/problem+json:
@@ -332,8 +482,162 @@ paths:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
 
+  /items/by-category:
+    get:
+      summary: Get all items with the given category
+      operationId: getItemsByCategory
+      tags:
+        - Item Management
+      parameters:
+        - name: categoryId
+          in: query
+          description: Category of the item for filtering
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all items with the given category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+  /items/{id}:
+    get:
+      summary: Get the item with the given id
+      operationId: getItemsById
+      tags:
+        - Item Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the Item
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The item object with the given id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+    patch:
+      summary: Update the data of the id's item
+      operationId: updateItemDataById
+      tags:
+        - Item Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the Item
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The CustomerBalance to be created
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ItemRequest'
+        required: true
+      responses:
+        '200':
+          description: User found, operation successfully commited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+      x-codegen-request-body-name: patchItem
+
+    delete:
+      tags:
+        - Item Management
+      description: Delete item by Id
+      operationId: deleteItemById
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Item successfully deleted
+          content:
+            application/json: { }
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+
 components:
   schemas:
+
+    Role:
+      type: string
+      enum:
+          - ADMIN
+          - STUDENT
+          - GUEST
+          - COORDINATOR
+      example: "STUDENT"
+      description: User role that determines permissions
+
+    LoginType:
+      type: string
+      enum:
+        - LOCAL
+        - GOOGLE
+        - FACEBOOK
+      example: "LOCAL"
+      description: Type of the login/register
+
+    TransactionStatus:
+      type: string
+      enum:
+        - STARTED
+        - PENDING
+        - APPROVED
+        - DECLINED
+        - ARCHIVED
+        - DELETED
+        - OVERDUE
+      example: "PENDING"
+      description: Status of the transaction
+
     LoginRequest:
       type: object
       required:
@@ -352,49 +656,87 @@ components:
           minLength: 6
           maxLength: 100
           example: secretpassword
-    
-    RegisterRequest:
+
+    UserRequest:
       type: object
+      description: Request schema for creating or updating user information
       required:
-        - email
-        - passkey
-        - firstName
-        - lastName
+        - id
       properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the user
+        userName:
+          type: string
+          description: User's unique username in the system
+          minLength: 3
+          maxLength: 50
+          pattern: '^[a-zA-Z0-9._-]+$'
+          example: "janos_nagy"
         email:
           type: string
           format: email
+          description: User's email address for login and notifications
           pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
           minLength: 5
           maxLength: 255
-          example: newuser@example.com
-        passkey:
-          type: string
-          minLength: 6
-          maxLength: 100
-          example: newuserpassword
+          example: "user@example.com"
         firstName:
           type: string
-          minLength: 1
-          maxLength: 50
+          description: User's first name, supports Hungarian characters
+          minLength: 2
+          maxLength: 100
           pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
-          example: John
+          example: "John"
         lastName:
           type: string
-          minLength: 1
-          maxLength: 50
+          description: User's last name, supports Hungarian characters
           pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
-          example: Doe
+          minLength: 2
+          maxLength: 100
+          example: "Nagy"
+        ratings:
+          type: number
+          format: float
+          description: Average rating of the user based on past transactions
+          minimum: 0
+          maximum: 5
+          example: 4.7
+        description:
+          type: string
+          description: User's description or bio
+          maxLength: 2000
+          example: "Egyetemi hallgató vagyok, és szeretek sporteszközöket kölcsönadni."
+        balance:
+          $ref: '#/components/schemas/Balance'
+        university:
+          $ref: '#/components/schemas/University'
+        faculty:
+          $ref: '#/components/schemas/Faculty'
+        role:
+          $ref: '#/components/schemas/Role'
+        image:
+          $ref: '#/components/schemas/Image'
+        password:
+          type: string
+          format: password
+          description: Password for the user, for local login or for new password
+          example: "StrongP@ssw0rd"
+
+      # No required fields in the PATCH request since it's a partial update
+      # where any combination of fields can be updated
+      additionalProperties: false
     
     User:
       required:
-        - id
         - userName
         - email
         - firstName
         - lastName
         - role
-        - balance
         - university
         - faculty
       type: object
@@ -443,10 +785,7 @@ components:
           maxLength: 255
           example: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
         loginType:
-          type: string
-          description: Method used for authentication
-          enum: [ "LOCAL", "GOOGLE", "FACEBOOK" ]
-          example: "LOCAL"
+          $ref: '#/components/schemas/LoginType'
         ratings:
           type: number
           format: float
@@ -466,14 +805,9 @@ components:
         faculty:
           $ref: '#/components/schemas/Faculty'
         role:
-          type: string
-          enum:
-            - ADMIN
-            - STUDENT
-            - GUEST
-            - COORDINATOR
-          example: STUDENT
-          description: User role that determines permissions
+          $ref: '#/components/schemas/Role'
+        image:
+          $ref: '#/components/schemas/Image'
 
     Item:
       required:
@@ -526,6 +860,187 @@ components:
           example: 5
         image:
           $ref: '#/components/schemas/Image'
+
+    ItemRequest:
+      required:
+        - id
+      type: object
+      description: Represents an item in the system with all their information
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the user
+        name:
+          type: string
+          description: Item's name in the system
+          minLength: 3
+          maxLength: 100
+          example: "Macbook Pro 16 2019"
+        description:
+          type: string
+          description: Item's description in the system
+          minLength: 3
+          maxLength: 100
+          example: "Apple Macbook Pro 16 inch, 64gb RAM, 1TB SSD, Made in 2024"
+        categories:
+          type: array
+          items:
+            type: string
+          description: Item's categories, which is helpful for filtering
+          example: [ "Laptop", "Electronics", "Computer" ]
+        costPerDay:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 5.0
+          description: "A rating value between 0.0 and 5.0"
+          example: 4.5
+        availability:
+          type: integer
+          format: int64
+          description: "Number of available items"
+          minimum: 0
+          example: 5
+        image:
+          $ref: '#/components/schemas/Image'
+      # No required fields in the PATCH request since it's a partial update
+      # where any combination of fields can be updated
+      additionalProperties: false
+
+    ItemCategory:
+      required:
+        - id
+        - name
+        - description
+        - category
+        - costPerDay
+        - availability
+        - image
+      type: object
+      description: Represents an item in the system with all their information
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the user
+        name:
+          type: string
+          description: Item's name in the system
+          minLength: 3
+          maxLength: 100
+          example: "Macbook Pro 16 2019"
+        description:
+          type: string
+          description: Item's description in the system
+          minLength: 3
+          maxLength: 100
+          example: "Apple Macbook Pro 16 inch, 64gb RAM, 1TB SSD, Made in 2024"
+        categories:
+          type: array
+          items:
+            type: string
+          description: Item's categories, which is helpful for filtering
+          example: [ "Laptop", "Electronics", "Computer" ]
+        costPerDay:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 5.0
+          description: "A rating value between 0.0 and 5.0"
+          example: 4.5
+        availability:
+          type: integer
+          format: int64
+          description: "Number of available items"
+          minimum: 0
+          example: 5
+        image:
+          $ref: '#/components/schemas/Image'
+
+    TransactionResponse:
+      required:
+        - id
+        - item
+        - numberOfItem
+        - status
+        - user
+        - startDate
+        - endDate
+      type: object
+      description: Represents a transaction request for a renting process
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the transaction
+        item:
+          $ref: '#/components/schemas/Item'
+        numberOfItem:
+          type: integer
+          format: int64
+          description: Item's requested number
+          example: "1"
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        user:
+          $ref: '#/components/schemas/User'
+        startDate:
+          type: string
+          format: date-time
+          example: 2025-02-10T23:00:00+01:00
+        endDate:
+          type: string
+          format: date-time
+          example: 2025-02-10T23:00:00+01:00
+
+    TransactionRequest:
+      required:
+        - itemId
+        - numberOfItem
+        - userId
+        - startDate
+        - endDate
+      type: object
+      description: Represents a transaction request for a renting process
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the transaction
+        itemId:
+          type: string
+          example: 123456
+          description: Unique identifier for the item of the transaction
+        userId:
+          type: string
+          example: 123456
+          description: Unique identifier for the user of the transaction
+        numberOfItem:
+          type: integer
+          format: int64
+          description: Item's requested number
+          example: "1"
+        startDate:
+          type: string
+          format: date-time
+          example: 2025-02-10T23:00:00+01:00
+        endDate:
+          type: string
+          format: date-time
+          example: 2025-02-10T23:00:00+01:00
+      # No required fields in the PATCH request since it's a partial update
+      # where any combination of fields can be updated
+      additionalProperties: false
+
 
     Balance:
       type: object
@@ -653,85 +1168,6 @@ components:
           format: int64
           description: ID of the entity this image is associated with
           example: 123
-
-    UserPatchRequest:
-      type: object
-      description: Request schema for updating user information through PATCH operation
-      properties:
-        id:
-          type: integer
-          format: int64
-          minimum: 1
-          example: 123456
-          description: Unique identifier for the user
-        userName:
-          type: string
-          description: User's unique username in the system
-          minLength: 3
-          maxLength: 50
-          pattern: '^[a-zA-Z0-9._-]+$'
-          example: "janos_nagy"
-        email:
-          type: string
-          format: email
-          description: User's email address for login and notifications
-          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-          minLength: 5
-          maxLength: 255
-          example: "user@example.com"
-        firstName:
-          type: string
-          description: User's first name, supports Hungarian characters
-          minLength: 2
-          maxLength: 100
-          pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
-          example: "John"
-        lastName:
-          type: string
-          description: User's last name, supports Hungarian characters
-          pattern: '^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\\s-]+$'
-          minLength: 2
-          maxLength: 100
-          example: "Nagy"
-        ratings:
-          type: number
-          format: float
-          description: Average rating of the user based on past transactions
-          minimum: 0
-          maximum: 5
-          example: 4.7
-        description:
-          type: string
-          description: User's description or bio
-          maxLength: 2000
-          example: "Egyetemi hallgató vagyok, és szeretek sporteszközöket kölcsönadni."
-        balance:
-          $ref: '#/components/schemas/Balance'
-        university:
-          $ref: '#/components/schemas/University'
-        faculty:
-          $ref: '#/components/schemas/Faculty'
-        role:
-          type: string
-          enum:
-            - ADMIN
-            - STUDENT
-            - GUEST
-            - COORDINATOR
-          example: STUDENT
-          description: User role that determines permissions
-        password:
-          type: string
-          format: password
-          description: New password for the user (will be hashed before storage)
-          minLength: 8
-          maxLength: 128
-          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
-          example: "StrongP@ssw0rd"
-
-      # No required fields in the PATCH request since it's a partial update
-      # where any combination of fields can be updated
-      additionalProperties: false
 
     ErrorModel:
       required:

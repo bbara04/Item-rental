@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
         @Index(name = "idx_entity", columnList = "entity_type, entity_id")
 })
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Image {
@@ -27,7 +26,8 @@ public class Image {
     @Column(name = "entity_id")
     private Long entityId;
 
-    @Column(name = "image_data", columnDefinition = "VARBINARY(MAX)")
+    @Lob
+    @Column(name = "image_data")
     private byte[] imageData;
 
     @Column(name = "content_type")
@@ -52,4 +52,5 @@ public class Image {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 }

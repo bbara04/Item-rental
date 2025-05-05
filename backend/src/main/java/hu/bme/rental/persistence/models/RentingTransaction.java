@@ -22,13 +22,14 @@ public class RentingTransaction {
     @Column(name = "transaction_type")
     private String transactionType;
 
+    @Column(name = "status")
     private String status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "rented_item_id")
     private Item rentedItem;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "renter_user_id")
     private User renterUser;
 
@@ -63,4 +64,5 @@ public class RentingTransaction {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 }

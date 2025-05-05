@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "item_categories")
@@ -19,12 +20,15 @@ public class ItemCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "parent_category_id")
     private ItemCategory parentCategory;
+
+    @OneToMany(mappedBy = "parentCategory")
+    private Set<ItemCategory> childCategories;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
@@ -46,4 +50,5 @@ public class ItemCategory {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 }

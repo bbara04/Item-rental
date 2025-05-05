@@ -1,11 +1,11 @@
 package hu.bme.rental.controllers;
 
+import hu.bme.rental.api.model.UserRequest;
 import hu.bme.rental.api.rest.AuthenticationApi;
 import hu.bme.rental.services.authentication.BasicUserAuthService;
 import hu.bme.rental.services.authentication.GoogleUserAuthService;
 import lombok.RequiredArgsConstructor;
 import hu.bme.rental.api.model.LoginRequest;
-import hu.bme.rental.api.model.RegisterRequest;
 import hu.bme.rental.api.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,12 +31,12 @@ public class AuthenticationController implements AuthenticationApi {
     }
 
     @Override
-    public ResponseEntity<User> registerByBasic(RegisterRequest registerRequest) {
+    public ResponseEntity<User> registerByBasic(User regRequestedUser) {
         return null;
     }
 
     @Override
-    public ResponseEntity<User> registerByGoogle(RegisterRequest registerRequest) {
+    public ResponseEntity<User> registerByGoogle(UserRequest regRequestedUser) {
         return null;
     }
 

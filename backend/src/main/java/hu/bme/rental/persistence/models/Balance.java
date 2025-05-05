@@ -22,16 +22,23 @@ public class Balance {
     @Column(name = "cur_value")
     private Float curValue;
 
+    @Column(name = "unit")
     private String unit;
 
     @Column(name = "pay_type")
     private String payType;
+
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @OneToOne(mappedBy = "balance")
+    private User user;
 
     @PrePersist
     protected void onCreate() {
@@ -43,4 +50,5 @@ public class Balance {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "faculties")
@@ -19,18 +20,21 @@ public class Faculty {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "university_id", nullable = false)
     private University university;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(length = 50)
+    @Column(name = "code")
     private String code;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
+
+    @OneToMany(mappedBy = "faculty")
+    private Set<User> users;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -48,4 +52,5 @@ public class Faculty {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 }

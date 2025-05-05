@@ -104,7 +104,6 @@ CREATE TABLE items (
 
                     created_at DATETIME2            NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME2            NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    CONSTRAINT fk_item_category FOREIGN KEY (category_id) REFERENCES item_categories(id),
                     CONSTRAINT fk_item_image_id FOREIGN KEY (image_id) REFERENCES images(id)
 );
 

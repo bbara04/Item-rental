@@ -21,11 +21,21 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
+
+    @Column(name = "cost_per_day")
+    private Float costPerDay;
+
+    @Column(name = "availability")
+    private Integer availability;
+
+    @ManyToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     @ManyToMany
     @JoinTable(
@@ -33,16 +43,7 @@ public class Item {
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<ItemCategory> categories = new HashSet<>();
-
-    @Column(name = "cost_per_day")
-    private Float costPerDay;
-
-    private Integer availability;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
-    private Image image;
+    private Set<ItemCategory> categories;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
