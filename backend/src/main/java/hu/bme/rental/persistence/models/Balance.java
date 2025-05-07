@@ -1,10 +1,10 @@
 package hu.bme.rental.persistence.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Balance {
 
     @Id
@@ -28,17 +31,11 @@ public class Balance {
     @Column(name = "pay_type")
     private String payType;
 
-    @Column(name = "user_id")
-    private Long userId;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    @OneToOne(mappedBy = "balance")
-    private User user;
 
     @PrePersist
     protected void onCreate() {

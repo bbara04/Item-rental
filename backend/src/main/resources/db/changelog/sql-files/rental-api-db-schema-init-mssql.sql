@@ -1,4 +1,6 @@
 -- Kép tábla
+
+
 CREATE TABLE images (
                         id BIGINT IDENTITY(1,1) PRIMARY KEY,
                         entity_type NVARCHAR(255)   NULL, -- 'item', 'app_user', 'category', stb.
@@ -18,9 +20,6 @@ CREATE TABLE balances (
                         cur_value FLOAT             NULL,
                         unit NVARCHAR(255)          NULL,
                         pay_type NVARCHAR(255)      NULL,
-                        user_id BIGINT              NULL,
-
-
 
                         created_at DATETIME2        NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         updated_at DATETIME2        NOT NULL DEFAULT CURRENT_TIMESTAMP

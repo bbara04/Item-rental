@@ -302,6 +302,73 @@ paths:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
 
+#  /transactions/{id}:
+#    get:
+#      summary: Get all renting transactions of the user
+#      operationId: getAllUserTransactions
+#      tags:
+#        - Transaction Management
+#      parameters:
+#        - name: id
+#          in: path
+#          description: Identifier of the User
+#          style: simple
+#          explode: false
+#          required: true
+#          schema:
+#            type: string
+#      responses:
+#        '200':
+#          description: List of all user's renting transactions
+#          content:
+#            application/json:
+#              schema:
+#                type: array
+#                items:
+#                  $ref: '#/components/schemas/TransactionResponse'
+#        default:
+#          content:
+#            application/problem+json:
+#              schema:
+#                $ref: '#/components/schemas/ErrorModel'
+#          description: Basic Error Response
+#
+#    post:
+#      summary: Create renting transaction
+#      operationId: createUserTransaction
+#      tags:
+#        - Transaction Management
+#      parameters:
+#        - name: id
+#          in: path
+#          description: Identifier of the User
+#          style: simple
+#          explode: false
+#          required: true
+#          schema:
+#            type: string
+#      requestBody:
+#        description: The Transaction to be created
+#        content:
+#          application/json;charset=utf-8:
+#            schema:
+#              $ref: '#/components/schemas/TransactionRequest'
+#        required: true
+#      responses:
+#        '200':
+#          description: User found, operation successfully commited
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/TransactionResponse'
+#        default:
+#          content:
+#            application/problem+json:
+#              schema:
+#                $ref: '#/components/schemas/ErrorModel'
+#          description: Basic Error Response
+#      x-codegen-request-body-name: postTransaction
+
   /auth/basic/login:
     post:
       tags:
@@ -826,7 +893,7 @@ components:
           format: int64
           minimum: 1
           example: 123456
-          description: Unique identifier for the user
+          description: Unique identifier for the item
         name:
           type: string
           description: Item's name in the system
@@ -872,7 +939,7 @@ components:
           format: int64
           minimum: 1
           example: 123456
-          description: Unique identifier for the user
+          description: Unique identifier for the item
         name:
           type: string
           description: Item's name in the system
@@ -915,9 +982,8 @@ components:
         - id
         - name
         - description
-        - category
-        - costPerDay
-        - availability
+        - isRoot
+        - parentCategory
         - image
       type: object
       description: Represents an item in the system with all their information
@@ -927,38 +993,25 @@ components:
           format: int64
           minimum: 1
           example: 123456
-          description: Unique identifier for the user
+          description: Unique identifier for the ItemCategory
         name:
           type: string
-          description: Item's name in the system
+          description: ItemCategory's name in the system
           minLength: 3
           maxLength: 100
-          example: "Macbook Pro 16 2019"
+          example: "Laptop"
         description:
           type: string
-          description: Item's description in the system
+          description: ItemCategory's description in the system
           minLength: 3
           maxLength: 100
-          example: "Apple Macbook Pro 16 inch, 64gb RAM, 1TB SSD, Made in 2024"
-        categories:
-          type: array
-          items:
-            type: string
-          description: Item's categories, which is helpful for filtering
-          example: [ "Laptop", "Electronics", "Computer" ]
-        costPerDay:
-          type: number
-          format: float
-          minimum: 0.0
-          maximum: 5.0
-          description: "A rating value between 0.0 and 5.0"
-          example: 4.5
-        availability:
-          type: integer
-          format: int64
-          description: "Number of available items"
-          minimum: 0
-          example: 5
+          example: "Laptopok, notebookok, mindenféle gyártótól"
+        parentCategory:
+          $ref: '#/components/schemas/ItemCategory'
+        isRoot:
+          type: boolean
+          description: If true, this Boolean indicates that the category is a root of categories
+          example: true
         image:
           $ref: '#/components/schemas/Image'
 
@@ -1130,7 +1183,7 @@ components:
           description: Description of the university
           example: "BME-nek legjobb kara"
         university:
-          $ref: '#/components/schemas/Image'
+          $ref: '#/components/schemas/University'
 
     Image:
       type: object

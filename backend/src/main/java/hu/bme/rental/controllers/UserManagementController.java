@@ -2,7 +2,7 @@ package hu.bme.rental.controllers;
 
 import hu.bme.rental.api.model.UserRequest;
 import hu.bme.rental.api.rest.UserManagementApi;
-import hu.bme.rental.services.usermanagement.UserManagementBusService;
+import hu.bme.rental.services.usermanagement.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import hu.bme.rental.api.model.User;
 import org.springframework.http.ResponseEntity;
@@ -15,31 +15,52 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserManagementController implements UserManagementApi {
 
-    private final UserManagementBusService userManagementBusService;
-
+    private final UserManagementService userManagementService;
 
     @Override
     public ResponseEntity<Void> deleteUserById(String id) {
-        return null;
+        boolean deleted = userManagementService.deleteUserById(id);
+        return deleted
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
+
     }
 
     @Override
     public ResponseEntity<User> findByEmail(String email) {
-        return null;
+
+        User apiUsers = userManagementService.findByEmail(email);
+        if (apiUsers == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(apiUsers);
+
     }
 
     @Override
     public ResponseEntity<List<User>> getAllUser() {
-        return null;
+        List<User> apiUsers = userManagementService.getAllUsers();
+        return ResponseEntity.ok(apiUsers);
+
     }
 
     @Override
     public ResponseEntity<User> getUserdataById(String id) {
-        return null;
+        User apiUser = userManagementService.getUserById(id);
+        if (apiUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(apiUser);
+
     }
 
     @Override
     public ResponseEntity<User> updateUserdataById(String id, UserRequest patchUser) {
-        return null;
+        User updatedUser = userManagementService.updateUserById(id, patchUser);
+        if (updatedUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedUser);
+
     }
 }

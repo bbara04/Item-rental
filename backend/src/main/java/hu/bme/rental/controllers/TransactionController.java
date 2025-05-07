@@ -1,10 +1,8 @@
 package hu.bme.rental.controllers;
 
 import hu.bme.rental.api.model.*;
-import hu.bme.rental.api.rest.AuthenticationApi;
 import hu.bme.rental.api.rest.TransactionManagementApi;
-import hu.bme.rental.services.authentication.BasicUserAuthService;
-import hu.bme.rental.services.authentication.GoogleUserAuthService;
+import hu.bme.rental.services.transactionmanagement.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController implements TransactionManagementApi {
 
+    private TransactionService transactionService;
 
     @Override
     public ResponseEntity<TransactionResponse> createUserTransaction(String id, TransactionRequest postTransaction) {

@@ -1,12 +1,11 @@
 package hu.bme.rental.persistence.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "faculties")
@@ -14,6 +13,11 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"university"})
+@EqualsAndHashCode(exclude = {"university"})
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Faculty {
 
     @Id
@@ -21,7 +25,12 @@ public class Faculty {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "university_id", nullable = false)
+    @JoinColumn(
+            name = "university_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_user_id")
+    )
     private University university;
 
     @Column(name = "name", nullable = false)
@@ -32,9 +41,6 @@ public class Faculty {
 
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
-
-    @OneToMany(mappedBy = "faculty")
-    private Set<User> users;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

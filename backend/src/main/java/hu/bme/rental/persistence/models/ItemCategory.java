@@ -1,10 +1,10 @@
 package hu.bme.rental.persistence.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -14,6 +14,11 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"childCategories"})
+@EqualsAndHashCode(exclude = {"childCategories"})
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class ItemCategory {
 
     @Id
@@ -23,14 +28,18 @@ public class ItemCategory {
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_category_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "parent_category_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_parent_category")
+    )
     private ItemCategory parentCategory;
 
-    @OneToMany(mappedBy = "parentCategory")
+    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER)
     private Set<ItemCategory> childCategories;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "image_id")
     private Image image;
 

@@ -7,7 +7,21 @@
         "changes": [
           {
             "sqlFile": {
+              "path": "sql-files/drop-all-tables-indexes-mssql.sql",
+              "relativeToChangelogFile": true,
+              "stripComments": true
+            }
+          },
+          {
+            "sqlFile": {
               "path": "sql-files/rental-api-db-schema-init-mssql.sql",
+              "relativeToChangelogFile": true,
+              "stripComments": true
+            }
+          },
+          {
+            "sqlFile": {
+              "path": "sql-files/db-demo-data-mssql.sql",
               "relativeToChangelogFile": true,
               "stripComments": true
             }

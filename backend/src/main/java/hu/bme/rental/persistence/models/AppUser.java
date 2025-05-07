@@ -1,12 +1,11 @@
 package hu.bme.rental.persistence.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "app_users")
@@ -14,13 +13,16 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
+public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "balance_id", unique = true, nullable = false)
     private Balance balance;
 
@@ -45,16 +47,31 @@ public class User {
     @Column(name = "role", nullable = false)
     private String role;
 
-    @ManyToOne
-    @JoinColumn(name = "university_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "university_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_uni_id")
+    )
     private University university;
 
-    @ManyToOne
-    @JoinColumn(name = "faculty_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "faculty_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_faculty_id")
+    )
     private Faculty faculty;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "image_id",
+            unique = true,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_user_image_id")
+    )
     private Image image;
 
     @Column(name = "ratings")
@@ -62,9 +79,6 @@ public class User {
 
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
-
-    @OneToMany(mappedBy = "renterUser")
-    private Set<RentingTransaction> transactions;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -76,6 +90,7 @@ public class User {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        ratings = Float.valueOf("5.0");
     }
 
     @PreUpdate

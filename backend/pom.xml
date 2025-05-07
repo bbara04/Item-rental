@@ -274,6 +274,9 @@
                         <useOptional>false</useOptional>
                         <hideGenerationTimestamp>true</hideGenerationTimestamp>
                         <dateLibrary>java8</dateLibrary>
+                          <additionalModelTypeAnnotations>
+                              @lombok.Data
+                          </additionalModelTypeAnnotations>
                         <bigDecimalAsString>true</bigDecimalAsString>
                           <useJakartaEe>true</useJakartaEe>
                           <containerDefaultToNull>true</containerDefaultToNull>

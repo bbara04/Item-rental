@@ -1,10 +1,10 @@
 package hu.bme.rental.persistence.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,6 +13,11 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"renterAppUser"})
+@EqualsAndHashCode(exclude = {"renterAppUser"})
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class RentingTransaction {
 
     @Id
@@ -25,13 +30,21 @@ public class RentingTransaction {
     @Column(name = "status")
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "rented_item_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "rented_item_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_item_id")
+    )
     private Item rentedItem;
 
-    @ManyToOne
-    @JoinColumn(name = "renter_user_id")
-    private User renterUser;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "renter_user_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_user_id")
+    )
+    private AppUser renterAppUser;
 
     @Column(name = "start_date_time")
     private LocalDateTime startDateTime;
