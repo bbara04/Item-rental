@@ -80,6 +80,7 @@ CREATE TABLE app_users(
 );
 CREATE TABLE item_categories (
                                  id BIGINT IDENTITY(1,1) PRIMARY KEY,
+                                 name NVARCHAR(255)              NOT NULL,
                                  description NVARCHAR(MAX)       NULL,
                                  parent_category_id BIGINT       NULL,
                                  image_id BIGINT                 NULL,

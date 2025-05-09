@@ -1,10 +1,9 @@
 package hu.bme.rental.controllers;
 
-import hu.bme.rental.api.model.UserRequest;
+import hu.bme.rental.api.model.*;
 import hu.bme.rental.api.rest.UserManagementApi;
 import hu.bme.rental.services.usermanagement.UserManagementService;
 import lombok.RequiredArgsConstructor;
-import hu.bme.rental.api.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +34,14 @@ public class UserManagementController implements UserManagementApi {
         }
         return ResponseEntity.ok(apiUsers);
 
+    }
+
+    @Override
+    public ResponseEntity<UniversitiesResponse> getAllUniversitiesFaculties() {
+        List<University> universities = userManagementService.getAllUniversities();
+        List<Faculty> faculties = userManagementService.getAllFaculties();
+        UniversitiesResponse universitiesResponse = new UniversitiesResponse(universities=universities, faculties=faculties);
+        return ResponseEntity.ok(universitiesResponse);
     }
 
     @Override

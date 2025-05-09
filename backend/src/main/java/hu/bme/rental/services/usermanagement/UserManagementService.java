@@ -1,10 +1,16 @@
 package hu.bme.rental.services.usermanagement;
 
+import hu.bme.rental.api.model.Faculty;
+import hu.bme.rental.api.model.University;
 import hu.bme.rental.api.model.User;
 import hu.bme.rental.api.model.UserRequest;
 import hu.bme.rental.configuration.JsonLogger;
+import hu.bme.rental.mappers.FacultyMapper;
+import hu.bme.rental.mappers.UniversityMapper;
 import hu.bme.rental.mappers.UserMapper;
 import hu.bme.rental.persistence.models.AppUser;
+import hu.bme.rental.persistence.repositories.FacultyRepository;
+import hu.bme.rental.persistence.repositories.UniversityRepository;
 import hu.bme.rental.persistence.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +27,13 @@ public class UserManagementService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+
+    private final UniversityRepository universityRepository;
+    private final UniversityMapper universityMapper;
+
+    private final FacultyRepository facultyRepository;
+    private final FacultyMapper facultyMapper;
+
     private final JsonLogger jsonLogger;
 
     /**
@@ -64,7 +77,7 @@ public class UserManagementService {
         for (AppUser appUser : appUsers) {
             jsonLogger.logAsJson("User details", appUser);
         }
-        return userMapper.appUsersToUsers(appUsers);
+        return userMapper.toApiDtoList(appUsers);
     }
 
     /**
@@ -100,7 +113,7 @@ public class UserManagementService {
             if (userOptional.isPresent()) {
                 AppUser targetAppUser = userOptional.get();
 
-                userMapper.updateAppUserFromUserRequest(patchUser, targetAppUser);
+                userMapper.updateUserEntityFromApiUserRequest(patchUser, targetAppUser);
 
                 AppUser updatedUser = userRepository.saveAndFlush(targetAppUser);
                 return mapAppUserToApiUser(updatedUser);
@@ -113,8 +126,24 @@ public class UserManagementService {
         }
     }
 
+    public List<University> getAllUniversities() {
+        List<hu.bme.rental.persistence.models.University> persistUniversities = universityRepository.findAll();
+        return persistUniversities
+                .stream()
+                .map(universityMapper::toApiDto)
+                .toList();
+    }
+
+    public List<Faculty> getAllFaculties() {
+        List<hu.bme.rental.persistence.models.Faculty> persistFaculties = facultyRepository.findAll();
+        return persistFaculties
+                .stream()
+                .map(facultyMapper::toApiDto)
+                .toList();
+    }
+
     private User mapAppUserToApiUser(AppUser appUser) {
-        User user = userMapper.appUserToUser(appUser);
+        User user = userMapper.toApiDto(appUser);
         user.getBalance().setUserID(appUser.getId());
         return user;
     }

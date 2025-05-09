@@ -30,18 +30,18 @@ INSERT INTO items (name, description, cost_per_day, availability, image_id) VALU
                                                                                 ('Programozás C nyelven', 'Az alapoktól a haladó technikákig, egyetemi tankönyv', 500.0, 3, 6),
                                                                                 ('Samsung Galaxy S21', 'Jó állapotú okostelefon, 128GB tárhely', 1500.0, 1, NULL),
                                                                                 ('Teniszütő Wilson', 'Profi teniszütő kezdőknek és haladóknak', 800.0, 2, NULL);
-INSERT INTO item_categories (description, image_id) VALUES
-                                                        ('Elektronikai eszközök', NULL),
-                                                        ('Könyvek', NULL),
-                                                        ('Sport eszközök', NULL);
+INSERT INTO item_categories (name, description, image_id) VALUES
+                                                        ('Elektronikai eszközök', 'Elektronikai eszközök sok fajtában', NULL),
+                                                        ('Könyvek', 'Könyvek sok fajtában',NULL),
+                                                        ('Sport eszközök', 'Sport eszközök sok fajtában', NULL);
 
-INSERT INTO item_categories (description, parent_category_id, image_id) VALUES
-                                                                            ('Laptopok', 1, NULL),
-                                                                            ('Mobiltelefonok', 1, NULL),
-                                                                            ('Tankönyvek', 2, NULL),
-                                                                            ('Szépirodalmi könyvek', 2, NULL),
-                                                                            ('Foci kellékek', 3, NULL),
-                                                                            ('Tenisz kellékek', 3, NULL);
+INSERT INTO item_categories (name, description, parent_category_id, image_id) VALUES
+                                                                            ('Laptopok','Laptopok sok fajtában', 1, NULL),
+                                                                            ('Mobiltelefonok','Mobiltelefonok sok fajtában', 1, NULL),
+                                                                            ('Tankönyvek','Tankönyvek sok fajtában', 2, NULL),
+                                                                            ('Szépirodalmi könyvek','Szépirodalmi könyvek sok fajtában', 2, NULL),
+                                                                            ('Foci kellékek', 'Foci kellékek sok fajtában', 3, NULL),
+                                                                            ('Tenisz kellékek','Tenisz kellékek sok fajtában', 3, NULL);
 INSERT INTO item_category_mappings (item_id, category_id) VALUES
                                                               (1, 1), -- Lenovo laptop -> Elektronikai eszközök
                                                               (1, 4), -- Lenovo laptop -> Laptopok

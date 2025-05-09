@@ -25,6 +25,9 @@ public class ItemCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
