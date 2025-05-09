@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useAppContext } from "../../AppContextProvider";
 import { NavigationBar } from "../NavigationBar";
 
@@ -7,16 +7,16 @@ import { NavigationBar } from "../NavigationBar";
 const MainPanel = () => {
 
     const { user, setUser } = useAppContext()
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
-    // TODO: Remove this hack and implement proper authentication
+    //TODO: Remove this hack and implement proper authentication
     useEffect(()=>{
         if (!user) {
             const storedUser = sessionStorage.getItem('user')
             if (storedUser) {
                 setUser(JSON.parse(storedUser));             
             } else {
-                navigate('/login')
+                //navigate('/login')
             }
         } else {
             sessionStorage.setItem('user', JSON.stringify(user));
