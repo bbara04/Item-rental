@@ -669,6 +669,26 @@ paths:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
 
+  /universities/all:
+    get:
+      summary: Get all universities and faculties
+      operationId: getAllUniversitiesFaculties
+      tags:
+        - User Management
+      responses:
+        '200':
+          description: List of all universities and faculties
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniversitiesResponse'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
 
 components:
   schemas:
@@ -1221,6 +1241,25 @@ components:
           format: int64
           description: ID of the entity this image is associated with
           example: 123
+
+    UniversitiesResponse:
+      type: object
+      description: Response of the Universities endpoint
+      required:
+        - universities
+        - faculties
+      properties:
+        universities:
+          type: array
+          items:
+            $ref: '#/components/schemas/University'
+          description: Universities array
+        faculties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Faculty'
+          description: Faculties array
+
 
     ErrorModel:
       required:

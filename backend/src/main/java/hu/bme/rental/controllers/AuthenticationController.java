@@ -1,13 +1,17 @@
 package hu.bme.rental.controllers;
 
-import hu.bme.rental.api.model.UserRequest;
+import hu.bme.rental.api.model.*;
 import hu.bme.rental.api.rest.AuthenticationApi;
 import hu.bme.rental.services.authentication.AuthenticationService;
 import lombok.RequiredArgsConstructor;
-import hu.bme.rental.api.model.LoginRequest;
-import hu.bme.rental.api.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+
+import static hu.bme.rental.api.model.LoginType.GOOGLE;
+import static hu.bme.rental.api.model.LoginType.LOCAL;
+import static hu.bme.rental.api.model.Role.STUDENT;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,22 +21,79 @@ public class AuthenticationController implements AuthenticationApi {
 
     @Override
     public ResponseEntity<User> loginByBasic(LoginRequest loginRequest) {
-        return null;
+
+        User mockUser = getMockUser();
+
+        return ResponseEntity.ok(mockUser);
+
     }
 
     @Override
     public ResponseEntity<User> loginByGoogle(LoginRequest loginRequest) {
-        return null;
+        User mockUser = getMockUser();
+        mockUser.setLoginType(GOOGLE);
+        return ResponseEntity.ok(mockUser);
     }
 
     @Override
     public ResponseEntity<User> registerByBasic(User regRequestedUser) {
-        return null;
+        return ResponseEntity.ok(getMockUser());
     }
 
     @Override
     public ResponseEntity<User> registerByGoogle(UserRequest regRequestedUser) {
-        return null;
+        User mockUser = getMockUser();
+        mockUser.setLoginType(GOOGLE);
+
+        return ResponseEntity.ok(mockUser);
     }
 
+
+    private User getMockUser() {
+        // Create mock Image
+        Image mockImage = new Image();
+        mockImage.id(1L);
+        mockImage.setEntityType("university");
+        mockImage.setImageData(new byte[]{0});
+        mockImage.setEntityId(1L);
+        mockImage.setContentType("image/jpg");
+        mockImage.setFileName("user_logo.jpg");
+        // Create mock University
+        University mockUniversity = new University();
+        mockUniversity.id(1L);
+        mockUniversity.setName("Budapesti Műszaki és Gazdaságtudományi Egyetem");
+        mockUniversity.setAddress("1111 Budapest, Műegyetem rkp. 3.");
+        mockUniversity.setDescription("A BME Magyarország legrégebbi műszaki felsőoktatási intézménye.");
+        mockUniversity.setWebsite("https://www.bme.hu");
+        // Create mock Faculty
+        Faculty mockFaculty = new Faculty();
+        mockFaculty.id(1L);
+        mockFaculty.setName("Villamosmérnöki és Informatikai Kar");
+        mockFaculty.setCode("VIK");
+        mockFaculty.setDescription("A BME legnagyobb kara, villamosmérnöki és informatikai képzést nyújt.");
+        mockFaculty.setUniversity(mockUniversity);
+        // Create mock Balance
+        Balance mockBalance = new Balance();
+        mockBalance.id(1L);
+        mockBalance.setUserID(1L);
+        mockBalance.setCurrentValue(1000f);
+        mockBalance.setUnit("HUF");
+        mockBalance.setPayType("CREDIT");
+        // Create mock User response
+        User mockUser = new User();
+        mockUser.id(1L);
+        mockUser.setUserName("user1");
+        mockUser.setEmail("user1@example.com");
+        mockUser.setFirstName("John");
+        mockUser.setLastName("Doe");
+        mockUser.setLoginType(LOCAL);
+        mockUser.setRole(STUDENT);
+        mockUser.setRatings(5.0f);
+        mockUser.setDescription("Amazing user");
+        mockUser.setImage(mockImage);
+        mockUser.setUniversity(mockUniversity);
+        mockUser.setFaculty(mockFaculty);
+        mockUser.setBalance(mockBalance);
+        return mockUser;
+    }
 }

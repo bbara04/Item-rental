@@ -29,7 +29,7 @@ public interface UserMapper {
     @Mapping(source = "faculty", target = "faculty", qualifiedByName = "toApiDto")
     @Mapping(target = "passwordHash", ignore = true)
     @Mapping(target = "loginType", ignore = true)
-    User appUserToUser(AppUser appUser);
+    User toApiDto(AppUser appUser);
 
 
     /**
@@ -37,7 +37,7 @@ public interface UserMapper {
      * @param appUsers List of persistence model users
      * @return List of API model users
      */
-    List<User> appUsersToUsers(List<AppUser> appUsers);
+    List<User> toApiDtoList(List<AppUser> appUsers);
 
 
 
@@ -53,7 +53,7 @@ public interface UserMapper {
     @Mapping(source = "university", target = "university", qualifiedByName = "toEntity")
     @Mapping(source = "faculty", target = "faculty", qualifiedByName = "toEntity")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateAppUserFromUserRequest(UserRequest userRequest, @MappingTarget AppUser appUser);
+    void updateUserEntityFromApiUserRequest(UserRequest userRequest, @MappingTarget AppUser appUser);
 
 
 
