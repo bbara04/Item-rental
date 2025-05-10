@@ -19,87 +19,103 @@ public class ItemManagementController implements ItemManagementApi {
 
     @Override
     public ResponseEntity<Void> deleteItemById(String id) {
-        return null;
+        if(itemService.deleteItemById(id))
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
     }
 
     @Override
     public ResponseEntity<List<Item>> getAllItems() {
-        //List<Item> items = itemService.getAllItems();
-        List<Item> items = new ArrayList<>();
-
-        // Create mock Image objects
-        Image laptopImage = new Image();
-        laptopImage.setId(5L);
-        laptopImage.setEntityType("item");
-        laptopImage.setContentType("image/jpeg");
-        laptopImage.setFileName("laptop.jpg");
-
-        Image bookImage = new Image();
-        bookImage.setId(6L);
-        bookImage.setEntityType("item");
-        bookImage.setContentType("image/jpeg");
-        bookImage.setFileName("konyv.jpg");
-
-        Image phoneImage = new Image();
-        phoneImage.setId(7L);
-        phoneImage.setEntityType("item");
-        phoneImage.setContentType("image/png");
-        phoneImage.setFileName("phone.png");
-
-        // Create the first Item - Laptop
-        Item laptop = new Item(
-                1L,
-                "Lenovo ThinkPad X1",
-                "Kiváló állapotú üzleti laptop, i7 processzor, 16GB RAM, 512GB SSD",
-                2500.0f,
-                1L,
-                laptopImage
-        );
-        laptop.setCategories(List.of("Elektronikai eszközök", "Laptopok"));
-
-        // Create the second Item - Book
-        Item book = new Item(
-                2L,
-                "Programozás C nyelven",
-                "Az alapoktól a haladó technikákig, egyetemi tankönyv",
-                500.0f,
-                3L,
-                bookImage
-        );
-        book.setCategories(List.of("Könyvek", "Tankönyvek"));
-
-        // Create the third Item - Smartphone
-        Item smartphone = new Item(
-                3L,
-                "Samsung Galaxy S21",
-                "Jó állapotú okostelefon, 128GB tárhely",
-                1500.0f,
-                1L,
-                phoneImage
-        );
-        smartphone.setCategories(List.of("Elektronikai eszközök", "Mobiltelefonok"));
-
-        // add the Items
-        items.add(laptop);
-        items.add(book);
-        items.add(smartphone);
-
-
+        List<Item> items = itemService.getAllItems();
+        if (items == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(items);
     }
 
     @Override
     public ResponseEntity<List<Item>> getItemsByCategory(String categoryId) {
-        return null;
+        List<Item> items = itemService.getItemsByCategory(categoryId);
+        if (items == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(items);
     }
 
     @Override
     public ResponseEntity<Item> getItemsById(String id) {
-        return null;
+        Item item = itemService.getItemById(id);
+        return item == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(item);
     }
 
     @Override
     public ResponseEntity<Item> updateItemDataById(String id, ItemRequest patchItem) {
-        return null;
+        Item item = itemService.updateItemById(id, patchItem);
+
+        if (item == null)
+            return ResponseEntity.notFound().build();
+         return ResponseEntity.ok(item);
     }
 }
+
+
+/**
+ * List<Item> mockItems = new ArrayList<>();
+ *
+ *         // Create mock Image objects
+ *         Image laptopImage = new Image();
+ *         laptopImage.setId(5L);
+ *         laptopImage.setEntityType("item");
+ *         laptopImage.setContentType("image/jpeg");
+ *         laptopImage.setFileName("laptop.jpg");
+ *
+ *         Image bookImage = new Image();
+ *         bookImage.setId(6L);
+ *         bookImage.setEntityType("item");
+ *         bookImage.setContentType("image/jpeg");
+ *         bookImage.setFileName("konyv.jpg");
+ *
+ *         Image phoneImage = new Image();
+ *         phoneImage.setId(7L);
+ *         phoneImage.setEntityType("item");
+ *         phoneImage.setContentType("image/png");
+ *         phoneImage.setFileName("phone.png");
+ *
+ *         // Create the first Item - Laptop
+ *         Item laptop = new Item(
+ *                 1L,
+ *                 "Lenovo ThinkPad X1",
+ *                 "Kiváló állapotú üzleti laptop, i7 processzor, 16GB RAM, 512GB SSD",
+ *                 2500.0f,
+ *                 1L,
+ *                 laptopImage
+ *         );
+ *         laptop.setCategories(List.of("Elektronikai eszközök", "Laptopok"));
+ *
+ *         // Create the second Item - Book
+ *         Item book = new Item(
+ *                 2L,
+ *                 "Programozás C nyelven",
+ *                 "Az alapoktól a haladó technikákig, egyetemi tankönyv",
+ *                 500.0f,
+ *                 3L,
+ *                 bookImage
+ *         );
+ *         book.setCategories(List.of("Könyvek", "Tankönyvek"));
+ *
+ *         // Create the third Item - Smartphone
+ *         Item smartphone = new Item(
+ *                 3L,
+ *                 "Samsung Galaxy S21",
+ *                 "Jó állapotú okostelefon, 128GB tárhely",
+ *                 1500.0f,
+ *                 1L,
+ *                 phoneImage
+ *         );
+ *         smartphone.setCategories(List.of("Elektronikai eszközök", "Mobiltelefonok"));
+ *
+ *         // add the Items
+ *         mockItems.add(laptop);
+ *         mockItems.add(book);
+ *         mockItems.add(smartphone);
+ */

@@ -1,6 +1,5 @@
 package hu.bme.rental.mappers;
 
-import hu.bme.rental.api.model.ItemCategory;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -13,10 +12,10 @@ import java.util.Set;
 )
 public interface ItemCategoryMapper {
 
-    @Named("toApiDto")
-    @Mapping(target = "parentCategory", ignore = true)
-    @Mapping(target = "isRoot", ignore = true)
-    ItemCategory toApiDto(hu.bme.rental.persistence.models.ItemCategory persItemCategory);
+    @Named("toStringApi")
+    default String toStringApi(hu.bme.rental.persistence.models.ItemCategory persItemCategory) {
+        return persItemCategory.getName();
+    };
 
 
 //    @Named("toEntity")
@@ -29,5 +28,6 @@ public interface ItemCategoryMapper {
      * @return List of API model item categories
      */
     @Named("toApiDtoList")
-    List<ItemCategory> toApiDtoList(Set<hu.bme.rental.persistence.models.ItemCategory> persItemCategories);
+    @IterableMapping(elementTargetType = String.class, qualifiedByName = "toStringApi")
+    List<String> toApiDtoList(Set<hu.bme.rental.persistence.models.ItemCategory> persItemCategories);
 }
