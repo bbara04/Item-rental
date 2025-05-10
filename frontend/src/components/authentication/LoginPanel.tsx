@@ -1,7 +1,7 @@
-import axios from "axios";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContextProvider";
+import { loginByBasic } from "../../client";
 import GoogleLoginComponent from "./GoogleLoginComponent";
 
 
@@ -21,26 +21,19 @@ const LoginPanel: FC = () => {
     setError(null);
     setLoading(true);
 
-    try {
-      const response = await axios.post(`${backendAddress}/api/auth/basic/login`, {
+    const {data, error} = await loginByBasic({
+      body: {
         email: email,
         passkey: password,
-      });
-
-      console.log("Login successful:", response.data);
-
-      setUser(response.data);
-      navigate('/');
-
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data?.message || "Hibás bejelentkezési adatok");
-      } else {
-        setError("Hibás bejelentkezési adatok");
-      }
-    } finally {
+      },
+    });
+    if (error) {
+      setError(error.toString());
       setLoading(false);
+      return;
     }
+    setUser(data);
+    navigate('/');
   };
 
   return (

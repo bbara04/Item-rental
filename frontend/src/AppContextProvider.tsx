@@ -1,5 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
-import { User } from "./dto/User";
+import { User } from "./client/types.gen";
 
 type AppContextType = {
     user: User | undefined;
