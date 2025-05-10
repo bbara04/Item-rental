@@ -100,6 +100,10 @@ export type Item = {
      */
     categories?: Array<string>;
     /**
+     * Item's faculties with id, which is helpful for filtering
+     */
+    facultiesId?: Array<string>;
+    /**
      * A rating value between 0.0 and 5.0
      */
     costPerDay: number;
@@ -304,6 +308,10 @@ export type ItemRequest = {
      * Item's categories, which is helpful for filtering
      */
     categories?: Array<string>;
+    /**
+     * Item's faculties with id, which is helpful for filtering
+     */
+    facultiesId?: Array<string>;
     /**
      * A rating value between 0.0 and 5.0
      */

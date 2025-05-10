@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ExampleData } from "../../../dto/ExampleData";
@@ -13,8 +14,6 @@ const ItemRentalPage: React.FC = () => {
   const [success, setSuccess] = useState<boolean>(false);
 
   useEffect(() => {
-    // In a real app, we would fetch the item data from an API
-    // For now, we'll use the example data
     setLoading(true);
     try {
       const id = Number(itemId);

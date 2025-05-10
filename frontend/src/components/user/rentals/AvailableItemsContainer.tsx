@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ExampleData } from "../../../dto/ExampleData";
+import { useEffect, useState } from "react";
+import { getAllItems, GetAllItemsResponse } from "../../../client";
 import CategorySelector from "./CategorySelector";
 import RentalItemSearch from "./RentalItemSearch";
 import RentalItemsResult from "./RentalItemsResult";
@@ -7,10 +7,31 @@ import RentalItemsResult from "./RentalItemsResult";
 const AvailableItemsContainer = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
-    const categories = Array.from(new Set(ExampleData.exampleRentalItems.map(item => item.category)));
-    const filteredItems = ExampleData.exampleRentalItems.filter(
+    const [items, setItems] = useState<GetAllItemsResponse>();
+
+    useEffect(() => {
+        async function fetchData() {
+            const {data, error} = await getAllItems();
+            if (error) {
+                console.error("Error fetching items:", error);
+            }
+            setItems(data);
+        }
+        fetchData();
+    }, []);
+
+    if (!items) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-2xl text-gray-600">Loading items...</div>
+            </div>
+        );
+    }
+
+    const categories = Array.from(new Set(items.map(item => item.categories).flat().filter((category): category is string => category !== undefined)));
+    const filteredItems = items.filter(
         (item) =>
-            (selectedCategory === "" || item.category === selectedCategory) &&
+            (selectedCategory === "" || item.categories?.includes(selectedCategory)) &&
             (item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.description.toLowerCase().includes(searchQuery.toLowerCase()))
     );

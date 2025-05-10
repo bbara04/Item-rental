@@ -1,45 +1,43 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { Link } from "react-router-dom";
-import { PreviewRentalItem } from "../../dto/PreviewRentalItem";
+import { Item } from "../../../client";
 
-const RentalItemCard: React.FC<PreviewRentalItem> = ({
-  id,
-  imageUrl,
-  name,
-  description,
-  price,
-  available,
-}) => {
+const RentalItemCard: React.FC<Item> = (item) => {
   return (
-    <div className="flex flex-col justify-evenly p-6 bg-white shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 w-full max-w-sm h-[450px]">
-      <div className="w-full flex flex-grow justify-center mb-6">
-        <img
-          src={imageUrl}
-          alt={name}
-          className="h-full object-cover rounded-md"
-        />
-      </div>
+    <div className="grid grid-rows-[auto_auto] grid-cols-1 bg-white shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 max-w-[300px] max-h-fit content-between">
+      <div className="flex flex-col max-h-fit">
+        <div className="w-full flex justify-center mb-2">
+          <img
+            src={item.image?.imageData ?? "https://placehold.co/600x400"}
+            alt={item.image?.fileName ?? "Placeholder image"}
+            className="h-full object-cover rounded-t-md"
+          />
+        </div>
 
-      <div className="flex flex-col justify-end p-4">
-        <h2 className="text-xl font-semibold text-gray-800 text-center">{name}</h2>
-        <p className="text-sm text-gray-600 mt-2 text-center line-clamp-3">
-          {description}
-        </p>
-        <p className="text-sm font-medium mt-3 text-center">
-          Available: <span className="font-bold text-green-600">{available}</span>
-        </p>
+        <div className="flex flex-col justify-end p-2">
+          <h2 className="text-xl font-semibold text-gray-800 text-center">{item.name}</h2>
+          <p className="text-sm text-gray-600 mt-2 text-center line-clamp-3">
+            {item.description}
+          </p>
+          
+        </div>
       </div>
-
-      <div className="flex justify-evenly">
-        <p className="text-sm font-medium text-center text-gray-600 mt-2 font-semibold">
-          Price: <span className="font-bold text-blue-600">${price.toLocaleString()}</span>
+      <div className="flex flex-col justify-end max-h-fit p-2">
+        <p className="text-sm font-medium text-center pb-3">
+            Available: <span className="font-bold text-green-600">{item.availability}</span>
         </p>
-        <Link
-          to={`/rent/${id}`}
-          className="mt-auto bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
-        >
-          Rent Now
-        </Link>
+        <div className="flex justify-evenly">
+          <p className="text-sm text-center text-gray-600 mt-2 font-semibold">
+            Price/Day: <span className="font-bold text-blue-600">${item.costPerDay}</span>
+          </p>
+          <Link
+            to={`/rent/${item.id}`}
+            className="mt-auto bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+          >
+            Rent Now
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { differenceInDays, parseISO } from 'date-fns'; // Assuming date-fns is available or installable
 import React from "react";
 import { PreviewRentalItem } from "../../dto/PreviewRentalItem";

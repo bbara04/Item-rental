@@ -6,8 +6,6 @@ const ProfilePanel: React.FC = () => {
   const { user } = useAppContext();
 
   if (!user) {
-    // Optionally handle the case where the user is not logged in,
-    // though MainPanel should redirect to login in this case.
     return <div className="container mx-auto px-4 py-8 text-center">Loading user data or not logged in...</div>;
   }
 
@@ -42,13 +40,6 @@ const ProfilePanel: React.FC = () => {
             {/* Add more user details here as needed */}
           </div>
         </div>
-
-        {/* Optional: Add sections for editing profile, viewing rental history, etc. */}
-        {/* <div className="border-t border-gray-200 mt-6 pt-6">
-          <button className="w-full rounded-md bg-blue-600 p-3 text-white shadow-md transition hover:bg-blue-700">
-            Edit Profile
-          </button>
-        </div> */}
       </div>
     </div>
   );
