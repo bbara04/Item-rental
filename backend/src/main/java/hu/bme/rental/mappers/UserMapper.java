@@ -24,6 +24,7 @@ public interface UserMapper {
      * @param appUser Persistence model user
      * @return API model user
      */
+    @Named("toApiDto")
     @Mapping(source = "balance", target = "balance", qualifiedByName = "toApiDto")
     @Mapping(source = "university", target = "university", qualifiedByName = "toApiDto")
     @Mapping(source = "faculty", target = "faculty", qualifiedByName = "toApiDto")
@@ -37,6 +38,7 @@ public interface UserMapper {
      * @param appUsers List of persistence model users
      * @return List of API model users
      */
+    @IterableMapping(elementTargetType = User.class, qualifiedByName = "toApiDto")
     List<User> toApiDtoList(List<AppUser> appUsers);
 
 

@@ -51,6 +51,18 @@ INSERT INTO item_category_mappings (item_id, category_id) VALUES
                                                               (3, 5), -- Samsung telefon -> Mobiltelefonok
                                                               (4, 3), -- Teniszütő -> Sport eszközök
                                                               (4, 9); -- Teniszütő -> Tenisz kellékek
+
+-- Item-Faculty kapcsolatok betöltése
+INSERT INTO item_faculty_mappings (item_id, faculty_id) VALUES
+                                                            (1, 1), -- Lenovo ThinkPad X1 -> BME VIK
+                                                            (1, 2), -- Lenovo ThinkPad X1 -> BME GPK
+                                                            (2, 1), -- Programozás C nyelven -> BME VIK
+                                                            (2, 4), -- Programozás C nyelven -> ELTE IK
+                                                            (3, 1), -- Samsung Galaxy S21 -> BME VIK
+                                                            (3, 3), -- Samsung Galaxy S21 -> ELTE TTK
+                                                            (4, 2); -- Teniszütő Wilson -> BME GPK
+
+
 INSERT INTO renting_transactions (transaction_type, status, rented_item_id, renter_user_id, start_date_time, end_date_time, remaining_days, cost_per_day, cur_cost) VALUES
                                                                                                                                                                         ('RENTAL', 'PENDING', 1, 1, '2023-11-01 10:00:00', '2023-11-08 10:00:00', 7, 2500.0, 17500.0),
                                                                                                                                                                         ('RENTAL', 'APPROVED', 2, 2, '2023-10-15 14:30:00', '2023-10-30 14:30:00', 0, 500.0, 7500.0),

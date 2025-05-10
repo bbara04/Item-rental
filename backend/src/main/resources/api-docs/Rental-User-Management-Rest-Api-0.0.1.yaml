@@ -932,6 +932,12 @@ components:
             type: string
           description: Item's categories, which is helpful for filtering
           example: ["Laptop", "Electronics", "Computer"]
+        facultiesId:
+          type: array
+          items:
+            type: string
+          description: Item's faculties with id, which is helpful for filtering
+          example: [ "100003", "23", "1" ]
         costPerDay:
           type: number
           format: float
@@ -978,6 +984,12 @@ components:
             type: string
           description: Item's categories, which is helpful for filtering
           example: [ "Laptop", "Electronics", "Computer" ]
+        facultiesId:
+          type: array
+          items:
+            type: string
+          description: Item's faculties with id, which is helpful for filtering
+          example: [ "100003", "23", "1" ]
         costPerDay:
           type: number
           format: float

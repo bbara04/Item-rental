@@ -44,9 +44,8 @@ public class UserManagementService {
     @Transactional
     public boolean deleteUserById(String id) {
         try {
-            Long userId = Long.parseLong(id);
-            if (userRepository.existsById(userId)) {
-                userRepository.deleteById(userId);
+            if (userRepository.existsById(id)) {
+                userRepository.deleteById(id);
                 return true;
             }
             return false;
@@ -88,8 +87,7 @@ public class UserManagementService {
     @Transactional
     public User getUserById(String id) {
         try {
-            Long userId = Long.parseLong(id);
-            Optional<AppUser> appUser = userRepository.findById(userId);
+            Optional<AppUser> appUser = userRepository.findById(id);
             jsonLogger.logAsJson("User details", appUser.isPresent() ? appUser.get() : " ");
             return appUser.map(this::mapAppUserToApiUser).orElse(null);
         } catch (Exception e) {
@@ -107,8 +105,7 @@ public class UserManagementService {
     @Transactional
     public User updateUserById(String id, UserRequest patchUser) {
         try {
-            Long userId = Long.parseLong(id);
-            Optional<AppUser> userOptional = userRepository.findById(userId);
+            Optional<AppUser> userOptional = userRepository.findById(id);
 
             if (userOptional.isPresent()) {
                 AppUser targetAppUser = userOptional.get();
