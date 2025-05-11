@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { Link } from "react-router-dom";
 import { Item } from "../../../client";
@@ -9,8 +8,8 @@ const RentalItemCard: React.FC<Item> = (item) => {
       <div className="flex flex-col max-h-fit">
         <div className="w-full flex justify-center mb-2">
           <img
-            src={item.image?.imageData ?? "https://placehold.co/600x400"}
-            alt={item.image?.fileName ?? "Placeholder image"}
+            src={item.image && item.image.imageData && item.image.contentType ? `data:${item.image.contentType};base64,${item.image.imageData}` : "https://placehold.co/600x400"}
+            alt={item.image?.fileName ?? item.name ?? "Item image"}
             className="h-full object-cover rounded-t-md"
           />
         </div>

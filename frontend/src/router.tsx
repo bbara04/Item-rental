@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import AdminPanel from './components/admin/AdminPanel';
 import AdminDashboardPage from './components/admin/dashboard/AdminDashboardPage';
 import ManageItemsPage from './components/admin/items/ManageItemsPage';
+import ModifyItemPage from './components/admin/items/ModifyItemPage'; // Import the new component
 import RentalApprovalsPage from './components/admin/rentals/RentalApprovalsPage';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
@@ -68,6 +69,14 @@ const router = createBrowserRouter(
                 {
                     path: "items", // Removed leading "/"
                     element: <ManageItemsPage />
+                },
+                {
+                    path: "items/new", // Route for adding a new item
+                    element: <ModifyItemPage />
+                },
+                {
+                    path: "items/edit/:itemId", // Route for editing an existing item
+                    element: <ModifyItemPage />
                 },
                 {
                     path: "approvals", // Removed leading "/"

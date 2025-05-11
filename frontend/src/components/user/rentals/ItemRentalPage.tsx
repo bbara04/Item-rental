@@ -1,35 +1,37 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ExampleData } from "../../../dto/ExampleData";
-import { PreviewRentalItem } from "../../../dto/PreviewRentalItem";
+import { getItemsById, Item } from "../../../client";
 
 const ItemRentalPage: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
-  const [item, setItem] = useState<PreviewRentalItem | null>(null);
+  const [item, setItem] = useState<Item | null>(null);
   const [rentalDays, setRentalDays] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
   useEffect(() => {
-    setLoading(true);
-    try {
-      const id = Number(itemId);
-      const foundItem = ExampleData.exampleRentalItems.find(
-        (item) => item.id === id
-      );
-      if (foundItem) {
-        setItem(foundItem);
-      } else {
-        setError("Item not found");
+    async function fetchItem() {
+      if (!itemId) {
+        setError("Item id is not provided");
+        setLoading(false);
+        return;
       }
-    } catch (err) {
-      setError("Failed to load item details");
-    } finally {
+      setLoading(true);
+      const { data, error } = await getItemsById({
+        path: {
+          id: itemId,
+        }
+      });
+      if (error) {
+        setError(String(error));
+      } else {
+        setItem(data);
+      }
       setLoading(false);
     }
+    fetchItem();
   }, [itemId]);
 
   const handleRentalDaysChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,8 +42,6 @@ const ItemRentalPage: React.FC = () => {
   };
 
   const handleRent = () => {
-    // In a real app, we would send a request to the backend to create a rental
-    // For now, just show a success message and redirect after a delay
     setSuccess(true);
     setTimeout(() => {
       navigate("/my-rentals");
@@ -86,8 +86,8 @@ const ItemRentalPage: React.FC = () => {
         <div className="md:flex">
           <div className="md:w-1/2">
             <img
-              src={item.imageUrl}
-              alt={item.name}
+              src={item.image && item.image.imageData && item.image.contentType ? `data:${item.image.contentType};base64,${item.image.imageData}` : "https://placehold.co/600x400"}
+              alt={item.image?.fileName ?? item.name ?? "Item image"}
               className="w-full h-auto object-contain max-h-[600px]"
             />
           </div>
@@ -96,14 +96,14 @@ const ItemRentalPage: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-800 mb-2">{item.name}</h1>
               <div className="flex items-center mb-4">
                 <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded mr-2">
-                  {item.category}
+                  {item.categories}
                 </span>
                 <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                  {item.available} available
+                  {item.availability} available
                 </span>
               </div>
               <div className="text-2xl font-bold text-blue-600 mb-4">
-                ${item.price} / day
+                ${item.costPerDay} / day
               </div>
               <p className="text-gray-600 mb-8">{item.description}</p>
             </div>
@@ -129,7 +129,7 @@ const ItemRentalPage: React.FC = () => {
                   <span className="font-semibold">Total cost:</span>
                 </div>
                 <div className="text-2xl font-bold text-blue-600">
-                  ${(item.price * rentalDays).toLocaleString()}
+                  ${(item.costPerDay * rentalDays)}
                 </div>
               </div>
 

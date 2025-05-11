@@ -1,69 +1,53 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { differenceInDays, parseISO } from 'date-fns'; // Assuming date-fns is available or installable
 import React from "react";
-import { PreviewRentalItem } from "../../dto/PreviewRentalItem";
-
-// Define a type for the augmented rental item data used on the UserRentalsPage
-export type UserRentalItemDetails = PreviewRentalItem & {
-    rentalStartDate?: string; // Make optional as not needed for active card per image
-    rentalEndDate: string; // Keep as string (ISO format preferred for parsing)
-    status: "Active" | "Returned" | "Completed"; // Use specific statuses
-    totalCost?: number; // For history
-};
+import { TransactionResponse } from '../../../client';
 
 interface UserRentalItemCardProps {
-    item: UserRentalItemDetails;
+    itemTransaction: TransactionResponse;
 }
 
-// Helper function to calculate remaining days (ensure rentalEndDate is a valid date string)
 const getRemainingDays = (endDate: string): number | null => {
     try {
-        // Let's assume the date is in a format parseISO can handle, like YYYY-MM-DD
-        // Or adjust parsing based on the actual format
-        const due = parseISO(endDate); // Or new Date(endDate) if format is compatible
-        const now = new Date(); // Use current date for calculation
-        // Ensure we only show positive remaining days
+        const due = parseISO(endDate);
+        const now = new Date();
         const days = differenceInDays(due, now);
         return days > 0 ? days : 0;
     } catch (e) {
         console.error("Error parsing date:", e);
-        return null; // Return null or some indicator of error
+        return null;
     }
 };
 
 
-const UserRentalItemCard: React.FC<UserRentalItemCardProps> = ({ item }) => {
-    // Only render if status is Active for this card component based on the image context
-    if (item.status !== "Active") {
-        return null; // Or handle other statuses differently if needed elsewhere
+const UserRentalItemCard: React.FC<UserRentalItemCardProps> = ({ itemTransaction }) => {
+    if (["DECLINED", "PENDING", "DELETED", "ARCHIVED"].includes(itemTransaction.status)) {
+        return null; 
     }
 
-    const remainingDays = getRemainingDays(item.rentalEndDate);
-    // Format the due date string for display (e.g., "May 6, 2025")
-    // This requires knowing the format of item.rentalEndDate or using a date library robustly
-    let formattedDueDate = item.rentalEndDate; // Placeholder
+    const remainingDays = getRemainingDays(itemTransaction.endDate);
+    let formattedDueDate = itemTransaction.endDate;
     try {
-        formattedDueDate = new Date(item.rentalEndDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        formattedDueDate = new Date(itemTransaction.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     } catch (e) { /* ignore potential parsing error, use original string */ }
 
 
     return (
-        // Adjusted card structure based on the image
         <div className="bg-white shadow-md rounded-lg overflow-hidden max-w-sm">
-            <div className="relative h-48 w-full"> {/* Container for image and badge */}
+            <div className="relative h-48 w-full">
                 <img
-                    src={item.imageUrl}
-                    alt={item.name}
-                    className="w-full h-full object-cover" // Cover the area
+                    src={itemTransaction.item.image && itemTransaction.item.image.imageData && itemTransaction.item.image.contentType ? `data:${itemTransaction.item.image.contentType};base64,${itemTransaction.item.image.imageData}` : "https://placehold.co/600x400"}
+                    alt={itemTransaction.item.image?.fileName ?? itemTransaction.item.name ?? "Item image"}
+                    className="w-full h-full object-cover"
                 />
                 <span className="absolute bottom-2 left-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded">
-                    {item.status}
+                    {itemTransaction.status}
                 </span>
             </div>
             <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
-                    <p className="text-sm text-gray-600">${item.price}/day</p>
+                    <h3 className="text-lg font-semibold text-gray-800">{itemTransaction.item.name}</h3>
+                    <p className="text-sm text-gray-600">${itemTransaction.item.costPerDay}/day</p>
                 </div>
                 <div className="text-sm text-gray-600 space-y-1">
                      <p>

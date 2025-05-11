@@ -1,28 +1,89 @@
 import React from "react";
-import { ExampleData } from "../../../dto/ExampleData";
-import UserRentalItemCard, { UserRentalItemDetails } from "./UserRentalItemCard";
+import { TransactionResponse } from "../../../client";
+import UserRentalItemCard from "./UserRentalItemCard";
 
 // Simulate active rentals using ExampleData
 // In a real app, this data would come from an API based on the logged-in user
-const activeRentals: UserRentalItemDetails[] = ExampleData.exampleRentalItems.slice(0, 1).map(item => ({
-  ...item,
-  name: "MacBook Pro 16\"", // Hardcode the name to match the image
-  price: 89, // $89/day as shown in image
-  rentalStartDate: "2025-04-15",
-  rentalEndDate: "2025-05-06", // Due date as shown in image: May 6, 2025
-  status: "Active"
-}));
+const activeRentals: TransactionResponse[] = [{
+  id: 1,
+  item: {
+    id: 101,
+    name: "MacBook Pro 16",
+    description: "Powerful laptop for all your creative needs. Features a stunning 16-inch Retina display.",
+    categories: ["Electronics", "Computers", "Laptops"],
+    facultiesId: ["F001"], // Example faculty ID
+    costPerDay: 89, // This was already here as 'price', aligning with Item type
+    availability: 5,
+    image: {
+      id: 201,
+      imageData: "base64_encoded_image_data_placeholder", // Placeholder for actual base64 image data
+      contentType: "image/jpeg",
+      fileName: "macbook_pro_16.jpg"
+    }
+  },
+  numberOfItem: 1, // added numberOfItem property
+  status: "STARTED",
+  user: { // Added User mock data
+    id: 123,
+    userName: "testuser",
+    email: "testuser@example.com",
+    firstName: "Test",
+    lastName: "User",
+    role: "STUDENT",
+    university: {
+      id: 1,
+      name: "Test University",
+    },
+    faculty: {
+      id: 1,
+      name: "Test Faculty",
+      code: "TF"
+    }
+  },
+  startDate: "2025-04-15",
+  endDate: "2025-05-06"
+}];
 
 // Simulate rental history
-const rentalHistory = [
-  {
-    id: 1,
-    name: "iPhone 13 Pro",
-    status: "Completed",
-    period: "Mar 15 - Apr 2",
-    total: 245.00
-  }
-];
+const rentalHistory: TransactionResponse[] = [{
+  id: 1,
+  item: {
+    id: 101,
+    name: "MacBook Pro 16",
+    description: "Powerful laptop for all your creative needs. Features a stunning 16-inch Retina display.",
+    categories: ["Electronics", "Computers", "Laptops"],
+    facultiesId: ["F001"],
+    costPerDay: 89, 
+    availability: 5,
+    image: {
+      id: 201,
+      imageData: "base64_encoded_image_data_placeholder",
+      contentType: "image/jpeg",
+      fileName: "macbook_pro_16.jpg"
+    }
+  },
+  numberOfItem: 1, // added numberOfItem property
+  status: "ARCHIVED",
+  user: { // Added User mock data
+    id: 123,
+    userName: "testuser",
+    email: "testuser@example.com",
+    firstName: "Test",
+    lastName: "User",
+    role: "STUDENT",
+    university: {
+      id: 1,
+      name: "Test University",
+    },
+    faculty: {
+      id: 1,
+      name: "Test Faculty",
+      code: "TF"
+    }
+  },
+  startDate: "2025-04-15",
+  endDate: "2025-05-06"
+}];
 
 const UserRentalsPage: React.FC = () => {
   return (
@@ -39,7 +100,7 @@ const UserRentalsPage: React.FC = () => {
         {activeRentals.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {activeRentals.map((item) => (
-              <UserRentalItemCard key={`${item.id}-active`} item={item} />
+              <UserRentalItemCard key={`${item.id}-active`} itemTransaction={item} />
             ))}
           </div>
         ) : (
@@ -62,16 +123,16 @@ const UserRentalsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {rentalHistory.map((item) => (
-                  <tr key={item.id} className="border-b">
-                    <td className="py-3 px-4">{item.name}</td>
+                {rentalHistory.map((itemTransaction) => (
+                  <tr key={itemTransaction.id} className="border-b">
+                    <td className="py-3 px-4">{itemTransaction.item.name}</td>
                     <td className="py-3 px-4">
                       <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs">
-                        {item.status}
+                        {itemTransaction.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4">{item.period}</td>
-                    <td className="py-3 px-4 text-right">${item.total.toFixed(2)}</td>
+                    <td className="py-3 px-4">{itemTransaction.startDate} - {itemTransaction.endDate}</td>
+                    <td className="py-3 px-4 text-right">${itemTransaction.item.costPerDay}</td>
                   </tr>
                 ))}
               </tbody>
