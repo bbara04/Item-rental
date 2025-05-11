@@ -1,5 +1,13 @@
 package hu.bme.rental.services.itemmanagement;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import hu.bme.rental.api.model.Item;
 import hu.bme.rental.api.model.ItemRequest;
 import hu.bme.rental.configuration.JsonLogger;
@@ -8,18 +16,12 @@ import hu.bme.rental.persistence.models.Faculty;
 import hu.bme.rental.persistence.models.ItemCategory;
 import hu.bme.rental.persistence.models.RentingTransaction;
 import hu.bme.rental.persistence.repositories.FacultyRepository;
+import hu.bme.rental.persistence.repositories.ImageRepository; // Added
 import hu.bme.rental.persistence.repositories.ItemCategoryRepository;
 import hu.bme.rental.persistence.repositories.ItemRepository;
 import hu.bme.rental.persistence.repositories.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 
 @Slf4j
@@ -34,6 +36,7 @@ public class ItemService {
     private final FacultyRepository facultyRepository;
     private final TransactionRepository transactionRepository;
     private final JsonLogger jsonLogger;
+    private final ImageRepository imageRepository; // Added
 
     /**
      * Gets all item in the system
@@ -156,6 +159,69 @@ public class ItemService {
                         log.info("New Faculty: {}",presFaculty);
                     persistItem.setFaculties(newFaculties);
                 }
+
+                // Image frissítése, ha érkezett
+                if (itemRequest.getImage() != null) {
+                    hu.bme.rental.api.model.Image apiImage = itemRequest.getImage();
+                    hu.bme.rental.persistence.models.Image imageToPersist = null;
+
+                    // Prioritize new image data if provided
+                    if (apiImage.getImageData() != null && apiImage.getImageData().length > 0) {
+                        imageToPersist = persistItem.getImage() != null ? persistItem.getImage() : new hu.bme.rental.persistence.models.Image();
+                        try {
+                            // Assuming apiImage.getImageData() already contains the raw binary bytes,
+                            // as Jackson likely decoded the Base64 string from the request.
+                            byte[] imageDataBytes = apiImage.getImageData(); 
+                            imageToPersist.setImageData(imageDataBytes);
+                            imageToPersist.setContentType(apiImage.getContentType());
+                            imageToPersist.setFileName(apiImage.getFileName());
+                            imageToPersist.setEntityType("item");
+                            try {
+                                imageToPersist.setEntityId(persistItem.getId());
+                            } catch (NumberFormatException e) {
+                                log.warn("Item ID {} (String) could not be parsed to Long for Image.entityId (Long). Image entityId might not be set correctly.", persistItem.getId(), e);
+                            }
+                            imageRepository.save(imageToPersist);
+                            persistItem.setImage(imageToPersist);
+                            log.info("Item's image updated with new data. Image ID: {}", imageToPersist.getId());
+                        } catch (IllegalArgumentException e) {
+                            log.error("Failed to decode base64 image data for item id: {}. Image not updated.", id, e);
+                        }
+                    }
+                    // Else, if ID is provided, try to link to an existing image
+                    else if (apiImage.getId() != null) {
+                        Optional<hu.bme.rental.persistence.models.Image> optExistingImage = imageRepository.findById(String.valueOf(apiImage.getId()));
+                        if (optExistingImage.isPresent()) {
+                            imageToPersist = optExistingImage.get();
+                            imageToPersist.setEntityType("item");
+                            try {
+                                imageToPersist.setEntityId(persistItem.getId());
+                            } catch (NumberFormatException e) {
+                                log.warn("Item ID {} (String) could not be parsed to Long for Image.entityId (Long) when linking existing image. EntityId may not be updated correctly.", persistItem.getId(), e);
+                            }
+                            imageRepository.save(imageToPersist); 
+                            persistItem.setImage(imageToPersist);
+                            log.info("Item {} linked to existing image_id: {}", id, imageToPersist.getId());
+                        } else {
+                            log.warn("Image_id: {} provided in request for item id: {}, but no such image found. Image not changed.", apiImage.getId(), id);
+                        }
+                    }
+                    // Else, if image object is "empty" (no data, no id), consider it a request to remove
+                    else if (apiImage.getId() == null && (apiImage.getImageData() == null || apiImage.getImageData().length == 0) && apiImage.getFileName() == null && apiImage.getContentType() == null) {
+                        if (persistItem.getImage() != null) {
+                            log.info("Request to remove image from item id: {}. Current image id: {}", id, persistItem.getImage().getId());
+                            persistItem.setImage(null); // Unlink
+                            // Optionally, delete the old image from imageRepository if it's not shared and exclusively owned by the item.
+                            // e.g., imageRepository.delete(oldImage); // Be cautious with this.
+                            log.info("Image unlinked from item id: {}", id);
+                        } else {
+                            log.info("Request to remove image for item id: {}, but no image was associated.", id);
+                        }
+                    } else {
+                        log.warn("ItemRequest for item id: {} contained an Image object with insufficient data to update or link, and not a clear removal request. Image not changed.", id);
+                    }
+                }
+                
 
                 // Entitás mentése
                 hu.bme.rental.persistence.models.Item savedItem = itemRepository.save(persistItem);
