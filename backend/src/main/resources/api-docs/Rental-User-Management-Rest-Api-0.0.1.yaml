@@ -740,7 +740,6 @@ components:
           example: user@example.com
         passkey:
           type: string
-          minLength: 6
           maxLength: 100
           example: secretpassword
 
@@ -868,7 +867,7 @@ components:
           type: string
           description: Hashed password (typically not returned in responses)
           format: password
-          minLength: 60
+          minLength: 1
           maxLength: 255
           example: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
         loginType:

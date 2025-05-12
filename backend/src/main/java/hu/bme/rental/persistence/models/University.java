@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "universities")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(
@@ -22,7 +21,7 @@ public class University {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "uni_code", unique = true, nullable = false, length = 15)
+    @Column(name = "uni_code", unique = true, nullable = true, length = 15)
     private String uniCode;
 
     @Column(name = "name", nullable = false)

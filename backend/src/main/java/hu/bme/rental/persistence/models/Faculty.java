@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "faculties")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"university"})

@@ -11,7 +11,6 @@ import java.util.Set;
 @Entity
 @Table(name = "item_categories")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"childCategories"})
@@ -31,7 +30,7 @@ public class ItemCategory {
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(
             name = "parent_category_id",
             referencedColumnName = "id",
@@ -39,10 +38,10 @@ public class ItemCategory {
     )
     private ItemCategory parentCategory;
 
-    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<ItemCategory> childCategories;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private Image image;
 

@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "balances")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(

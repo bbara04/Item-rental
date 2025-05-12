@@ -32,6 +32,11 @@ public interface UserMapper {
     @Mapping(target = "loginType", ignore = true)
     User toApiDto(AppUser appUser);
 
+    @AfterMapping
+    default void toApiDtoAfter(AppUser appUser, @MappingTarget User target) {
+        target.getBalance().setUserID(appUser.getId());
+    }
+
 
     /**
      * Maps a list of persistence model users to API model users
@@ -41,6 +46,15 @@ public interface UserMapper {
     @IterableMapping(elementTargetType = User.class, qualifiedByName = "toApiDto")
     List<User> toApiDtoList(List<AppUser> appUsers);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "balance", ignore = true)
+    @Mapping(target = "university", ignore = true)
+    @Mapping(target = "faculty", ignore = true)
+    @Mapping(target = "image.id", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    AppUser toEntity(User user, @MappingTarget AppUser appUser);
 
 
     /**
@@ -59,4 +73,12 @@ public interface UserMapper {
 
 
 
+    @Named("toApiDto")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "balance", target = "balance")
+    @Mapping(source = "university", target = "university")
+    @Mapping(source = "faculty", target = "faculty")
+    @Mapping(target = "passwordHash", source = "password")
+    @Mapping(target = "loginType", ignore = true)
+    User toApiDto(UserRequest regRequestedUser);
 }

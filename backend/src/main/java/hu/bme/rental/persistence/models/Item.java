@@ -13,7 +13,6 @@ import java.util.Set;
 @Entity
 @Table(name = "items")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(
@@ -37,7 +36,7 @@ public class Item {
     @Column(name = "availability")
     private Integer availability;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "image_id")
     private Image image;
 

@@ -1,17 +1,10 @@
 package hu.bme.rental.services.usermanagement;
 
-import hu.bme.rental.api.model.Faculty;
-import hu.bme.rental.api.model.University;
-import hu.bme.rental.api.model.User;
-import hu.bme.rental.api.model.UserRequest;
+import hu.bme.rental.api.model.*;
 import hu.bme.rental.configuration.JsonLogger;
-import hu.bme.rental.mappers.FacultyMapper;
-import hu.bme.rental.mappers.UniversityMapper;
-import hu.bme.rental.mappers.UserMapper;
+import hu.bme.rental.mappers.*;
 import hu.bme.rental.persistence.models.AppUser;
-import hu.bme.rental.persistence.repositories.FacultyRepository;
-import hu.bme.rental.persistence.repositories.UniversityRepository;
-import hu.bme.rental.persistence.repositories.UserRepository;
+import hu.bme.rental.persistence.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +21,12 @@ public class UserManagementService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    private final BalanceRepository balanceRepository;
+    private final BalanceMapper balanceMapper;
+
+    private final ImageRepository imageRepository;
+    private final ImageMapper imageMapper;
+
     private final UniversityRepository universityRepository;
     private final UniversityMapper universityMapper;
 
@@ -35,6 +34,80 @@ public class UserManagementService {
     private final FacultyMapper facultyMapper;
 
     private final JsonLogger jsonLogger;
+
+
+    public User createAppUser(User registeringUser) {
+        if(facultyRepository.findById(registeringUser.getFaculty().getId().toString()).isEmpty()
+            || universityRepository.findById(registeringUser.getUniversity().getId().toString()).isEmpty()) {
+            log.error("Bad Faculty or/and University");
+            return null;
+        }
+        try {
+            // Create and map the AppUser first
+            AppUser newAppUser = new AppUser();
+            newAppUser.setPasswordHash(registeringUser.getPasswordHash());
+
+            hu.bme.rental.persistence.models.Image image;
+            if (registeringUser.getImage() != null && registeringUser.getImage().getId() != null) {
+                image =
+                        imageRepository.findById(registeringUser.getImage().getId().toString())
+                                .orElse(
+                                        new hu.bme.rental.persistence.models.Image()
+                                );
+            }
+            else {
+                // Create a new Balance entity if not provided
+                image = new hu.bme.rental.persistence.models.Image();
+                imageMapper.toEntity(registeringUser.getImage(), image);
+            }
+            imageRepository.save(image);
+            newAppUser.setImage(image);
+
+            hu.bme.rental.persistence.models.Balance balance;
+            if (registeringUser.getBalance() != null && registeringUser.getBalance().getId() != null) {
+                 balance =
+                        balanceRepository.findById(registeringUser.getBalance().getId().toString())
+                                .orElse(
+                                        new hu.bme.rental.persistence.models.Balance()
+                                );
+            }
+            else {
+                // Create a new Balance entity if not provided
+                balance = new hu.bme.rental.persistence.models.Balance();
+            }
+            balanceMapper.toEntity(registeringUser.getBalance(), balance);
+            balanceRepository.save(balance);
+            newAppUser.setBalance(balance);
+
+            userMapper.toEntity(registeringUser, newAppUser);
+
+            // Get existing University and Faculty from DB instead of creating new ones
+            hu.bme.rental.persistence.models.Faculty faculty =
+                    facultyRepository.findById(registeringUser.getFaculty().getId().toString())
+                            .orElseThrow(() -> new RuntimeException("Faculty not found"));
+
+            hu.bme.rental.persistence.models.University university =
+                    universityRepository.findById(registeringUser.getUniversity().getId().toString())
+                            .orElseThrow(() -> new RuntimeException("University not found"));
+
+            // Set the relationships
+            newAppUser.setFaculty(faculty);
+            newAppUser.setUniversity(university);
+
+            jsonLogger.logAsJson("Wanna be saved AppUser", newAppUser);
+
+            // Save the AppUser
+            userRepository.save(newAppUser);
+            userRepository.flush();
+
+            jsonLogger.logAsJson("Saved persistence user: ", newAppUser);
+            return userMapper.toApiDto(newAppUser);
+
+        }catch (Exception e) {
+            log.error("Error with newUser saving {}", registeringUser.getUserName(), e);
+        }
+        return null;
+    }
 
     /**
      * Deletes a appUser by ID
