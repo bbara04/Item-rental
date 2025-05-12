@@ -4,48 +4,61 @@ import hu.bme.rental.api.model.*;
 import hu.bme.rental.api.rest.AuthenticationApi;
 import hu.bme.rental.services.authentication.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
 
 import static hu.bme.rental.api.model.LoginType.GOOGLE;
 import static hu.bme.rental.api.model.LoginType.LOCAL;
 import static hu.bme.rental.api.model.Role.STUDENT;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AuthenticationController implements AuthenticationApi {
 
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     @Override
     public ResponseEntity<User> loginByBasic(LoginRequest loginRequest) {
 
-        User mockUser = getMockUser();
-
-        return ResponseEntity.ok(mockUser);
-
+        User loggedUser = authenticationService.logUserInWithEmail(loginRequest);
+        if(loggedUser != null)
+            return ResponseEntity.ok(loggedUser);
+        return ResponseEntity.badRequest().build();
     }
 
     @Override
     public ResponseEntity<User> loginByGoogle(LoginRequest loginRequest) {
-        User mockUser = getMockUser();
-        mockUser.setLoginType(GOOGLE);
-        return ResponseEntity.ok(mockUser);
+        if (loginRequest.getPasskey() == null || loginRequest.getPasskey().isBlank() || loginRequest.getPasskey().isEmpty()) {
+            loginRequest.setPasskey(loginRequest.getEmail());
+        }
+        log.info(loginRequest.getPasskey());
+        log.info(loginRequest.getEmail());
+        User loggedUser = authenticationService.loginWithGoogle(loginRequest);
+        if(loggedUser != null)
+            return ResponseEntity.ok(loggedUser);
+        return ResponseEntity.badRequest().build();
     }
 
     @Override
     public ResponseEntity<User> registerByBasic(User regRequestedUser) {
-        return ResponseEntity.ok(getMockUser());
+        User newUser = authenticationService.registerUserWithLocal(regRequestedUser);
+        if (newUser == null) {
+            log.error("Error with creating User");
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok(newUser);
     }
 
     @Override
     public ResponseEntity<User> registerByGoogle(UserRequest regRequestedUser) {
-        User mockUser = getMockUser();
-        mockUser.setLoginType(GOOGLE);
-
-        return ResponseEntity.ok(mockUser);
+        User newUser = authenticationService.registerUserWithGoogle(regRequestedUser);
+        if (newUser == null) {
+            log.error("Error with creating User");
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok(newUser);
     }
 
 

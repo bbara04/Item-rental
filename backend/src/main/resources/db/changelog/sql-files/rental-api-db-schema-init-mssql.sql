@@ -26,7 +26,7 @@ CREATE TABLE balances (
 );
 CREATE TABLE universities (
                         id BIGINT IDENTITY(1,1) PRIMARY KEY,
-                        uni_code NVARCHAR(15)       UNIQUE NOT NULL,
+                        uni_code NVARCHAR(15)       UNIQUE NULL,
                         name NVARCHAR(255)          NOT NULL,
                         address NVARCHAR(255)       NULL,
                         website NVARCHAR(255)       NULL,

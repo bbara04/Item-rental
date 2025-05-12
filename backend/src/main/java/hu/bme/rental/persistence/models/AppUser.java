@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "app_users")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(
@@ -22,7 +21,7 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
     @JoinColumn(name = "balance_id", unique = true, nullable = false)
     private Balance balance;
 
@@ -47,7 +46,7 @@ public class AppUser {
     @Column(name = "role", nullable = false)
     private String role;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(
             name = "university_id",
             nullable = false,
@@ -56,7 +55,7 @@ public class AppUser {
     )
     private University university;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(
             name = "faculty_id",
             nullable = false,
@@ -65,7 +64,7 @@ public class AppUser {
     )
     private Faculty faculty;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
     @JoinColumn(
             name = "image_id",
             unique = true,

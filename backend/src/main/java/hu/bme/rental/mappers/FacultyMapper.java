@@ -45,5 +45,9 @@ public interface FacultyMapper {
     @Mapping(source = "university", target = "university", qualifiedByName = "toEntity")
     hu.bme.rental.persistence.models.Faculty toEntity(Faculty apiFacility);
 
+    @Named("toEntity")
+    @Mapping(source = "university", target = "university", qualifiedByName = "toEntity")
+    hu.bme.rental.persistence.models.Faculty toEntity(Faculty apiFacility, @MappingTarget hu.bme.rental.persistence.models.Faculty targetFaculty);
+
 
 }

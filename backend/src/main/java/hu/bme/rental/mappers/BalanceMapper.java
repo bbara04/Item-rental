@@ -2,10 +2,7 @@ package hu.bme.rental.mappers;
 
 
 import hu.bme.rental.api.model.Balance;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(
         componentModel = "spring",
@@ -23,6 +20,6 @@ public interface BalanceMapper {
     @Mapping(source = "currentValue", target = "curValue")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    hu.bme.rental.persistence.models.Balance toEntity(Balance balance);
+    hu.bme.rental.persistence.models.Balance toEntity(Balance balance, @MappingTarget hu.bme.rental.persistence.models.Balance targetBalance);
 
 }
