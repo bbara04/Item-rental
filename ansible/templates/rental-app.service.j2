@@ -1,0 +1,13 @@
+[Unit]
+Description=Rental Java Application Backend
+After=network.target
+
+[Service]
+User={{ service_user }}
+Group={{ service_group}}
+WorkingDirectory={{ remote_app_dir }}
+ExecStart=/usr/bin/java -jar {{ remote_app_dir }}/{{ remote_jar_name }}
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
