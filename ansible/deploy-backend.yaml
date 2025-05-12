@@ -1,0 +1,62 @@
+---
+- name: Deploy and run Rental Java application
+  hosts: all # Replace with your target host group from the inventory file
+  become: yes # Run tasks with root privileges (sudo)
+
+  vars:
+    # Backend vars
+    local_jar_path: "{{ playbook_dir }}/../backend/target/rental-0.0.1-SNAPSHOT.jar" # Path relative to the playbook file
+    remote_app_dir: /opt/rental
+    remote_jar_name: rental-app.jar
+    rental_app_service_template: "{{ playbook_dir }}/templates/rental-app.service.j2"
+    service_name: rental-backend
+    service_user: ubuntu
+    service_group: ubuntu
+    backend_port: 8080 # Default Spring Boot port
+
+  tasks:
+    # --- Backend Deployment ---
+    - name: Ensure Java target directory exists
+      ansible.builtin.file:
+        path: "{{ remote_app_dir }}"
+        state: directory
+        mode: '0755'
+        owner: "{{ service_user | default('root') }}"
+        group: "{{ service_user | default('root') }}"
+
+    - name: Copy Java application JAR to remote host
+      ansible.builtin.copy:
+        src: "{{ local_jar_path }}"
+        dest: "{{ remote_app_dir }}/{{ remote_jar_name }}"
+        mode: '0644'
+        owner: "{{ service_user | default('root') }}"
+        group: "{{ service_user | default('root') }}"
+      notify: Restart rental service # Notify handler to restart if JAR changes
+
+    - name: Create systemd service file for backend
+      ansible.builtin.template:
+        src: "{{ rental_app_service_template }}"
+        dest: "/etc/systemd/system/{{ service_name }}.service"
+        mode: '0644'
+        
+      notify: Reload systemd and restart rental service # Notify handler if service file changes
+
+    - name: Ensure backend rental service is enabled and started
+      ansible.builtin.systemd:
+        name: "{{ service_name }}"
+        enabled: yes
+        state: started
+        daemon_reload: yes # Reload daemon if service file was created/changed by the handler
+
+  handlers:
+    # Backend handlers
+    - name: Reload systemd and restart rental service
+      ansible.builtin.systemd:
+        name: "{{ service_name }}"
+        state: restarted
+        daemon_reload: yes
+
+    - name: Restart rental service
+      ansible.builtin.systemd:
+        name: "{{ service_name }}"
+        state: restarted

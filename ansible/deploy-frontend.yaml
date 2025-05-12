@@ -1,0 +1,72 @@
+---
+- name: Deploy Rental Frontend with Nginx
+  hosts: all
+  become: yes
+
+  vars:
+    # Frontend vars
+    app_domain_address: rental.oracle1.bbara.hu
+    local_frontend_dir: "{{ playbook_dir }}/../frontend"
+    local_frontend_build_dir: "{{ local_frontend_dir }}/dist" # Default Vite build output dir
+    remote_frontend_dir: /var/www/rental-frontend
+    nginx_config_template: "{{ playbook_dir }}/templates/nginx.conf.j2" # Path relative to playbook
+    nginx_config_dest: /etc/nginx/sites-available/rental
+    nginx_enabled_site_link: /etc/nginx/sites-enabled/rental
+    backend_api_prefix: /api # URL prefix for backend API calls
+    backend_host: localhost # Assuming backend runs on the same host
+    backend_port: 8080 # Default Spring Boot port
+
+  tasks:
+    # --- Frontend Deployment ---
+    - name: Install Nginx
+      ansible.builtin.apt: # Use ansible.builtin.yum for RHEL/CentOS
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Ensure Nginx web directory exists for frontend
+      ansible.builtin.file:
+        path: "{{ remote_frontend_dir }}"
+        state: directory
+        mode: '0755'
+        owner: ubuntu
+        group: ubuntu
+
+    - name: Copy frontend build files to remote host
+      ansible.posix.synchronize:
+        src: "{{ local_frontend_build_dir }}/" # Trailing slash is important
+        dest: "{{ remote_frontend_dir }}"
+        archive: yes
+        delete: yes # Remove files on dest that are not on src
+      notify: Restart nginx service
+
+    - name: Create Nginx site configuration from template
+      ansible.builtin.template:
+        src: "{{ nginx_config_template }}"
+        dest: "{{ nginx_config_dest }}"
+        mode: '0644'
+      notify: Reload nginx service
+
+    - name: Enable Nginx site
+      ansible.builtin.file:
+        src: "{{ nginx_config_dest }}"
+        dest: "{{ nginx_enabled_site_link }}"
+        state: link
+      notify: Reload nginx service
+
+    - name: Ensure Nginx service is enabled and started
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: Reload nginx service
+      ansible.builtin.systemd:
+        name: nginx
+        state: reloaded
+
+    - name: Restart nginx service
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
