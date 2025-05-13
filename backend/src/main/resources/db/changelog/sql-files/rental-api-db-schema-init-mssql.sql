@@ -133,6 +133,7 @@ CREATE TABLE renting_transactions (
                     renter_user_id BIGINT               NULL,
                     start_date_time DATETIME2           NULL,
                     end_date_time DATETIME2             NULL,
+                    number_of_items INT                 NULL,
                     remaining_days INT                  NULL,
                     cost_per_day  FLOAT                 NULL,
                     cur_cost FLOAT                      NULL,

@@ -302,72 +302,107 @@ paths:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
 
-#  /transactions/{id}:
-#    get:
-#      summary: Get all renting transactions of the user
-#      operationId: getAllUserTransactions
-#      tags:
-#        - Transaction Management
-#      parameters:
-#        - name: id
-#          in: path
-#          description: Identifier of the User
-#          style: simple
-#          explode: false
-#          required: true
-#          schema:
-#            type: string
-#      responses:
-#        '200':
-#          description: List of all user's renting transactions
-#          content:
-#            application/json:
-#              schema:
-#                type: array
-#                items:
-#                  $ref: '#/components/schemas/TransactionResponse'
-#        default:
-#          content:
-#            application/problem+json:
-#              schema:
-#                $ref: '#/components/schemas/ErrorModel'
-#          description: Basic Error Response
-#
-#    post:
-#      summary: Create renting transaction
-#      operationId: createUserTransaction
-#      tags:
-#        - Transaction Management
-#      parameters:
-#        - name: id
-#          in: path
-#          description: Identifier of the User
-#          style: simple
-#          explode: false
-#          required: true
-#          schema:
-#            type: string
-#      requestBody:
-#        description: The Transaction to be created
-#        content:
-#          application/json;charset=utf-8:
-#            schema:
-#              $ref: '#/components/schemas/TransactionRequest'
-#        required: true
-#      responses:
-#        '200':
-#          description: User found, operation successfully commited
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/TransactionResponse'
-#        default:
-#          content:
-#            application/problem+json:
-#              schema:
-#                $ref: '#/components/schemas/ErrorModel'
-#          description: Basic Error Response
-#      x-codegen-request-body-name: postTransaction
+  /transactions/{id}:
+    get:
+      summary: Get id's renting transactions
+      operationId: getUserTransactionById
+      tags:
+        - Transaction Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the transaction
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get renting transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+    patch:
+      summary: Patch renting transaction
+      operationId: patchTransactionById
+      tags:
+        - Transaction Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the renting transaction
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Transaction patch request
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/TransactionPatch'
+        required: true
+      responses:
+        '200':
+          description: Transaction found, operation successfully commited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+      x-codegen-request-body-name: postTransaction
+
+  /transactions/{id}/status:
+    patch:
+      summary: Patch renting transaction's status
+      operationId: patchTransactionStatusById
+      tags:
+        - Transaction Management
+      parameters:
+        - name: id
+          in: path
+          description: Identifier of the User
+          style: simple
+          explode: false
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The Transaction's status to be patched
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/TransactionStatusPatch'
+        required: true
+      responses:
+        '200':
+          description: Transaction found, operation successfully commited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+      x-codegen-request-body-name: postTransaction
 
   /auth/basic/login:
     post:
@@ -1050,7 +1085,7 @@ components:
       required:
         - id
         - item
-        - numberOfItem
+        - numberOfItems
         - status
         - user
         - startDate
@@ -1066,7 +1101,7 @@ components:
           description: Unique identifier for the transaction
         item:
           $ref: '#/components/schemas/Item'
-        numberOfItem:
+        numberOfItems:
           type: integer
           format: int64
           description: Item's requested number
@@ -1083,11 +1118,25 @@ components:
           type: string
           format: date-time
           example: 2025-02-10T23:00:00+01:00
+        transactionType:
+          type: string
+          format: simple
+          example: "RENTING"
+        costPerDay:
+          type: number
+          format: float
+          example: 250.50
+          minimum: 0
+        currentCost:
+          type: number
+          format: float
+          example: 25000.50
+          minimum: 0
 
     TransactionRequest:
       required:
         - itemId
-        - numberOfItem
+        - numberOfItems
         - userId
         - startDate
         - endDate
@@ -1108,7 +1157,46 @@ components:
           type: string
           example: 123456
           description: Unique identifier for the user of the transaction
-        numberOfItem:
+        numberOfItems:
+          type: integer
+          format: int64
+          description: Item's requested number
+          example: "1"
+        startDate:
+          type: string
+          format: date-time
+          example: 2025-02-10T23:00:00
+        endDate:
+          type: string
+          format: date-time
+          example: 2025-02-10T23:00:00
+      # No required fields in the PATCH request since it's a partial update
+      # where any combination of fields can be updated
+      additionalProperties: false
+
+    TransactionPatch:
+      required:
+        - id
+      type: object
+      description: Represents a transaction patch for a renting process
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the transaction
+        itemId:
+          type: string
+          example: 123456
+          description: Unique identifier for the item of the transaction
+        userId:
+          type: string
+          example: 123456
+          description: Unique identifier for the user of the transaction
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        numberOfItems:
           type: integer
           format: int64
           description: Item's requested number
@@ -1125,6 +1213,24 @@ components:
       # where any combination of fields can be updated
       additionalProperties: false
 
+    TransactionStatusPatch:
+      required:
+        - id
+        - status
+      type: object
+      description: Represents a transaction's status patch request for a renting process
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 123456
+          description: Unique identifier for the transaction
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+      # No required fields in the PATCH request since it's a partial update
+      # where any combination of fields can be updated
+      additionalProperties: false
 
     Balance:
       type: object

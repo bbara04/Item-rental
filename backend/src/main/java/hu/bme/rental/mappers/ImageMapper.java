@@ -1,7 +1,5 @@
 package hu.bme.rental.mappers;
 
-import hu.bme.rental.api.model.User;
-import hu.bme.rental.persistence.models.AppUser;
 import hu.bme.rental.persistence.models.Image;
 import org.mapstruct.*;
 

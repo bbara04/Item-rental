@@ -63,8 +63,14 @@ INSERT INTO item_faculty_mappings (item_id, faculty_id) VALUES
                                                             (4, 2); -- Teniszütő Wilson -> BME GPK
 
 
-INSERT INTO renting_transactions (transaction_type, status, rented_item_id, renter_user_id, start_date_time, end_date_time, remaining_days, cost_per_day, cur_cost) VALUES
-                                                                                                                                                                        ('RENTAL', 'PENDING', 1, 1, '2023-11-01 10:00:00', '2023-11-08 10:00:00', 7, 2500.0, 17500.0),
-                                                                                                                                                                        ('RENTAL', 'APPROVED', 2, 2, '2023-10-15 14:30:00', '2023-10-30 14:30:00', 0, 500.0, 7500.0),
-                                                                                                                                                                        ('RENTAL', 'PENDING', 3, 3, '2023-11-10 09:00:00', '2023-11-17 09:00:00', 7, 1500.0, 10500.0),
-                                                                                                                                                                        ('RENTAL', 'DECLINED', 4, 1, '2023-10-01 16:45:00', '2023-10-05 16:45:00', 0, 800.0, 0.0);
+-- INSERT INTO renting_transactions (transaction_type, status, rented_item_id, renter_user_id, start_date_time, end_date_time, remaining_days, cost_per_day, cur_cost) VALUES
+--                 ('RENTAL', 'PENDING', 1, 1, '2023-11-01 10:00:00', '2023-11-08 10:00:00', 7, 2500.0, 17500.0),
+--                 ('RENTAL', 'APPROVED', 2, 2, '2023-10-15 14:30:00', '2023-10-30 14:30:00', 0, 500.0, 7500.0),
+--                 ('RENTAL', 'PENDING', 3, 3, '2023-11-10 09:00:00', '2023-11-17 09:00:00', 7, 1500.0, 10500.0),
+--                 ('RENTAL', 'DECLINED', 4, 1, '2023-10-01 16:45:00', '2023-10-05 16:45:00', 0, 800.0, 0.0);
+
+INSERT INTO renting_transactions (transaction_type, status, rented_item_id, renter_user_id, start_date_time, end_date_time, number_of_items, remaining_days, cost_per_day, cur_cost) VALUES
+                 ('RENTAL', 'PENDING', 1, 1, '2025-11-01 10:00:00', '2025-11-08 10:00:00', 1, 7, 2500.0, 0.0),
+                 ('RENTAL', 'ARCHIVED', 4, 2, '2023-10-15 14:30:00', '2023-10-30 14:30:00', 2, 0, 500.0, 7500.0),
+                 ('RENTAL', 'STARTED', 3, 3, '2025-05-10 09:00:00', '2025-05-17 09:00:00', 1, 4, 1500.0, 0.0),
+                 ('RENTAL', 'APPROVED', 4, 2, '2025-10-01 16:45:00', '2025-10-05 16:45:00', 2, 4, 800.0, 0.0);

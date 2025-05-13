@@ -14,6 +14,10 @@ public class JsonLogger {
     private final ObjectMapper objectMapper;
 
     public void logAsJson(String message, Object object) {
+        if (object == null) {
+            log.warn("Given object is NULL");
+            return;
+        }
         try {
             String json = objectMapper.writeValueAsString(object);
             log.info("{}: {}", message, json);
