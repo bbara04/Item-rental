@@ -30,7 +30,7 @@ public class RentingTransaction {
     @Column(name = "status")
     private String status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(
             name = "rented_item_id",
             referencedColumnName = "id",
@@ -38,7 +38,7 @@ public class RentingTransaction {
     )
     private Item rentedItem;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(
             name = "renter_user_id",
             referencedColumnName = "id",
@@ -60,6 +60,9 @@ public class RentingTransaction {
 
     @Column(name = "cur_cost")
     private Float curCost;
+
+    @Column(name = "number_of_items")
+    private Integer numberOfItems;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

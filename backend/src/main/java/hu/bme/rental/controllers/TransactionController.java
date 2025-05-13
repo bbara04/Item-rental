@@ -2,6 +2,7 @@ package hu.bme.rental.controllers;
 
 import hu.bme.rental.api.model.*;
 import hu.bme.rental.api.rest.TransactionManagementApi;
+import hu.bme.rental.configuration.JsonLogger;
 import hu.bme.rental.services.transactionmanagement.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController implements TransactionManagementApi {
 
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
+
+    private final JsonLogger jsonLogger;
 
     @Override
     public ResponseEntity<TransactionResponse> createUserTransaction(String id, TransactionRequest postTransaction) {
-        return null;
+        TransactionResponse response = transactionService.createTransactionFromUser(id, postTransaction);
+        return response == null ?
+            ResponseEntity.internalServerError().build()
+            : ResponseEntity.ok(response);
     }
 
     @Override
@@ -27,7 +33,32 @@ public class TransactionController implements TransactionManagementApi {
 
     @Override
     public ResponseEntity<List<TransactionResponse>> getAllUserTransactions(String id) {
+        List<TransactionResponse> apiTransactions = transactionService.getAllTransactionsByUserId(id);
+        return apiTransactions == null ?
+                ResponseEntity.notFound().build()
+                : ResponseEntity.ok(apiTransactions);
+    }
+
+    @Override
+    public ResponseEntity<TransactionResponse> getUserTransactionById(String id) {
+        TransactionResponse response = transactionService.getTransactionById(id);
+        jsonLogger.logAsJson("Found transaction: ", response);
+        return response == null ?
+                ResponseEntity.notFound().build()
+                : ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<TransactionResponse> patchTransactionById(String id, TransactionPatch postTransaction) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<TransactionResponse> patchTransactionStatusById(String id, TransactionStatusPatch postTransaction) {
+        TransactionResponse transactionResponse = transactionService.updateTransactionStatusById(id, postTransaction);
+        return transactionResponse == null ?
+                ResponseEntity.internalServerError().build()
+                : ResponseEntity.ok(transactionResponse);
     }
 
     @Override
