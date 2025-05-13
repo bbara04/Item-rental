@@ -1,20 +1,114 @@
 import React, { useEffect, useState } from "react";
-import { Faculty, getAllUniversitiesFaculties, University } from "../../client";
+import { data, useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContextProvider";
+import { Faculty, getAllUniversitiesFaculties, registerByBasic, University, User } from "../../client";
+import { RegisterType } from "../../dto/RegistrationInfo";
 
-
-interface AdditionalRegistrationProp {
-    setUniversity: (universities: University) => void,
-    setFaculty: (faculties: Faculty) => void,
-    handleSubmit: () => void
-}
-
-export const AdditionalRegistration: React.FC<AdditionalRegistrationProp> = ({setUniversity, setFaculty: setFaculity, handleSubmit}) => {
+export const AdditionalRegistration: React.FC = () => {
+    const { registrationInfo, setUser } = useAppContext();
     const [universities, setUniversities] = useState<University[]>([]);
     const [faculties, setFaculities] = useState<Faculty[]>([]);
+    const [university, setUniversity] = useState<University>();
+    const [faculty, setFaculity] = useState<Faculty>();
+    const navigate = useNavigate();
 
-    useEffect(() =>{
+    const handleSubmitToBackend = async () => {
+        if (registrationInfo == undefined) {
+            console.error("Registration info is undefined");
+            return;
+        }
+
+        const user = registrationInfo?.user;
+
+        if (!university || !faculty) {
+            console.error("University or Faculty not selected. Please complete the additional registration details.");
+            return;
+        }
+
+        const universityPayload: University = { ...university };
+        if (universityPayload.image == null || universityPayload.image.imageData == null) {
+            universityPayload.image = undefined;
+        }
+
+        const facultyForPayload = {
+            id: faculty.id,
+            name: faculty.name,
+            code: faculty.code,
+            description: faculty.description,
+        };
+
+        const newUser: User = {
+            id: undefined,
+            userName: user?.userName,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            faculty: facultyForPayload,
+            role: "STUDENT",
+            university: universityPayload,
+            loginType: "LOCAL",
+            passwordHash: user.passkey,
+            description: "",
+            balance: {
+                id: undefined,
+                userID: undefined,
+                currentValue: 0,
+                unit: "HUF",
+                payType: "CREDIT"
+            },
+            image: undefined,
+            ratings: 5.0
+        };
+
+        try {
+            switch (registrationInfo.registerType) {
+                case RegisterType.BASIC:
+                    {
+                        const { data, error } = await registerByBasic({
+                            body: newUser
+                        });
+                        if (error) {
+                            console.error("Registration failed:", error);
+                            // TODO: Display a user-friendly error message
+                        } else {
+                            console.log("Registration successful:", data);
+                            // TODO: Display a success message and/or navigate
+                            if (data) {
+                                setUser(data);
+                            }
+                            navigate("/");
+                        }
+                        break;
+                    }
+                case RegisterType.GOOGLE:
+                    {
+                        const { data: googleData, error: googleError } = await registerByBasic({
+                            body: newUser
+                        });
+                        if (googleError) {
+                            console.error("Registration failed:", googleError);
+                            // TODO: Display a user-friendly error message
+                        } else {
+                            console.log("Registration successful:", data);
+                            // TODO: Display a success message and/or navigate
+                            if (googleData) {
+                                setUser(googleData);
+                            }
+                            navigate("/");
+                        }
+                        break;
+                    }
+            }
+
+        } catch (apiError) {
+            console.error("An unexpected error occurred during registration:", apiError);
+            // TODO: Display a generic user-friendly error message
+        }
+    };
+
+    useEffect(() => {
         async function fetchUniversitiesAndFaculties() {
-            const {data, error} = await getAllUniversitiesFaculties()
+            const { data, error } = await getAllUniversitiesFaculties()
             if (error) {
                 console.error("Error fetching universities and faculties:", error);
             } else {
@@ -79,7 +173,7 @@ export const AdditionalRegistration: React.FC<AdditionalRegistrationProp> = ({se
                     <button
                         type="button"
                         className="py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75"
-                        onClick={handleSubmit}
+                        onClick={handleSubmitToBackend}
                     >
                         Submit
                     </button>

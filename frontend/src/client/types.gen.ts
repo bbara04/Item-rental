@@ -126,11 +126,14 @@ export type TransactionResponse = {
     /**
      * Item's requested number
      */
-    numberOfItem: number;
+    numberOfItems: number;
     status: 'STARTED' | 'PENDING' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
     user: User;
     startDate: string;
     endDate: string;
+    transactionType?: string;
+    costPerDay?: number;
+    currentCost?: number;
 };
 
 /**
@@ -235,7 +238,7 @@ export type TransactionRequest = {
     /**
      * Item's requested number
      */
-    numberOfItem: number;
+    numberOfItems: number;
     startDate: string;
     endDate: string;
 };
@@ -286,6 +289,42 @@ export type UserRequest = {
 export type LoginRequest = {
     email: string;
     passkey: string;
+};
+
+/**
+ * Transaction patch request
+ */
+export type TransactionPatch = {
+    /**
+     * Unique identifier for the transaction
+     */
+    id: number;
+    /**
+     * Unique identifier for the item of the transaction
+     */
+    itemId?: string;
+    /**
+     * Unique identifier for the user of the transaction
+     */
+    userId?: string;
+    status?: 'STARTED' | 'PENDING' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
+    /**
+     * Item's requested number
+     */
+    numberOfItems?: number;
+    startDate?: string;
+    endDate?: string;
+};
+
+/**
+ * The Transaction's status to be patched
+ */
+export type TransactionStatusPatch = {
+    /**
+     * Unique identifier for the transaction
+     */
+    id: number;
+    status: 'STARTED' | 'PENDING' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
 };
 
 /**
@@ -684,6 +723,96 @@ export type UpdateUserdataByIdResponses = {
 };
 
 export type UpdateUserdataByIdResponse = UpdateUserdataByIdResponses[keyof UpdateUserdataByIdResponses];
+
+export type GetUserTransactionByIdData = {
+    body?: never;
+    path: {
+        /**
+         * Identifier of the transaction
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/transactions/{id}';
+};
+
+export type GetUserTransactionByIdErrors = {
+    /**
+     * Basic Error Response
+     */
+    default: ErrorModel;
+};
+
+export type GetUserTransactionByIdError = GetUserTransactionByIdErrors[keyof GetUserTransactionByIdErrors];
+
+export type GetUserTransactionByIdResponses = {
+    /**
+     * Get renting transaction
+     */
+    200: TransactionResponse;
+};
+
+export type GetUserTransactionByIdResponse = GetUserTransactionByIdResponses[keyof GetUserTransactionByIdResponses];
+
+export type PatchTransactionByIdData = {
+    body: TransactionPatch;
+    path: {
+        /**
+         * Identifier of the renting transaction
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/transactions/{id}';
+};
+
+export type PatchTransactionByIdErrors = {
+    /**
+     * Basic Error Response
+     */
+    default: ErrorModel;
+};
+
+export type PatchTransactionByIdError = PatchTransactionByIdErrors[keyof PatchTransactionByIdErrors];
+
+export type PatchTransactionByIdResponses = {
+    /**
+     * Transaction found, operation successfully commited
+     */
+    200: TransactionResponse;
+};
+
+export type PatchTransactionByIdResponse = PatchTransactionByIdResponses[keyof PatchTransactionByIdResponses];
+
+export type PatchTransactionStatusByIdData = {
+    body: TransactionStatusPatch;
+    path: {
+        /**
+         * Identifier of the User
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/transactions/{id}/status';
+};
+
+export type PatchTransactionStatusByIdErrors = {
+    /**
+     * Basic Error Response
+     */
+    default: ErrorModel;
+};
+
+export type PatchTransactionStatusByIdError = PatchTransactionStatusByIdErrors[keyof PatchTransactionStatusByIdErrors];
+
+export type PatchTransactionStatusByIdResponses = {
+    /**
+     * Transaction found, operation successfully commited
+     */
+    200: TransactionResponse;
+};
+
+export type PatchTransactionStatusByIdResponse = PatchTransactionStatusByIdResponses[keyof PatchTransactionStatusByIdResponses];
 
 export type DeleteItemByIdData = {
     body?: never;

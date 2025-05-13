@@ -1,18 +1,22 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../AppContextProvider';
 import { DecodedGoogleToken } from '../../dto/DecodedGoogleToken';
 import { GoogleAuthHelper } from '../../helper/GoogleAuthHelper';
-import { useNavigate } from 'react-router-dom';
 
 const GoogleLoginComponent = () => {
 
-    const { setUser } = useAppContext();
+    const { setUser, setRegistrationInfo } = useAppContext();
     const navigate = useNavigate();
 
-    function handleDecodedToken(token: DecodedGoogleToken) {
-        GoogleAuthHelper.handleDecodedToken(token, setUser, () => navigate('/'));
+    async function handleDecodedToken(token: DecodedGoogleToken) {
+        const successful: boolean = await GoogleAuthHelper.authenticateUser(token, setRegistrationInfo, setUser, () => navigate('/'));
+        if (!successful) {
+            navigate("/register/additional")
+        }
     }
+
 
     return (
         <>

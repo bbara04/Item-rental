@@ -4,6 +4,7 @@ import AdminDashboardPage from './components/admin/dashboard/AdminDashboardPage'
 import ManageItemsPage from './components/admin/items/ManageItemsPage';
 import ModifyItemPage from './components/admin/items/ModifyItemPage'; // Import the new component
 import RentalApprovalsPage from './components/admin/rentals/RentalApprovalsPage';
+import { AdditionalRegistration } from './components/authentication/AdditionalRegistration';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
 import AboutUsPanel from './components/user/AboutUsPanel';
@@ -23,6 +24,10 @@ const router = createBrowserRouter(
         {
             path: "/register",
             element: <RegisterPanel />
+        },
+        {
+            path: "/register/additional",
+            element: <AdditionalRegistration />
         },
         {
             path: "/",

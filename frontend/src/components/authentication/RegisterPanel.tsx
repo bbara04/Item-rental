@@ -1,10 +1,12 @@
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Faculty, registerByBasic, University, User } from "../../client";
-import { AdditionalRegistration } from "./AdditionalRegistration";
+import { useAppContext } from "../../AppContextProvider";
+import { RegisterType, RegistrationInfo } from "../../dto/RegistrationInfo";
+import { SimpleUser } from "../../dto/SimpleUser";
 
 
 const RegisterPanel: FC = () => {
+  const { setRegistrationInfo } = useAppContext();
   const navigate = useNavigate();
 
   const [username, setUsername] = useState<string>('');
@@ -12,79 +14,29 @@ const RegisterPanel: FC = () => {
   const [firstName, setFirstName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [university, setUniversity] = useState<University>();
-  const [faculty, setFaculty] = useState<Faculty>();
-  const [showAdditionalDataWindow, setShowAdditionalDataWindow] = useState(false);
 
   const handleRegisterButton = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("button clicked");
-    setShowAdditionalDataWindow(true);
+    setRegistrationContext();
+    navigate("/register/additional");
   };
 
-  const handleSubmitToBackend = async () => {
-    if (!university || !faculty) {
-      console.error("University or Faculty not selected. Please complete the additional registration details.");
-      return;
-    }
-
-    const universityPayload: University = { ...university };
-    if (universityPayload.image == null || universityPayload.image.imageData == null) {
-      universityPayload.image = undefined;
-    }
-
-    const facultyForPayload = {
-      id: faculty.id,
-      name: faculty.name,
-      code: faculty.code,
-      description: faculty.description,
-    };
-
-    const newUser: User = {
-      id: undefined,
+  const setRegistrationContext = async () => {
+    const newUser: SimpleUser = {
       userName: username,
       email: email,
       firstName: firstName,
       lastName: lastName,
-      faculty: facultyForPayload,
-      role: "STUDENT",
-      university: universityPayload,
-      loginType: "LOCAL",
-      passwordHash: password,
-      description: "",
-      balance: {
-        id: undefined,
-        userID: undefined,
-        currentValue: 0,
-        unit: "HUF",
-        payType: "CREDIT"
-      },
-      image: undefined,
-      ratings: 5.0
+      passkey: password,
     };
 
-    try {
-      const { data, error } = await registerByBasic({
-        body: newUser
-      });
-
-      if (error) {
-        console.error("Registration failed:", error);
-        // TODO: Display a user-friendly error message
-      } else {
-        console.log("Registration successful:", data);
-        // TODO: Display a success message and/or navigate
-        navigate('/login'); // Example: navigate to login on success
-      }
-    } catch (apiError) {
-      console.error("An unexpected error occurred during registration:", apiError);
-      // TODO: Display a generic user-friendly error message
+    const registrationInfo: RegistrationInfo = {
+      user: newUser,
+      registerType: RegisterType.BASIC
     }
-  };
 
-  if (showAdditionalDataWindow) {
-    return <AdditionalRegistration  handleSubmit={handleSubmitToBackend} setFaculty={(faculty) => setFaculty(faculty)} setUniversity={setUniversity}/>
-  }
+    setRegistrationInfo(registrationInfo);
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">

@@ -6,8 +6,6 @@ import GoogleLoginComponent from "./GoogleLoginComponent";
 
 
 const LoginPanel: FC = () => {
-  const backendAddress = import.meta.env.VITE_BACKEND_ADDRESS;
-
   const { setUser } = useAppContext();
   const navigate = useNavigate();
 
@@ -28,7 +26,7 @@ const LoginPanel: FC = () => {
       },
     });
     if (error) {
-      setError(error.toString());
+      setError("Failed to login with current user");
       setLoading(false);
       return;
     }
