@@ -13,7 +13,7 @@ export class GoogleAuthHelper {
   static init(token: DecodedGoogleToken, setRegistrationInfo: (registrationInfo: RegistrationInfo) => void) {
     if (token.email == undefined || token.family_name == undefined || token.given_name == undefined || token.sub == undefined) {
       console.log("Received google jwt token does not contain data required for using this feature");
-      return
+      return;
     }
     GoogleAuthHelper.email = token.email;
     GoogleAuthHelper.firstName = token.given_name;
