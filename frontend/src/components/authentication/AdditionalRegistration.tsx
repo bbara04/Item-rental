@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContextProvider";
 import { Faculty, getAllUniversitiesFaculties, registerByBasic, University, User } from "../../client";
 import { RegisterType } from "../../dto/RegistrationInfo";
@@ -90,7 +90,7 @@ export const AdditionalRegistration: React.FC = () => {
                             console.error("Registration failed:", googleError);
                             // TODO: Display a user-friendly error message
                         } else {
-                            console.log("Registration successful:", data);
+                            console.log("Registration successful:", googleData);
                             // TODO: Display a success message and/or navigate
                             if (googleData) {
                                 setUser(googleData);
@@ -121,63 +121,72 @@ export const AdditionalRegistration: React.FC = () => {
     }, []);
 
     return (
-        <div className="flex justify-center items-center">
-            <div className="p-8 border w-96 shadow-lg rounded-md bg-white">
-                <h2 className="text-2xl font-semibold text-center mb-6">Complete Registration</h2>
-                <div className="mb-4">
+        <div className="flex justify-center items-center min-h-screen bg-gray-50">
+            <div className="p-8 max-w-md w-full shadow-lg rounded-md bg-white">
+                <h2 className="text-2xl font-semibold text-center mb-8">Regisztráció</h2>
+                
+                <div className="mb-5">
                     <label htmlFor="university" className="block text-sm font-medium text-gray-700 mb-1">
                         University
                     </label>
-                    <select
+                    <input
+                        type="text"
+                        list="university-list"
                         id="university"
                         name="university"
-                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Select University"
                         onChange={(e) => {
                             const selectedUniversity = universities.find((uni) => uni.name === e.target.value);
                             if (selectedUniversity) {
                                 setUniversity(selectedUniversity);
                             }
                         }}
-                    >
-                        <option value="">Select University</option>
+                    />
+                    <datalist id="university-list">
                         {universities.map((uni) => (
-                            <option key={uni.id} value={uni.name}>
-                                {uni.name}
-                            </option>
+                            <option key={uni.id} value={uni.name} />
                         ))}
-                    </select>
+                    </datalist>
                 </div>
-                <div className="mb-6">
+                
+                <div className="mb-5">
                     <label htmlFor="faculty" className="block text-sm font-medium text-gray-700 mb-1">
                         Faculty
                     </label>
-                    <select
+                    <input
+                        type="text"
+                        list="faculty-list"
                         id="faculty"
                         name="faculty"
-                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Select Faculty"
                         onChange={(e) => {
                             const selectedFaculty = faculties.find((fac) => fac.name === e.target.value);
                             if (selectedFaculty) {
                                 setFaculity(selectedFaculty);
                             }
                         }}
-                    >
-                        <option value="">Select Faculty</option>
+                    />
+                    <datalist id="faculty-list">
                         {faculties.map((faculty) => (
-                            <option key={faculty.id} value={faculty.name}>
-                                {faculty.name}
-                            </option>
+                            <option key={faculty.id} value={faculty.name} />
                         ))}
-                    </select>
+                    </datalist>
                 </div>
-                <div className="flex justify-end">
-                    <button
-                        type="button"
-                        className="py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75"
-                        onClick={handleSubmitToBackend}
-                    >
-                        Submit
-                    </button>
+                
+                <button
+                    type="button"
+                    className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+                    onClick={handleSubmitToBackend}
+                >
+                    Regisztráció
+                </button>
+                
+                <div className="text-center mt-4">
+                    <p className="text-sm text-gray-600">
+                        Már van fiókod? <a href="/login" className="text-blue-500 hover:underline">Bejelentkezés</a>
+                    </p>
                 </div>
             </div>
         </div>
