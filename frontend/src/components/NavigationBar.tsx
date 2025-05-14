@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../AppContextProvider";
 import BlankProfilePic from '../assets/blank_profile_pic.png';
+import Logo from "../assets/bme_logo_kicsi.jpg";
 import useResponsiveWidth from "../hooks/useResponsiveWidth";
 
 const pages = ['Renting', 'About Us', 'Contact Us'];
@@ -64,15 +65,15 @@ export function NavigationBar() {
 
     return (
         // Main nav bar with shadow
-        <nav className="relative flex justify-between bg-blue-600 p-3 px-6 sm:px-16 items-center shadow-lg">
+        <nav className="relative flex justify-between border-b-0.5 p-3 px-6 sm:px-16 items-center shadow-sm bg-white">
             {
                 width < 640 ?
                     // Mobile Menu
                     <div className="relative">
                         <button
                             ref={menuButton}
-                            // Increased rounding
-                            className="text-white p-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-colors"
+                            // Increased rounding, changed text and hover background for white nav
+                            className="text-blue-600 p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
                             onClick={() => setShowPages(!showPages)}
                             aria-expanded={showPages}
                             aria-controls="mobile-menu"
@@ -107,26 +108,34 @@ export function NavigationBar() {
                             <a
                                 key={page}
                                 onClick={() => handlePageClick(pageRoutes[index])}
-                                // Increased rounding
-                                className="text-white text-lg px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-150 cursor-pointer"
+                                // Increased rounding, changed text and hover background for white nav
+                                className="text-blue-600 text-lg font-semibold px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
                             >
                                 {page}
                             </a>
                         ))}
                     </div>
             }
+            {/* Logo */}
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <img
+                    className="w-40"
+                    src={Logo}
+                    alt="Logo"
+                />
+            </div>
             {/* Profile Button and Settings Dropdown */}
             <div className="relative">
                 <button
                     ref={settingsButton}
                     onClick={() => setShowSettings(!showSettings)}
-                    // Using rounded-full, added subtle shadow on hover/focus maybe? (focus ring already present)
-                    className="flex items-center rounded-full hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-600 focus:ring-white transition-opacity"
+                    // Using rounded-full, changed focus ring for white nav
+                    className="flex items-center rounded-full hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500 transition-opacity"
                     aria-expanded={showSettings}
                     aria-controls="settings-menu"
                 >
-                    {/* Profile pic with border */}
-                    <img className="h-10 w-10 rounded-full border-2 border-white" src={BlankProfilePic} alt="Profile" />
+                    {/* Profile pic with border, changed border color for white nav */}
+                    <img className="h-10 w-10 rounded-full border-2 border-blue-600" src={BlankProfilePic} alt="Profile" />
                 </button>
                 {showSettings && (
                     <ul

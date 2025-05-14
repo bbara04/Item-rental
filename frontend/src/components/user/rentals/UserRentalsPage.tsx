@@ -1,91 +1,61 @@
-import React from "react";
-import { TransactionResponse } from "../../../client";
+import React, { useEffect, useState } from "react";
+import { useAppContext } from "../../../AppContextProvider";
+import { getAllUserTransactions, TransactionResponse } from "../../../client";
 import UserRentalItemCard from "./UserRentalItemCard";
 
-// Simulate active rentals using ExampleData
-// In a real app, this data would come from an API based on the logged-in user
-const activeRentals: TransactionResponse[] = [{
-  id: 1,
-  item: {
-    id: 101,
-    name: "MacBook Pro 16",
-    description: "Powerful laptop for all your creative needs. Features a stunning 16-inch Retina display.",
-    categories: ["Electronics", "Computers", "Laptops"],
-    facultiesId: ["F001"], // Example faculty ID
-    costPerDay: 89, // This was already here as 'price', aligning with Item type
-    availability: 5,
-    image: {
-      id: 201,
-      imageData: "base64_encoded_image_data_placeholder", // Placeholder for actual base64 image data
-      contentType: "image/jpeg",
-      fileName: "macbook_pro_16.jpg"
-    }
-  },
-  numberOfItem: 1, // added numberOfItem property
-  status: "STARTED",
-  user: { // Added User mock data
-    id: 123,
-    userName: "testuser",
-    email: "testuser@example.com",
-    firstName: "Test",
-    lastName: "User",
-    role: "STUDENT",
-    university: {
-      id: 1,
-      name: "Test University",
-    },
-    faculty: {
-      id: 1,
-      name: "Test Faculty",
-      code: "TF"
-    }
-  },
-  startDate: "2025-04-15",
-  endDate: "2025-05-06"
-}];
+function isTransactionActive(transaction: TransactionResponse): boolean {
+  return transaction.status === "APPROVED" || transaction.status === "PENDING";
+};
 
-// Simulate rental history
-const rentalHistory: TransactionResponse[] = [{
-  id: 1,
-  item: {
-    id: 101,
-    name: "MacBook Pro 16",
-    description: "Powerful laptop for all your creative needs. Features a stunning 16-inch Retina display.",
-    categories: ["Electronics", "Computers", "Laptops"],
-    facultiesId: ["F001"],
-    costPerDay: 89, 
-    availability: 5,
-    image: {
-      id: 201,
-      imageData: "base64_encoded_image_data_placeholder",
-      contentType: "image/jpeg",
-      fileName: "macbook_pro_16.jpg"
-    }
-  },
-  numberOfItem: 1, // added numberOfItem property
-  status: "ARCHIVED",
-  user: { // Added User mock data
-    id: 123,
-    userName: "testuser",
-    email: "testuser@example.com",
-    firstName: "Test",
-    lastName: "User",
-    role: "STUDENT",
-    university: {
-      id: 1,
-      name: "Test University",
-    },
-    faculty: {
-      id: 1,
-      name: "Test Faculty",
-      code: "TF"
-    }
-  },
-  startDate: "2025-04-15",
-  endDate: "2025-05-06"
-}];
+function isTransactionOverdue(transaction: TransactionResponse): boolean {
+  return transaction.status === "OVERDUE";
+};
+
+function isTransactionOld(transaction: TransactionResponse): boolean {
+  return transaction.status === "ARCHIVED" || transaction.status === "DECLINED";
+};
 
 const UserRentalsPage: React.FC = () => {
+  const { user } = useAppContext();
+  const [activeTransactions, setActiveTransactions] = useState<TransactionResponse[]>([]);
+  const [overdueTransactions, setOverdueTransactions] = useState<TransactionResponse[]>([]);
+  const [oldTransactions, setOldTransactions] = useState<TransactionResponse[]>([]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (user?.id) {
+        const { data, error } = await getAllUserTransactions({
+          path: {
+            id: user.id.toString()
+          }
+        });
+        if (error) {
+          console.error("Error fetching transactions:", error);
+          return;
+        }
+        if (!data) {
+          console.error("No data returned from API");
+          return;
+        }
+        const active = data.filter(isTransactionActive);
+        const overdue = data.filter(isTransactionOverdue);
+        const old = data.filter(isTransactionOld);
+        setActiveTransactions(active);
+        setOverdueTransactions(overdue);
+        setOldTransactions(old);
+      } else {
+        console.log("user's id is undefined");
+      }
+    }
+    fetchTransactions();
+  }, [user]);
+
+  if (user == undefined) {
+    console.log("User is not set.");
+    return <p>Loading...</p>;
+  }
+
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
@@ -97,9 +67,9 @@ const UserRentalsPage: React.FC = () => {
       </div>
 
       <section className="mb-10">
-        {activeRentals.length > 0 ? (
+        {activeTransactions.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {activeRentals.map((item) => (
+            {activeTransactions.map((item) => (
               <UserRentalItemCard key={`${item.id}-active`} itemTransaction={item} />
             ))}
           </div>
@@ -108,10 +78,23 @@ const UserRentalsPage: React.FC = () => {
         )}
       </section>
 
+      <section className="mb-10">
+        <h2 className="text-3xl font-bold mb-6">Overdue Rentals</h2>
+        {overdueTransactions.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {overdueTransactions.map((item) => (
+              <UserRentalItemCard key={`${item.id}-overdue`} itemTransaction={item} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-600">You have no overdue rentals.</p>
+        )}
+      </section>
+
       <section>
         <h2 className="text-3xl font-bold mb-6">Rental History</h2>
         
-        {rentalHistory.length > 0 ? (
+        {oldTransactions.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
               <thead>
@@ -123,7 +106,7 @@ const UserRentalsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {rentalHistory.map((itemTransaction) => (
+                {oldTransactions.filter(t => t.status === "ARCHIVED").map((itemTransaction) => (
                   <tr key={itemTransaction.id} className="border-b">
                     <td className="py-3 px-4">{itemTransaction.item.name}</td>
                     <td className="py-3 px-4">

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getItemsById, Item } from "../../../client";
+import { useAppContext } from "../../../AppContextProvider";
+import { createUserTransaction, getItemsById, Item } from "../../../client";
 
 const ItemRentalPage: React.FC = () => {
+  const { user } = useAppContext();
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
   const [item, setItem] = useState<Item | null>(null);
-  const [rentalDays, setRentalDays] = useState<number>(1);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [quantity, setQuantity] = useState<number>(1); // Added quantity state
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -34,18 +38,77 @@ const ItemRentalPage: React.FC = () => {
     fetchItem();
   }, [itemId]);
 
-  const handleRentalDaysChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (value > 0) {
-      setRentalDays(value);
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const dateValue = e.target.value;
+    if (dateValue) {
+      const newStartDate = new Date(dateValue);
+      setStartDate(newStartDate);
+      if (endDate && newStartDate > endDate) {
+        setEndDate(null); // Reset end date if it's before the new start date
+      }
+    } else {
+      setStartDate(null);
     }
   };
 
-  const handleRent = () => {
-    setSuccess(true);
-    setTimeout(() => {
-      navigate("/my-rentals");
-    }, 2000);
+  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const dateValue = e.target.value;
+    if (dateValue) {
+      const newEndDate = new Date(dateValue);
+      setEndDate(newEndDate);
+      if (startDate && newEndDate < startDate) {
+        setStartDate(null); // Reset start date if it's after the new end date
+      }
+    } else {
+      setEndDate(null);
+    }
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = parseInt(e.target.value);
+    if (isNaN(value)) {
+      value = 1;
+    }
+    if (item && value > item.availability) {
+      value = item.availability;
+    }
+    if (value < 1) {
+      value = 1;
+    }
+    setQuantity(value);
+  };
+
+  const handleRent = async () => {
+    if (startDate && endDate && item) {
+      const formattedStartDate = startDate.toISOString();
+      const formattedEndDate = endDate.toISOString();
+
+      const {data, error} = await createUserTransaction({
+        body: {
+          itemId: item.id.toString(),
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          numberOfItems: quantity,
+          userId: user?.id?.toString()
+        }
+      })
+      if (error) {
+        setError(String(error));
+        return;
+      }
+      if (!data) {
+        setError("No data returned from API");
+        return;
+      }
+      setSuccess(true);
+
+      setTimeout(() => {
+        navigate("/my-rentals");
+      }, 2000);
+    } else {
+      // Handle case where dates are not selected, perhaps show an error
+      setError("Please select both a start and end date.");
+    }
   };
 
   if (loading) {
@@ -111,26 +174,45 @@ const ItemRentalPage: React.FC = () => {
             <div className="border-t border-gray-200 pt-4">
               <h2 className="text-xl font-semibold mb-4">Rent this item</h2>
               <div className="mb-4">
-                <label htmlFor="rentalDays" className="block text-gray-700 mb-2">
-                  Number of days:
+                <label htmlFor="startDate" className="block text-gray-700 mb-2">
+                  Start Date:
+                </label>
+                <input
+                  type="date"
+                  id="startDate"
+                  value={startDate ? startDate.toISOString().split("T")[0] : ""}
+                  onChange={handleStartDateChange}
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  min={new Date().toISOString().split("T")[0]} // Prevent selecting past dates
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="endDate" className="block text-gray-700 mb-2">
+                  End Date:
+                </label>
+                <input
+                  type="date"
+                  id="endDate"
+                  value={endDate ? endDate.toISOString().split("T")[0] : ""}
+                  onChange={handleEndDateChange}
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  min={startDate ? startDate.toISOString().split("T")[0] : new Date().toISOString().split("T")[0]} // Prevent selecting dates before start date or past dates
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="quantity" className="block text-gray-700 mb-2">
+                  Quantity (Available: {item.availability}):
                 </label>
                 <input
                   type="number"
-                  id="rentalDays"
-                  min="1"
-                  value={rentalDays}
-                  onChange={handleRentalDaysChange}
+                  id="quantity"
+                  value={quantity}
+                  onChange={handleQuantityChange}
                   className="w-full border border-gray-300 rounded px-3 py-2"
+                  min="1"
+                  max={item.availability}
+                  disabled={item.availability === 0} // Disable if no items are available
                 />
-              </div>
-              
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-gray-700">
-                  <span className="font-semibold">Total cost:</span>
-                </div>
-                <div className="text-2xl font-bold text-blue-600">
-                  ${(item.costPerDay * rentalDays)}
-                </div>
               </div>
 
               <div className="flex justify-between items-center">
@@ -142,9 +224,11 @@ const ItemRentalPage: React.FC = () => {
                 </button>
                 <button
                   onClick={handleRent}
-                  disabled={success}
+                  disabled={success || item.availability === 0 || !startDate || !endDate} // Also disable if no items or dates not selected
                   className={`px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-500 transition-colors ${
-                    success ? "opacity-50 cursor-not-allowed" : ""
+                    success || item.availability === 0 || !startDate || !endDate
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
                   }`}
                 >
                   Rent Now

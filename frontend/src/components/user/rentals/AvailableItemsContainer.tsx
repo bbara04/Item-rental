@@ -37,8 +37,8 @@ const AvailableItemsContainer = () => {
     );
     return (
         <div className="p-4">
-            <CategorySelector categories={categories} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
             <RentalItemSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            <CategorySelector categories={categories} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
             <RentalItemsResult items={filteredItems} />
         </div>
     );

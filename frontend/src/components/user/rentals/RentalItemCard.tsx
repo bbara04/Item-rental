@@ -6,14 +6,13 @@ const RentalItemCard: React.FC<Item> = (item) => {
   return (
     <div className="grid grid-rows-[auto_auto] grid-cols-1 bg-white shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 max-w-[300px] max-h-fit content-between">
       <div className="flex flex-col max-h-fit">
-        <div className="w-full flex justify-center mb-2">
+        <div className="flex max-h-[200px] justify-center mb-2">
           <img
             src={item.image && item.image.imageData && item.image.contentType ? `data:${item.image.contentType};base64,${item.image.imageData}` : "https://placehold.co/600x400"}
             alt={item.image?.fileName ?? item.name ?? "Item image"}
-            className="h-full object-cover rounded-t-md"
+            className="h-full object- rounded-t-md"
           />
         </div>
-
         <div className="flex flex-col justify-end p-2">
           <h2 className="text-xl font-semibold text-gray-800 text-center">{item.name}</h2>
           <p className="text-sm text-gray-600 mt-2 text-center line-clamp-3">

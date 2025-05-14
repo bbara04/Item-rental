@@ -83,6 +83,7 @@ export const AdditionalRegistration: React.FC = () => {
                     }
                 case RegisterType.GOOGLE:
                     {
+                        newUser.loginType = "GOOGLE";
                         const { data: googleData, error: googleError } = await registerByBasic({
                             body: newUser
                         });
