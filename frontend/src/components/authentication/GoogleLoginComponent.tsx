@@ -17,7 +17,6 @@ const GoogleLoginComponent = () => {
         }
     }
 
-
     return (
         <>
             <GoogleLogin

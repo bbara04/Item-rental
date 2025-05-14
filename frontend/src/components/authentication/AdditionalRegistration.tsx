@@ -69,6 +69,7 @@ export const AdditionalRegistration: React.FC = () => {
                         });
                         if (error) {
                             console.error("Registration failed:", error);
+                            navigate("/login");
                             // TODO: Display a user-friendly error message
                         } else {
                             console.log("Registration successful:", data);
