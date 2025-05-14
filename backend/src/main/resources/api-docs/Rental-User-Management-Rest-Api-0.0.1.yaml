@@ -874,7 +874,7 @@ components:
           description: User's unique username in the system
           minLength: 3
           maxLength: 50
-          pattern: '^[a-zA-Z0-9._-]+$'
+          pattern: '^[a-zA-Z0-9._-áéíóöőúüűÁÉÍÓÖŐÚÜŰ]+$'
           example: "janos_nagy"
         email:
           type: string
