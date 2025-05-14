@@ -2,6 +2,7 @@ package hu.bme.rental.controllers;
 
 import hu.bme.rental.api.model.Image;
 import hu.bme.rental.api.model.Item;
+import hu.bme.rental.api.model.ItemCategory;
 import hu.bme.rental.api.model.ItemRequest;
 import hu.bme.rental.api.rest.ItemManagementApi;
 import hu.bme.rental.services.itemmanagement.ItemService;
@@ -22,6 +23,15 @@ public class ItemManagementController implements ItemManagementApi {
         if(itemService.deleteItemById(id))
             return ResponseEntity.noContent().build();
         return ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public ResponseEntity<List<ItemCategory>> getAllCategories() {
+        List<ItemCategory> itemCategories = itemService.getAllItemCategories();
+        return itemCategories.isEmpty() ?
+                ResponseEntity.notFound().build()
+                : ResponseEntity.ok(itemCategories);
+
     }
 
     @Override

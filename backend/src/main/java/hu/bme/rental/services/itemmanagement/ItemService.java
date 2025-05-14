@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import hu.bme.rental.mappers.ItemCategoryMapperImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,8 @@ public class ItemService {
     private final ItemMapper itemMapper;
 
     private final ItemCategoryRepository itemCategoryRepository;
+    private final ItemCategoryMapperImpl itemCategoryMapper;
+
     private final FacultyRepository facultyRepository;
     private final TransactionRepository transactionRepository;
     private final JsonLogger jsonLogger;
@@ -239,6 +242,12 @@ public class ItemService {
             return null;
         }
 
+    }
+
+
+    public List<hu.bme.rental.api.model.ItemCategory> getAllItemCategories(){
+        List<ItemCategory> persItemCategories = itemCategoryRepository.findAll();
+        return itemCategoryMapper.toApiDtoList(persItemCategories);
     }
 
 
