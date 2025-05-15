@@ -7,11 +7,15 @@ import hu.bme.rental.api.model.User;
 import hu.bme.rental.api.model.UserRequest;
 import hu.bme.rental.configuration.JsonLogger;
 import hu.bme.rental.mappers.UserMapper;
+import hu.bme.rental.persistence.models.AppUser;
+import hu.bme.rental.persistence.repositories.UserRepository;
 import hu.bme.rental.services.usermanagement.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -19,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AuthenticationService {
 
     private final UserManagementService userManagementService;
+    private final UserRepository userRepository;
 
     private final UserMapper userMapper;
 
@@ -27,12 +32,13 @@ public class AuthenticationService {
     private final JsonLogger jsonLogger;
 
     public User logUserInWithEmail(LoginRequest loginRequest) {
-        User userWithEmail = userManagementService.findByEmail(loginRequest.getEmail());
+        Optional<AppUser> userWithEmail = userRepository.findByEmail(loginRequest.getEmail());
+        if (userWithEmail.isEmpty())
+            return null;
         // Auth ellenőrzés
-        if (userWithEmail != null &&
-                passwordEncoder.matches(loginRequest.getPasskey(), userWithEmail.getPasswordHash())) {
+        if (passwordEncoder.matches(loginRequest.getPasskey(), userWithEmail.get().getPasswordHash())) {
             jsonLogger.logAsJson("Login user with:", userWithEmail);
-            return userWithEmail;
+            return userMapper.toApiDto(userWithEmail.get());
         }
         log.info("Bad Access request");
         return null;
@@ -70,6 +76,7 @@ public class AuthenticationService {
             log.warn("This email is already exists!");
             return null;
         }
+
         User castedUser = userMapper.toApiDto(regRequestedUser);
         String hashedPassword = passwordEncoder.encode(castedUser.getEmail());
         castedUser.setPasswordHash(hashedPassword);
