@@ -84,6 +84,9 @@ const ItemRentalPage: React.FC = () => {
       const formattedEndDate = endDate.toISOString();
 
       const {data, error} = await createUserTransaction({
+        path: {
+          id: user?.id?.toString(),
+        },
         body: {
           itemId: item.id.toString(),
           startDate: formattedStartDate,
