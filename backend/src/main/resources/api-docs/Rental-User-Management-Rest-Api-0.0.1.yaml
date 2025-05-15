@@ -166,7 +166,7 @@ paths:
   /user/{id}/renting-transactions:
     get:
       summary: Get all renting transactions of the user
-      operationId: getAllUserTransactions
+      operationId: getAllUserTransactionsByUserId
       tags:
         - Transaction Management
       parameters:
@@ -307,6 +307,30 @@ paths:
           description: Transaction found, operation successfully commited
           content:
             application/json: {}
+        '404':
+          description: Transaction not found (no content)
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+  /transactions/all:
+    get:
+      summary: Get all renting transactions
+      operationId: getAllUserTransactions
+      tags:
+        - Transaction Management
+      responses:
+        '200':
+          description: Get all renting transaction
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
         '404':
           description: Transaction not found (no content)
         default:

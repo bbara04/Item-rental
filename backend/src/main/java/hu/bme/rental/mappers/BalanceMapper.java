@@ -14,12 +14,14 @@ public interface BalanceMapper {
     @Named("toApiDto")
     @Mapping(source = "curValue", target = "currentValue")
     @Mapping(target = "userID", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Balance toApiDto(hu.bme.rental.persistence.models.Balance balance);
 
     @Named("toEntity")
     @Mapping(source = "currentValue", target = "curValue")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     hu.bme.rental.persistence.models.Balance toEntity(Balance balance, @MappingTarget hu.bme.rental.persistence.models.Balance targetBalance);
 
 }
