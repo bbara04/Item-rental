@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useAppContext } from "../../../AppContextProvider";
 import { getAllItems, GetAllItemsResponse } from "../../../client";
 import CategorySelector from "./CategorySelector";
 import RentalItemSearch from "./RentalItemSearch";
 import RentalItemsResult from "./RentalItemsResult";
 
 const AvailableItemsContainer = () => {
+    const { user } = useAppContext();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
     const [items, setItems] = useState<GetAllItemsResponse>();
@@ -15,7 +17,15 @@ const AvailableItemsContainer = () => {
             if (error) {
                 console.error("Error fetching items:", error);
             }
-            setItems(data);
+            if (!data) {
+                console.error("No items found");
+                return;
+            }
+            
+            //Fix hack with be filter
+            const filteredData = data.filter((item) => item.facultiesId?.includes(user?.faculty.id?.toString() ?? ""));
+
+            setItems(filteredData);
         }
         fetchData();
     }, []);
