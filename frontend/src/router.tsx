@@ -4,6 +4,7 @@ import AdminDashboardPage from './components/admin/dashboard/AdminDashboardPage'
 import ManageItemsPage from './components/admin/items/ManageItemsPage';
 import ModifyItemPage from './components/admin/items/ModifyItemPage'; // Import the new component
 import RentalApprovalsPage from './components/admin/rentals/RentalApprovalsPage';
+import UsersAdminPanel from './components/admin/users/UsersAdminPanel';
 import { AdditionalRegistration } from './components/authentication/AdditionalRegistration';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
@@ -93,10 +94,7 @@ const router = createBrowserRouter(
                 },
                 {
                     path: "users", // Removed leading "/"
-                    element: <div className="container mx-auto px-4 py-8">
-                        <h1 className="text-2xl font-bold">User Management</h1>
-                        <p className="text-gray-600 mt-4">User management functionality will be implemented here.</p>
-                    </div>
+                    element: <UsersAdminPanel />
                 }
             ]
         }
