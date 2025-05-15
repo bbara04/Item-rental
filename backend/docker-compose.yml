@@ -1,30 +1,23 @@
 services:
   db:
+    image: 'postgres:latest'
     platform: 'linux/amd64'
-    image: 'mcr.microsoft.com/mssql/server:2022-latest'
-    user: root
     ports:
-      - '7071:1433'
+      - '7071:5432'
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=StrongRoot1
-      - DB_NAME=rentaldb
-      - TZ='Europe/Budapest'
-      - MSSQL_RUN_AS_ROOT=1
-    privileged: true
-    command: /opt/mssql/bin/start.sh
+      - POSTGRES_DB=rentaldb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=StrongRoot1
     volumes:
-      - ./start.sh:/opt/mssql/bin/start.sh
+      - postgres_data:/var/lib/postgresql/data
     container_name: RentalDatabase
     restart: unless-stopped
     networks:
       - rental-net
-    deploy:
-      resources:
-        limits:
-          memory: 4g
-        reservations:
-          memory: 2g
+
+volumes:
+  postgres_data:
+    driver: local
 
 networks:
   rental-net:
