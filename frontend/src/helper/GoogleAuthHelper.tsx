@@ -43,7 +43,7 @@ export class GoogleAuthHelper {
       });
 
       if (error) {
-        console.log("Error fetching user by email:", error.detail || error);
+        console.log("Error fetching user by email:", error);
         return false;
       }
 

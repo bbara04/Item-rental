@@ -90,7 +90,7 @@ const ItemRentalPage: React.FC = () => {
   };
 
   const handleRent = async () => {
-    if (startDate && endDate && item) {
+    if (startDate && endDate && item && user && user.id) {
       const formattedStartDate = startDate.toISOString();
       const formattedEndDate = endDate.toISOString();
 
