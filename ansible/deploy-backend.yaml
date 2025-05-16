@@ -12,7 +12,7 @@
     service_name: rental-backend
     service_user: ubuntu
     service_group: ubuntu
-    backend_port: 8080 # Default Spring Boot port
+    backend_port: 7070 # Default Spring Boot port
 
   tasks:
     # --- Backend Deployment ---

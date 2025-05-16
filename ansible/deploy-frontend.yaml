@@ -14,7 +14,7 @@
     nginx_enabled_site_link: /etc/nginx/sites-enabled/rental
     backend_api_prefix: /api # URL prefix for backend API calls
     backend_host: localhost # Assuming backend runs on the same host
-    backend_port: 8080 # Default Spring Boot port
+    backend_port: 7070 # Default Spring Boot port
 
   tasks:
     # --- Frontend Deployment ---
