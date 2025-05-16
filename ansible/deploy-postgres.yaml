@@ -1,0 +1,90 @@
+---
+- name: Deploy and run PostgreSQL Docker container
+  hosts: all # Replace with your target host group from the inventory file
+  become: yes # Run tasks with root privileges (sudo)
+
+  vars:
+    local_compose_path: "{{ playbook_dir }}/../backend/docker-compose.yml" # Path relative to the playbook file
+    remote_compose_dir: /opt/postgres # Directory on the remote host to store docker-compose.yml
+    remote_compose_file: "{{ remote_compose_dir }}/docker-compose.yml"
+    service_user: ubuntu # User to own the files, adjust if needed
+
+  tasks:
+    - name: Ensure remote directory for docker-compose exists
+      ansible.builtin.file:
+        path: "{{ remote_compose_dir }}"
+        state: directory
+        mode: '0755'
+        owner: "{{ service_user | default('root') }}"
+        group: "{{ service_user | default('root') }}"
+
+    - name: Copy docker-compose.yml to remote host
+      ansible.builtin.copy:
+        src: "{{ local_compose_path }}"
+        dest: "{{ remote_compose_file }}"
+        mode: '0644'
+        owner: "{{ service_user | default('root') }}"
+        group: "{{ service_user | default('root') }}"
+      notify: Restart postgres container
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Remove potentially conflicting container packages
+      ansible.builtin.apt:
+        name:
+          - containerd
+          - containerd.io
+          - runc
+        state: absent
+        autoremove: yes # Remove unused dependencies as well
+        purge: yes # Also remove configuration files
+      when: ansible_facts['os_family'] == "Debian"
+      ignore_errors: yes # Continue if packages are not found or removal fails for some reason
+
+    - name: Ensure Docker is installed
+      ansible.builtin.apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian" # Example for Debian/Ubuntu
+
+    - name: Ensure Docker Compose is installed
+      ansible.builtin.apt:
+        name: docker-compose
+        state: present
+      when: ansible_facts['os_family'] == "Debian" # Example for Debian/Ubuntu
+      
+    - name: Ensure Docker service is started and enabled
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Stop and remove existing postgres container if it exists
+      ansible.builtin.command: docker-compose -f {{ remote_compose_file }} down --rmi local
+      args:
+        chdir: "{{ remote_compose_dir }}"
+      register: docker_down_result
+      changed_when: "'removing' in docker_down_result.stdout or 'stopping' in docker_down_result.stdout"
+      failed_when:
+        - "docker_down_result.rc != 0"
+        - "'No such service: db' not in docker_down_result.stderr"
+        - "'no container found for project' not in docker_down_result.stderr"
+        - "'network rental-network not found' not in docker_down_result.stderr"
+
+
+    - name: Start postgres container using docker-compose
+      ansible.builtin.command: docker-compose -f {{ remote_compose_file }} up -d db
+      args:
+        chdir: "{{ remote_compose_dir }}"
+      register: docker_up_result
+      changed_when: "'Creating' in docker_up_result.stdout or 'Starting' in docker_up_result.stdout"
+
+  handlers:
+    - name: Restart postgres container
+      ansible.builtin.command: docker-compose -f {{ remote_compose_file }} down --rmi local && docker-compose -f {{ remote_compose_file }} up -d db
+      args:
+        chdir: "{{ remote_compose_dir }}"

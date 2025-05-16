@@ -1,9 +1,9 @@
 import React from "react";
-import { PreviewRentalItem } from "../../dto/PreviewRentalItem";
+import { Item } from "../../../client";
 import RentalItemCard from "./RentalItemCard";
 
 type RentalItemsResultProps = {
-  items: PreviewRentalItem[];
+  items: Item[];
 };
 
 const RentalItemsResult: React.FC<RentalItemsResultProps> = ({ items }) => (

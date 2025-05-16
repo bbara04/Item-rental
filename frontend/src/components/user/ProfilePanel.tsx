@@ -50,7 +50,7 @@ const ProfilePanel: React.FC = () => {
       });
 
       if (error) {
-        setError(`Hiba történt: ${error.detail || error.title || 'Ismeretlen hiba'}`);
+        setError(`Hiba történt: ${error || 'Ismeretlen hiba'}`);
       } else if (data) {
         setUser(data);
         setSuccess('Sikeres adatmódosítás!');
