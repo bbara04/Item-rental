@@ -21,9 +21,6 @@ const getRemainingDays = (endDate: string): number | null => {
 
 
 const UserRentalItemCard: React.FC<UserRentalItemCardProps> = ({ itemTransaction }) => {
-    if (["DECLINED", "PENDING", "DELETED", "ARCHIVED"].includes(itemTransaction.status)) {
-        return null; 
-    }
 
     const remainingDays = getRemainingDays(itemTransaction.endDate);
     let formattedDueDate = itemTransaction.endDate;

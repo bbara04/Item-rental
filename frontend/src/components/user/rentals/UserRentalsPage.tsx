@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../../AppContextProvider";
-import { getAllUserTransactions, TransactionResponse } from "../../../client";
+import { getAllUserTransactionsByUserId, TransactionResponse } from "../../../client";
 import UserRentalItemCard from "./UserRentalItemCard";
 
 function isTransactionActive(transaction: TransactionResponse): boolean {
@@ -24,7 +24,7 @@ const UserRentalsPage: React.FC = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       if (user?.id) {
-        const { data, error } = await getAllUserTransactions({
+        const { data, error } = await getAllUserTransactionsByUserId({
           path: {
             id: user.id.toString()
           }
@@ -104,40 +104,19 @@ const UserRentalsPage: React.FC = () => {
       </section>
 
       {/* Rental History Section */}
-      <section>
+      <section className="mb-10">
         <div className="flex items-center gap-2 mb-4">
-          <span className="inline-block w-2 h-6 bg-gray-400 rounded-full"></span>
+          <span className="inline-block w-2 h-6 bg-slate-500 rounded-full"></span>
           <h2 className="text-2xl font-semibold text-gray-800 tracking-tight">Rental History</h2>
         </div>
         {oldTransactions.length > 0 ? (
-          <div className="overflow-x-auto w-full">
-            <table className="min-w-full bg-white rounded-lg shadow text-sm md:text-base">
-              <thead>
-                <tr className="text-left text-gray-500 border-b">
-                  <th className="py-3 px-2 md:px-4">Device</th>
-                  <th className="py-3 px-2 md:px-4">Status</th>
-                  <th className="py-3 px-2 md:px-4">Period</th>
-                  <th className="py-3 px-2 md:px-4 text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {oldTransactions.filter(t => t.status === "ARCHIVED").map((itemTransaction) => (
-                  <tr key={itemTransaction.id} className="border-b">
-                    <td className="py-3 px-2 md:px-4">{itemTransaction.item.name}</td>
-                    <td className="py-3 px-2 md:px-4">
-                      <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs">
-                        {itemTransaction.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-2 md:px-4">{itemTransaction.startDate} - {itemTransaction.endDate}</td>
-                    <td className="py-3 px-2 md:px-4 text-right">${itemTransaction.item.costPerDay}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {oldTransactions.map((item) => (
+              <UserRentalItemCard key={`${item.id}-old`} itemTransaction={item} />
+            ))}
           </div>
         ) : (
-          <p className="text-gray-500 italic text-center">You have no rental history.</p>
+          <p className="text-gray-500 italic text-center">You have no history of renting.</p>
         )}
       </section>
     </div>
