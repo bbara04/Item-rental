@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContextProvider";
-import { Faculty, getAllUniversitiesFaculties, registerByBasic, University, User } from "../../client";
+import { Faculty, getAllUniversitiesFaculties, registerByBasic, UniversitiesResponse, University, User } from "../../client";
 import { RegisterType } from "../../dto/RegistrationInfo";
 
 export const AdditionalRegistration: React.FC = () => {
     const { registrationInfo, setUser } = useAppContext();
+    const [allUniversitiesFaculties, setAllUniversitiesFaculties] = useState<UniversitiesResponse>();
     const [universities, setUniversities] = useState<University[]>([]);
     const [faculties, setFaculities] = useState<Faculty[]>([]);
     const [university, setUniversity] = useState<University>();
@@ -108,14 +109,21 @@ export const AdditionalRegistration: React.FC = () => {
         }
     };
 
+    const onSelectUniversity = (university: University) => {
+        setUniversity(university);
+        const facultiesAtUniversity = allUniversitiesFaculties?.faculties.filter((faculty) => faculty.university?.id === university.id);
+        setFaculities(facultiesAtUniversity || []);
+    };
+
     useEffect(() => {
         async function fetchUniversitiesAndFaculties() {
             const { data, error } = await getAllUniversitiesFaculties()
             if (error) {
                 console.error("Error fetching universities and faculties:", error);
             } else {
+                setAllUniversitiesFaculties(data);
                 setUniversities(data.universities);
-                setFaculities(data.faculties);
+                setFaculities([]);
             }
         }
         fetchUniversitiesAndFaculties();
@@ -138,7 +146,7 @@ export const AdditionalRegistration: React.FC = () => {
                         onChange={(e) => {
                             const selectedUniversity = universities.find((uni) => uni.id === parseInt(e.target.value, 10));
                             if (selectedUniversity) {
-                                setUniversity(selectedUniversity);
+                                onSelectUniversity(selectedUniversity);
                             } else {
                                 setUniversity(undefined);
                             }
