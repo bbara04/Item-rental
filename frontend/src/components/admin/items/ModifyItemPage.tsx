@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Item, ItemRequest, getItemsById, updateItemDataById } from '../../../client';
-import useResponsiveWidth from '../../../hooks/useResponsiveWidth';
+import { Item, ItemRequest, getItemsById, updateItemDataById } from '../../../client'; // Try itemsPost
+// Removed unused useResponsiveWidth import
 
 // Define a type for the error structure from the API
 interface ApiErrorDetail {
@@ -18,7 +18,6 @@ interface FormFieldProps {
   type?: string;
   value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-  error?: string;
   required?: boolean;
   min?: string;
   rows?: number;
@@ -26,15 +25,74 @@ interface FormFieldProps {
   placeholder?: string;
   className?: string;
   children?: React.ReactNode;
+  fieldError?: string; // Added fieldError prop
 }
+
+// Moved FormField outside of ModifyItemPage component
+const FormField = ({ 
+  label, id, name, type = 'text', value, onChange, required = false,
+  min, rows, accept, placeholder, className = '', children, fieldError // Added fieldError prop
+}: FormFieldProps) => {
+  // const fieldError = validationErrors[name] || ''; // Now passed as a prop
+  
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="block text-gray-700 mb-1 font-medium">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      
+      {type === 'textarea' ? (
+        <textarea
+          id={id}
+          name={name}
+          value={value || ''}
+          onChange={onChange}
+          placeholder={placeholder}
+          rows={rows || 4}
+          className={`w-full border ${fieldError ? 'border-red-500' : 'border-gray-300'} rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition`}
+          required={required}
+        />
+      ) : (
+        <input
+          id={id}
+          type={type}
+          name={name}
+          value={value ?? ''}
+          onChange={onChange}
+          accept={accept}
+          min={min}
+          placeholder={placeholder}
+          className={`w-full border ${fieldError ? 'border-red-500' : 'border-gray-300'} rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition`}
+          required={required}
+        />
+      )}
+      
+      {children}
+      
+      {fieldError && (
+        <p className="mt-1 text-sm text-red-600">{fieldError}</p>
+      )}
+    </div>
+  );
+};
 
 const ModifyItemPage: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
   const isEditMode = Boolean(itemId);
-  const screenWidth = useResponsiveWidth();
+  // const screenWidth = useResponsiveWidth(); // Removed unused variable
 
-  const [formData, setFormData] = useState<Partial<Item>>({});
+  const [formData, setFormData] = useState<Partial<Item>>(
+    isEditMode ? {} : {
+      name: '',
+      description: '',
+      categories: [],
+      costPerDay: undefined,
+      availability: undefined,
+      image: undefined,
+      facultiesId: []
+    }
+  );
   const [originalItem, setOriginalItem] = useState<Item | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -174,19 +232,15 @@ const ModifyItemPage: React.FC = () => {
     setError(null);
     setIsSaving(true);
     
-    // Validate all fields
     const errors: Record<string, string> = {};
-    
     if (!formData.name) errors.name = 'Name is required';
     if (!formData.categories?.length) errors.categories = 'At least one category is required';
     if (formData.costPerDay === undefined || formData.costPerDay < 0) errors.costPerDay = 'Price must be a positive number';
     if (formData.availability === undefined || formData.availability < 0) errors.availability = 'Quantity must be a positive number';
     if (!formData.description) errors.description = 'Description is required';
     
-    // Update validation state
     setValidationErrors(errors);
     
-    // Check if there are any validation errors
     if (Object.values(errors).some(error => error !== '')) {
       setError('Please correct the errors in the form.');
       setIsSaving(false);
@@ -196,49 +250,30 @@ const ModifyItemPage: React.FC = () => {
     let payload: Partial<ItemRequest> = {};
 
     if (isEditMode && originalItem && itemId) {
-      // For PATCH, start with the ID, then add only changed fields.
       payload = { id: parseInt(itemId, 10) };
-
-      if (formData.name !== undefined && formData.name !== originalItem.name) {
-        payload.name = formData.name;
-      }
-      if (formData.description !== undefined && formData.description !== originalItem.description) {
-        payload.description = formData.description;
-      }
-      if (formData.costPerDay !== undefined && formData.costPerDay !== originalItem.costPerDay) {
-        payload.costPerDay = formData.costPerDay;
-      }
-      if (formData.availability !== undefined && formData.availability !== originalItem.availability) {
-        payload.availability = formData.availability;
-      }
-
-      // Deep compare for categories, handling undefined cases
+      if (formData.name !== undefined && formData.name !== originalItem.name) payload.name = formData.name;
+      if (formData.description !== undefined && formData.description !== originalItem.description) payload.description = formData.description;
+      if (formData.costPerDay !== undefined && formData.costPerDay !== originalItem.costPerDay) payload.costPerDay = formData.costPerDay;
+      if (formData.availability !== undefined && formData.availability !== originalItem.availability) payload.availability = formData.availability;
+      
       const originalCategoriesString = JSON.stringify(originalItem.categories || []);
       const formCategoriesString = JSON.stringify(formData.categories || []);
-      if (formCategoriesString !== originalCategoriesString) {
-        payload.categories = formData.categories; // Send current formData.categories (could be undefined)
-      }
+      if (formCategoriesString !== originalCategoriesString) payload.categories = formData.categories;
 
-      // Deep compare for image, handling undefined cases
-      // originalItem.image is non-optional in Item, formData.image can be undefined
       const originalImageString = JSON.stringify(originalItem.image);
       const formImageString = JSON.stringify(formData.image);
-      if (formImageString !== originalImageString) {
-         payload.image = formData.image; // Send current formData.image (could be undefined)
-      }
+      if (formImageString !== originalImageString) payload.image = formData.image;
       
-      // Check if any actual changes were made
       const changedFieldKeys = Object.keys(payload).filter(k => k !== 'id');
       if (changedFieldKeys.length === 0) {
          setError('No changes detected to update.');
          setIsSaving(false);
          return;
       }
-
     } else {
-      // Create mode: build full payload from formData
+      // Create mode
       payload = {
-        id: formData.id || 0, 
+        id: formData.id || 0, // Backend might auto-generate ID, adjust as needed
         name: formData.name,
         description: formData.description,
         categories: formData.categories,
@@ -255,19 +290,32 @@ const ModifyItemPage: React.FC = () => {
             path: { id: itemId }, 
             body: payload as ItemRequest
         });
-
         if (updateError) {
           const apiError = updateError as ApiErrorDetail;
-          const errorDetail = apiError.error?.detail || apiError.message || 'Failed to update item.';
-          setError(errorDetail);
-          console.error("Error updating item:", updateError);
+          setError(apiError.error?.detail || apiError.message || 'Failed to update item.');
         } else {
           navigate('/admin/items');
         }
       } else {
-        // TODO: Implement createItem call once available in the SDK.
-        setError('Create item functionality is not yet implemented.');
-        console.log("Attempted to create item with payload:", payload);
+        // Create mode using itemsPost
+        const createPayload = payload as ItemRequest; // Ensure full ItemRequest for creation
+        
+        // The following line will cause an error if itemsPost is not defined/imported.
+        // This is a separate issue from the input field problem.
+        // For now, to prevent a crash if itemsPost is not available, let's comment it out
+        // and keep the placeholder error. You'll need to resolve the itemsPost import
+        // and usage for item creation to work.
+        // const { data: newItem, error: createError } = await itemsPost({ body: createPayload });
+
+        // if (createError) {
+        //   const apiError = createError as ApiErrorDetail;
+        //   setError(apiError.error?.detail || apiError.message || 'Failed to create item.');
+        // } else if (newItem) {
+        //   navigate('/admin/items');
+        // } else {
+        //    setError('Failed to create item. No data returned.');
+        // }
+        setError('Item creation function (itemsPost) not yet properly implemented or imported.'); // Placeholder
       }
     } catch (apiErrorResponse: unknown) {
       let detailMessage = isEditMode ? 'Failed to update item.' : 'Failed to create item.';
@@ -282,54 +330,6 @@ const ModifyItemPage: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
-  };
-
-  // Form field helper component
-  const FormField = ({ 
-    label, id, name, type = 'text', value, onChange, error, required = false,
-    min, rows, accept, placeholder, className = '', children
-  }: FormFieldProps) => {
-    const fieldError = validationErrors[name] || '';
-    
-    return (
-      <div className={className}>
-        <label htmlFor={id} className="block text-gray-700 mb-1 font-medium">
-          {label} {required && <span className="text-red-500">*</span>}
-        </label>
-        
-        {type === 'textarea' ? (
-          <textarea
-            id={id}
-            name={name}
-            value={value || ''}
-            onChange={onChange}
-            placeholder={placeholder}
-            rows={rows || 4}
-            className={`w-full border ${fieldError ? 'border-red-500' : 'border-gray-300'} rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition`}
-            required={required}
-          />
-        ) : (
-          <input
-            id={id}
-            type={type}
-            name={name}
-            value={value ?? ''}
-            onChange={onChange}
-            accept={accept}
-            min={min}
-            placeholder={placeholder}
-            className={`w-full border ${fieldError ? 'border-red-500' : 'border-gray-300'} rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition`}
-            required={required}
-          />
-        )}
-        
-        {children}
-        
-        {fieldError && (
-          <p className="mt-1 text-sm text-red-600">{fieldError}</p>
-        )}
-      </div>
-    );
   };
 
   if (isLoading && isEditMode && !originalItem) {
@@ -369,6 +369,7 @@ const ModifyItemPage: React.FC = () => {
               onChange={handleInputChange}
               required
               placeholder="Enter item name"
+              fieldError={validationErrors['name']}
             />
 
             <FormField
@@ -379,6 +380,7 @@ const ModifyItemPage: React.FC = () => {
               onChange={handleInputChange}
               required
               placeholder="e.g. Electronics, Tools, etc."
+              fieldError={validationErrors['categories']}
             >
               <p className="text-xs text-gray-500 mt-1">Separate multiple categories with commas</p>
             </FormField>
@@ -393,6 +395,7 @@ const ModifyItemPage: React.FC = () => {
               required
               min="0"
               placeholder="0"
+              fieldError={validationErrors['costPerDay']}
             />
 
             <FormField
@@ -405,6 +408,7 @@ const ModifyItemPage: React.FC = () => {
               required
               min="0"
               placeholder="0"
+              fieldError={validationErrors['availability']}
             />
 
             <FormField
@@ -418,6 +422,7 @@ const ModifyItemPage: React.FC = () => {
               placeholder="Describe the item in detail"
               className="md:col-span-2"
               rows={4}
+              fieldError={validationErrors['description']}
             />
 
             <div className="md:col-span-2">
