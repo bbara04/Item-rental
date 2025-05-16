@@ -1,7 +1,6 @@
 -- Kép tábla
-
 CREATE TABLE images (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     entity_type VARCHAR(255),
     entity_id BIGINT,
     image_data BYTEA,
@@ -14,7 +13,7 @@ CREATE TABLE images (
 CREATE INDEX idx_entity ON images(entity_type, entity_id);
 
 CREATE TABLE balances (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     cur_value FLOAT,
     unit VARCHAR(255),
     pay_type VARCHAR(255),
@@ -23,7 +22,7 @@ CREATE TABLE balances (
 );
 
 CREATE TABLE universities (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     uni_code VARCHAR(15) UNIQUE,
     name VARCHAR(255) NOT NULL,
     address VARCHAR(255),
@@ -35,7 +34,7 @@ CREATE TABLE universities (
 );
 
 CREATE TABLE faculties (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     university_id BIGINT NOT NULL,
     name VARCHAR(255) NOT NULL,
     code VARCHAR(50),
@@ -46,7 +45,7 @@ CREATE TABLE faculties (
 );
 
 CREATE TABLE app_users(
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     balance_id BIGINT UNIQUE NOT NULL,
     user_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -69,7 +68,7 @@ CREATE TABLE app_users(
 );
 
 CREATE TABLE item_categories (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     parent_category_id BIGINT,
@@ -81,7 +80,7 @@ CREATE TABLE item_categories (
 );
 
 CREATE TABLE items (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     cost_per_day FLOAT,
@@ -111,7 +110,7 @@ CREATE TABLE item_faculty_mappings (
 );
 
 CREATE TABLE renting_transactions (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     transaction_type VARCHAR(255),
     status VARCHAR(255),
     rented_item_id BIGINT,

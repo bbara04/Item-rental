@@ -1,0 +1,33 @@
+-- Drop tables and indexes if they exist
+
+-- Drop foreign key constraints
+ALTER TABLE IF EXISTS app_users DROP CONSTRAINT IF EXISTS fk_user_image_id CASCADE;
+ALTER TABLE IF EXISTS app_users DROP CONSTRAINT IF EXISTS fk_balance_id CASCADE;
+ALTER TABLE IF EXISTS app_users DROP CONSTRAINT IF EXISTS fk_faculty_id CASCADE;
+ALTER TABLE IF EXISTS app_users DROP CONSTRAINT IF EXISTS fk_uni_id CASCADE;
+ALTER TABLE IF EXISTS universities DROP CONSTRAINT IF EXISTS fk_uni_image_id CASCADE;
+ALTER TABLE IF EXISTS faculties DROP CONSTRAINT IF EXISTS fk_faculty_university CASCADE;
+ALTER TABLE IF EXISTS item_categories DROP CONSTRAINT IF EXISTS fk_parent_category CASCADE;
+ALTER TABLE IF EXISTS item_categories DROP CONSTRAINT IF EXISTS fk_category_image_id CASCADE;
+ALTER TABLE IF EXISTS items DROP CONSTRAINT IF EXISTS fk_item_image_id CASCADE;
+ALTER TABLE IF EXISTS item_category_mappings DROP CONSTRAINT IF EXISTS fk_mapping_item CASCADE;
+ALTER TABLE IF EXISTS item_category_mappings DROP CONSTRAINT IF EXISTS fk_mapping_category CASCADE;
+ALTER TABLE IF EXISTS renting_transactions DROP CONSTRAINT IF EXISTS fk_item_id CASCADE;
+ALTER TABLE IF EXISTS renting_transactions DROP CONSTRAINT IF EXISTS fk_user_id CASCADE;
+ALTER TABLE IF EXISTS item_faculty_mappings DROP CONSTRAINT IF EXISTS fk_item_faculty_item CASCADE;
+ALTER TABLE IF EXISTS item_faculty_mappings DROP CONSTRAINT IF EXISTS fk_item_faculty_faculty CASCADE;
+
+-- Drop indexes
+DROP INDEX IF EXISTS idx_entity;
+
+-- Drop tables
+DROP TABLE IF EXISTS renting_transactions CASCADE;
+DROP TABLE IF EXISTS item_category_mappings CASCADE;
+DROP TABLE IF EXISTS item_faculty_mappings CASCADE;
+DROP TABLE IF EXISTS items CASCADE;
+DROP TABLE IF EXISTS item_categories CASCADE;
+DROP TABLE IF EXISTS app_users CASCADE;
+DROP TABLE IF EXISTS faculties CASCADE;
+DROP TABLE IF EXISTS universities CASCADE;
+DROP TABLE IF EXISTS balances CASCADE;
+DROP TABLE IF EXISTS images CASCADE;

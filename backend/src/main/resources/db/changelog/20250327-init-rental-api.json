@@ -4,24 +4,27 @@
       "changeSet": {
         "id": "20250327-1",
         "author": "rental-api",
+        "validCheckSums": [
+          "9:e124e9ed8917e0fdae654eb4aeb07870"
+        ],
         "changes": [
           {
             "sqlFile": {
-              "path": "sql-files/drop-all-tables-indexes-mssql.sql",
+              "path": "sql-files/drop-all-tables-indexes-postgres.sql",
               "relativeToChangelogFile": true,
               "stripComments": true
             }
           },
           {
             "sqlFile": {
-              "path": "sql-files/rental-api-db-schema-init-mssql.sql",
+              "path": "sql-files/rental-api-db-schema-init-postgres.sql",
               "relativeToChangelogFile": true,
               "stripComments": true
             }
           },
           {
             "sqlFile": {
-              "path": "sql-files/db-demo-data-mssql.sql",
+              "path": "sql-files/db-demo-data-postgres.sql",
               "relativeToChangelogFile": true,
               "stripComments": true
             }
