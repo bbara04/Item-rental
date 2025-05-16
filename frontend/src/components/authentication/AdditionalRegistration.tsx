@@ -130,50 +130,54 @@ export const AdditionalRegistration: React.FC = () => {
                     <label htmlFor="university" className="block text-sm font-medium text-gray-700 mb-1">
                         University
                     </label>
-                    <input
-                        type="text"
-                        list="university-list"
+                    <select
                         id="university"
                         name="university"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Select University"
+                        value={university?.id || ""}
                         onChange={(e) => {
-                            const selectedUniversity = universities.find((uni) => uni.name === e.target.value);
+                            const selectedUniversity = universities.find((uni) => uni.id === parseInt(e.target.value, 10));
                             if (selectedUniversity) {
                                 setUniversity(selectedUniversity);
+                            } else {
+                                setUniversity(undefined);
                             }
                         }}
-                    />
-                    <datalist id="university-list">
+                    >
+                        <option value="" disabled>Select University</option>
                         {universities.map((uni) => (
-                            <option key={uni.id} value={uni.name} />
+                            <option key={uni.id} value={uni.id}>
+                                {uni.name}
+                            </option>
                         ))}
-                    </datalist>
+                    </select>
                 </div>
                 
                 <div className="mb-5">
                     <label htmlFor="faculty" className="block text-sm font-medium text-gray-700 mb-1">
                         Faculty
                     </label>
-                    <input
-                        type="text"
-                        list="faculty-list"
+                    <select
                         id="faculty"
                         name="faculty"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Select Faculty"
+                        value={faculty?.id || ""}
                         onChange={(e) => {
-                            const selectedFaculty = faculties.find((fac) => fac.name === e.target.value);
+                            const selectedFaculty = faculties.find((fac) => fac.id === parseInt(e.target.value, 10));
                             if (selectedFaculty) {
                                 setFaculity(selectedFaculty);
+                            } else {
+                                setFaculity(undefined);
                             }
                         }}
-                    />
-                    <datalist id="faculty-list">
+                    >
+                        <option value="" disabled>Select Faculty</option>
                         {faculties.map((faculty) => (
-                            <option key={faculty.id} value={faculty.name} />
+                            <option key={faculty.id} value={faculty.id}>
+                                {faculty.name}
+                            </option>
                         ))}
-                    </datalist>
+                    </select>
                 </div>
                 
                 <button

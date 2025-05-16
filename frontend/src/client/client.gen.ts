@@ -13,8 +13,8 @@ import type { ClientOptions } from './types.gen';
  */
 export type CreateClientConfig<T extends DefaultClientOptions = ClientOptions> = (override?: Config<DefaultClientOptions & T>) => Config<Required<DefaultClientOptions> & T>;
 
-const ipAddress = import.meta.env.VITE_BACKEND_ADDRESS;
+const backendIpAddress = import.meta.env.VITE_BACKEND_ADDRESS;
 
 export const client = createClient(createConfig<ClientOptions>({
-    baseUrl: `${ipAddress}/api`,
+    baseUrl: `${backendIpAddress}/api`,
 }));
