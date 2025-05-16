@@ -18,7 +18,7 @@ import java.util.List;
 public interface ItemMapper {
 
     @Named("toApiDto")
-    @Mapping(source = "categories", target = "categories", qualifiedByName = "toApiDtoList")
+    @Mapping(source = "categories", target = "categories", qualifiedByName = "toApiStringList")
     @Mapping(source = "faculties", target = "facultiesId", qualifiedByName = "toFacultyStringList")
     Item toApiDto(hu.bme.rental.persistence.models.Item persItem);
 

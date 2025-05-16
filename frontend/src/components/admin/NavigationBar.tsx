@@ -5,8 +5,8 @@ import BlankProfilePic from '../../assets/blank_profile_pic.png';
 import useResponsiveWidth from "../../hooks/useResponsiveWidth";
 
 // Admin-specific menu items
-const adminPages = ['Manage Items', 'Rental Approvals', 'Users', 'Dashboard'];
-const adminRoutes = ['/admin/items', '/admin/approvals', '/admin/users', '/admin/dashboard'];
+const adminPages = ['Dashboard', 'Rental Approvals', 'Manage Items', 'Users'];
+const adminRoutes = ['/admin/dashboard', '/admin/approvals', '/admin/items', '/admin/users'];
 const settings = ['Profile', 'Logout'];
 const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>, setUser: ReturnType<typeof useAppContext>['setUser']) => void } = {
     'Profile': (navigate) => navigate('/admin/profile'),

@@ -78,12 +78,26 @@ const ItemRentalPage: React.FC = () => {
     setQuantity(value);
   };
 
+  const handleInputClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    if (typeof input.showPicker === 'function') {
+      try {
+        input.showPicker();
+      } catch (e) {
+        console.error("Could not display date picker:", e);
+      }
+    }
+  };
+
   const handleRent = async () => {
     if (startDate && endDate && item) {
       const formattedStartDate = startDate.toISOString();
       const formattedEndDate = endDate.toISOString();
 
       const {data, error} = await createUserTransaction({
+        path: {
+          id: user?.id?.toString(),
+        },
         body: {
           itemId: item.id.toString(),
           startDate: formattedStartDate,
@@ -182,6 +196,7 @@ const ItemRentalPage: React.FC = () => {
                   id="startDate"
                   value={startDate ? startDate.toISOString().split("T")[0] : ""}
                   onChange={handleStartDateChange}
+                  onClick={handleInputClick} // Added onClick handler
                   className="w-full border border-gray-300 rounded px-3 py-2"
                   min={new Date().toISOString().split("T")[0]} // Prevent selecting past dates
                 />
@@ -195,6 +210,7 @@ const ItemRentalPage: React.FC = () => {
                   id="endDate"
                   value={endDate ? endDate.toISOString().split("T")[0] : ""}
                   onChange={handleEndDateChange}
+                  onClick={handleInputClick} // Added onClick handler
                   className="w-full border border-gray-300 rounded px-3 py-2"
                   min={startDate ? startDate.toISOString().split("T")[0] : new Date().toISOString().split("T")[0]} // Prevent selecting dates before start date or past dates
                 />

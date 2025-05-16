@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { User } from "./client/types.gen";
 import { RegistrationInfo } from "./dto/RegistrationInfo";
 
@@ -18,8 +18,28 @@ const AppContext = createContext<AppContextType>({
 
 export function AppContextProvider({ children }: { children: React.ReactNode }) {
 
-    const [user, setUser] = useState<User | undefined>(undefined);
+    const [user, setUser] = useState<User | undefined>(() => {
+        const storedUser = sessionStorage.getItem('user');
+        if (storedUser) {
+            try {
+                return JSON.parse(storedUser) as User;
+            } catch (error) {
+                console.error("Error parsing user from sessionStorage:", error);
+                sessionStorage.removeItem('user'); // Clear invalid data
+                return undefined;
+            }
+        }
+        return undefined;
+    });
     const [registrationInfo, setRegistrationInfo] = useState<RegistrationInfo | undefined>(undefined);
+
+    useEffect(() => {
+        if (user) {
+            sessionStorage.setItem('user', JSON.stringify(user));
+        } else {
+            sessionStorage.removeItem('user');
+        }
+    }, [user]);
 
     const AppContextValue: AppContextType = {
         user,

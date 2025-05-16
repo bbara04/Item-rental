@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-// import axios from 'axios'; // Removed axios import
-import { RentingTransaction } from '../../../dto/RentingTransaction';
-// import { RentingStatus } from '../../../dto/RentingTransaction'; // Removed RentingStatus import
-// import { ItemCategory } from '../../../dto/ItemCategory'; // Removed ItemCategory import
 import { format } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { TransactionResponse } from '../../../client';
+import {
+  getAllUserTransactions, // Changed from getTransactions
+  patchTransactionStatusById
+} from '../../../client/sdk.gen';
 
 // Helper function to format date strings (assuming ISO format)
 const formatDate = (dateString: string | null | undefined) => {
@@ -15,138 +16,97 @@ const formatDate = (dateString: string | null | undefined) => {
   }
 };
 
-// Mock data for pending rental requests - Adjusted to match DTOs
-const mockPendingRentals: RentingTransaction[] = [
-  {
-    id: 101,
-    transactionType: 'RENTAL',
-    status: 'PENDING', // Use string status
-    rentedItem: { 
-      id: 1, 
-      name: 'Laptop Pro X', 
-      category: 'LAPTOP', // Use string category
-      costPerDay: 5000, 
-      availability: 10, 
-      description: '...', 
-      image: { id: 1, url: 'https://via.placeholder.com/150/92c952', createdAt: '', updatedAt: '' },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    renterUser: { 
-      id: 5, 
-      firstName: 'Alice', 
-      lastName: 'Smith', 
-      email: 'alice.s@example.com', 
-      role: 'USER',
-      // Add other required User fields with placeholder/null values
-      balance: { id: 1, amount: 10000, createdAt: '', updatedAt: '' },
-      userName: 'alice.s',
-      loginType: 'BASIC',
-      university: { id: 1, name: 'Tech University', createdAt: '', updatedAt: '' },
-      faculty: { id: 1, name: 'Engineering', createdAt: '', updatedAt: '' },
-      image: null,
-      ratings: null,
-      description: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    startDateTime: '2025-05-10T09:00:00Z', // Use startDateTime
-    endDateTime: '2025-05-15T17:00:00Z', // Use endDateTime
-    remainingDays: null, // Or calculate if needed
-    costPerDay: 5000,
-    curCost: 25000, // Use curCost
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 102,
-    transactionType: 'RENTAL',
-    status: 'PENDING',
-    rentedItem: { 
-      id: 3, 
-      name: 'Smartphone Galaxy S25', 
-      category: 'SMARTPHONE', // Use string category
-      costPerDay: 4000, 
-      availability: 20, 
-      description: '...', 
-      image: { id: 3, url: 'https://via.placeholder.com/150/24f355', createdAt: '', updatedAt: '' },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    renterUser: { 
-      id: 8, 
-      firstName: 'Bob', 
-      lastName: 'Johnson', 
-      email: 'bob.j@example.com', 
-      role: 'USER',
-      // Add other required User fields with placeholder/null values
-      balance: { id: 2, amount: 5000, createdAt: '', updatedAt: '' },
-      userName: 'bob.j',
-      loginType: 'GOOGLE',
-      university: { id: 1, name: 'Tech University', createdAt: '', updatedAt: '' },
-      faculty: { id: 2, name: 'Business', createdAt: '', updatedAt: '' },
-      image: null,
-      ratings: null,
-      description: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    startDateTime: '2025-05-12T10:00:00Z',
-    endDateTime: '2025-05-19T10:00:00Z',
-    remainingDays: null,
-    costPerDay: 4000,
-    curCost: 28000,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
 const RentalApprovalsPage: React.FC = () => {
-  // const backendAddress = import.meta.env.VITE_BACKEND_ADDRESS; // No longer needed
-  
-  const [pendingRentals, setPendingRentals] = useState<RentingTransaction[]>([]);
-  const [loading, setLoading] = useState(true); // Removed loading state
+  const [pendingRentals, setPendingRentals] = useState<TransactionResponse[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
-  // Fetch pending rentals (using mock data)
+  // Fetch pending rentals from API
   useEffect(() => {
     fetchPendingRentals();
   }, []);
   
-  const fetchPendingRentals = () => {
-    // Simulate API call delay
+  const fetchPendingRentals = async () => {
     setLoading(true);
-    setTimeout(() => {
-      // Filter mock data to only show pending rentals
-      setPendingRentals(mockPendingRentals.filter(r => r.status === 'PENDING'));
-      setError(null);
+    setError(null);
+    
+    try {
+      // Request pending transactions from the API
+      const { data, error: apiError } = await getAllUserTransactions();
+      
+      if (apiError) {
+        setError(`Failed to fetch pending rentals: ${apiError.toString || 'Unknown error'}`);
+        setPendingRentals([]);
+      } else if (data) {
+        const pendingTransactions = data.filter((transaction) => transaction.status === 'STARTED');
+        setPendingRentals(pendingTransactions);
+      }
+    } catch (err) {
+      console.error('Error fetching pending rentals:', err);
+      setError('An unexpected error occurred while fetching pending rentals');
+      setPendingRentals([]);
+    } finally {
       setLoading(false);
-    }, 600); // 0.6 second delay
+    }
   };
   
-  const handleApprove = (id: number) => {
-    // Simulate API call delay
-    setTimeout(() => {
-      setPendingRentals(prevRentals =>
-        prevRentals.map(rental =>
-          rental.id === id ? { ...rental, status: 'APPROVED' } : rental // Use string status
-        ).filter(r => r.status === 'PENDING') // Keep only pending ones in the view
-      );
-      // Optionally, you might want to move approved items to a different list or view
-    }, 300);
+  const handleApprove = async (id: number) => {
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+    
+    try {
+      const { data, error: apiError } = await patchTransactionStatusById({
+        path: { id: id.toString() },
+        body: { 
+          id: id,
+          status: 'APPROVED'
+         }
+      });
+      
+      if (apiError) {
+        setError(`Failed to approve rental: ${apiError.status || 'Unknown error'}`);
+      } else {
+        setSuccessMessage(`Rental #${id} successfully approved`);
+        // Refresh the list to remove the approved rental
+        fetchPendingRentals();
+      }
+    } catch (err) {
+      console.error('Error approving rental:', err);
+      setError('An unexpected error occurred while approving the rental');
+    } finally {
+      setLoading(false);
+    }
   };
   
-  const handleDeny = (id: number) => {
-    // Simulate API call delay
-    setTimeout(() => {
-      setPendingRentals(prevRentals =>
-        prevRentals.map(rental =>
-          rental.id === id ? { ...rental, status: 'DENIED' } : rental // Use string status
-        ).filter(r => r.status === 'PENDING') // Keep only pending ones in the view
-      );
-      // Optionally, handle denied items (e.g., move to history)
-    }, 300);
+  const handleDeny = async (id: number) => {
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+    
+    try {
+      const { data, error: apiError } = await patchTransactionStatusById({
+        path: { id: id.toString() },
+        body: {
+          id: id, 
+          status: 'DECLINED'
+         }
+      });
+      
+      if (apiError) {
+        setError(`Failed to deny rental: ${apiError.status || 'Unknown error'}`);
+      } else {
+        setSuccessMessage(`Rental #${id} successfully denied`);
+        // Refresh the list to remove the denied rental
+        fetchPendingRentals();
+      }
+    } catch (err) {
+      console.error('Error denying rental:', err);
+      setError('An unexpected error occurred while denying the rental');
+    } finally {
+      setLoading(false);
+    }
   };
   
   return (
@@ -165,6 +125,17 @@ const RentalApprovalsPage: React.FC = () => {
         </div>
       )}
       
+      {/* Refresh button */}
+      <div className="mb-4">
+        <button 
+          onClick={fetchPendingRentals}
+          className="px-4 py-2 bg-blue-500 text-white font-medium rounded hover:bg-blue-600 transition"
+          disabled={loading}
+        >
+          {loading ? 'Refreshing...' : 'Refresh List'}
+        </button>
+      </div>
+      
       {/* Rental Requests List */}
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
@@ -173,7 +144,6 @@ const RentalApprovalsPage: React.FC = () => {
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                {/* Removed Quantity Header */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rental Period</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cost</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -203,32 +173,34 @@ const RentalApprovalsPage: React.FC = () => {
                   <tr key={rental.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        {rental.renterUser.firstName} {rental.renterUser.lastName} {/* Use renterUser */}
+                        {rental.user.firstName} {rental.user.lastName}
                       </div>
-                      <div className="text-sm text-gray-500">{rental.renterUser.email}</div> {/* Use renterUser */}
+                      <div className="text-sm text-gray-500">{rental.user.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{rental.rentedItem.name}</div> {/* Use rentedItem */}
-                      <div className="text-sm text-gray-500">{rental.rentedItem.category}</div> {/* Use rentedItem */}
+                      <div className="text-sm font-medium text-gray-900">{rental.item.name}</div>
+                      <div className="text-sm text-gray-500">{rental.item.categories}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div>From: {formatDate(rental.startDateTime)}</div> {/* Use startDateTime */}
-                      <div>To: {formatDate(rental.endDateTime)}</div> {/* Use endDateTime */}
+                      <div>From: {formatDate(rental.startDate)}</div>
+                      <div>To: {formatDate(rental.endDate)}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {rental.curCost} HUF {/* Use curCost */}
+                      {rental.item.costPerDay} Huf/day
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleApprove(rental.id)}
                           className="px-3 py-1 bg-green-500 text-white text-xs font-medium rounded hover:bg-green-600 transition"
+                          disabled={loading}
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => handleDeny(rental.id)}
                           className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded hover:bg-red-600 transition"
+                          disabled={loading}
                         >
                           Deny
                         </button>

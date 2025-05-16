@@ -57,7 +57,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        '204':
+        '404':
           description: User not found (no content)
         default:
           content:
@@ -88,6 +88,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '404':
+          description: User not found (no content)
         default:
           content:
             application/problem+json:
@@ -123,6 +125,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '404':
+          description: User not found (no content)
         default:
           content:
             application/problem+json:
@@ -147,9 +151,11 @@ paths:
             type: string
       responses:
         '204':
-          description: User successfully deleted
+          description: User successfully deleted (no content)
           content:
             application/json: {}
+        '404':
+          description: User not found (no content)
         default:
           content:
             application/problem+json:
@@ -160,7 +166,7 @@ paths:
   /user/{id}/renting-transactions:
     get:
       summary: Get all renting transactions of the user
-      operationId: getAllUserTransactions
+      operationId: getAllUserTransactionsByUserId
       tags:
         - Transaction Management
       parameters:
@@ -181,6 +187,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TransactionResponse'
+        '404':
+          description: User not found (no content)
         default:
           content:
             application/problem+json:
@@ -224,6 +232,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionResponse'
+        '500':
+          description: Internal server error (no content)
         default:
           content:
             application/problem+json:
@@ -260,6 +270,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionResponse'
+        '500':
+          description: Internal server error (no content)
         default:
           content:
             application/problem+json:
@@ -295,6 +307,32 @@ paths:
           description: Transaction found, operation successfully commited
           content:
             application/json: {}
+        '404':
+          description: Transaction not found (no content)
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
+  /transactions/all:
+    get:
+      summary: Get all renting transactions
+      operationId: getAllUserTransactions
+      tags:
+        - Transaction Management
+      responses:
+        '200':
+          description: Get all renting transaction
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+        '404':
+          description: Transaction not found (no content)
         default:
           content:
             application/problem+json:
@@ -324,6 +362,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionResponse'
+        '404':
+          description: Transaction not found (no content)
         default:
           content:
             application/problem+json:
@@ -359,6 +399,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionResponse'
+        '500':
+          description: Internal server error (no content)
         default:
           content:
             application/problem+json:
@@ -396,6 +438,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionResponse'
+        '500':
+          description: Internal server error (no content)
         default:
           content:
             application/problem+json:
@@ -464,7 +508,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        '400':
+        '500':
           description: Bad request - invalid input parameters
           content:
             text/plain:
@@ -583,6 +627,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorModel'
           description: Basic Error Response
+
+  /items/categories/all:
+    get:
+      summary: Get all item categories
+      operationId: getAllCategories
+      tags:
+        - Item Management
+      responses:
+        '200':
+          description: List of all item categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemCategory'
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Basic Error Response
+
 
   /items/by-category:
     get:
@@ -752,6 +819,7 @@ components:
       enum:
         - STARTED
         - PENDING
+        - INPROGRESS
         - APPROVED
         - DECLINED
         - ARCHIVED

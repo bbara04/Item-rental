@@ -127,7 +127,7 @@ export type TransactionResponse = {
      * Item's requested number
      */
     numberOfItems: number;
-    status: 'STARTED' | 'PENDING' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
+    status: 'STARTED' | 'PENDING' | 'INPROGRESS' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
     user: User;
     startDate: string;
     endDate: string;
@@ -307,7 +307,7 @@ export type TransactionPatch = {
      * Unique identifier for the user of the transaction
      */
     userId?: string;
-    status?: 'STARTED' | 'PENDING' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
+    status?: 'STARTED' | 'PENDING' | 'INPROGRESS' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
     /**
      * Item's requested number
      */
@@ -324,7 +324,7 @@ export type TransactionStatusPatch = {
      * Unique identifier for the transaction
      */
     id: number;
-    status: 'STARTED' | 'PENDING' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
+    status: 'STARTED' | 'PENDING' | 'INPROGRESS' | 'APPROVED' | 'DECLINED' | 'ARCHIVED' | 'DELETED' | 'OVERDUE';
 };
 
 /**
@@ -376,6 +376,30 @@ export type UniversitiesResponse = {
     faculties: Array<Faculty>;
 };
 
+/**
+ * Represents an item in the system with all their information
+ */
+export type ItemCategory = {
+    /**
+     * Unique identifier for the ItemCategory
+     */
+    id: number;
+    /**
+     * ItemCategory's name in the system
+     */
+    name: string;
+    /**
+     * ItemCategory's description in the system
+     */
+    description: string;
+    parentCategory: ItemCategory;
+    /**
+     * If true, this Boolean indicates that the category is a root of categories
+     */
+    isRoot: boolean;
+    image: Image;
+};
+
 export type DeleteUserTransactionData = {
     body?: never;
     path: {
@@ -395,6 +419,10 @@ export type DeleteUserTransactionData = {
 
 export type DeleteUserTransactionErrors = {
     /**
+     * Transaction not found (no content)
+     */
+    404: unknown;
+    /**
      * Basic Error Response
      */
     default: ErrorModel;
@@ -411,7 +439,7 @@ export type DeleteUserTransactionResponses = {
 
 export type DeleteUserTransactionResponse = DeleteUserTransactionResponses[keyof DeleteUserTransactionResponses];
 
-export type GetAllUserTransactionsData = {
+export type GetAllUserTransactionsByUserIdData = {
     body?: never;
     path: {
         /**
@@ -423,23 +451,27 @@ export type GetAllUserTransactionsData = {
     url: '/user/{id}/renting-transactions';
 };
 
-export type GetAllUserTransactionsErrors = {
+export type GetAllUserTransactionsByUserIdErrors = {
+    /**
+     * User not found (no content)
+     */
+    404: Array<TransactionResponse>;
     /**
      * Basic Error Response
      */
     default: ErrorModel;
 };
 
-export type GetAllUserTransactionsError = GetAllUserTransactionsErrors[keyof GetAllUserTransactionsErrors];
+export type GetAllUserTransactionsByUserIdError = GetAllUserTransactionsByUserIdErrors[keyof GetAllUserTransactionsByUserIdErrors];
 
-export type GetAllUserTransactionsResponses = {
+export type GetAllUserTransactionsByUserIdResponses = {
     /**
      * List of all user's renting transactions
      */
     200: Array<TransactionResponse>;
 };
 
-export type GetAllUserTransactionsResponse = GetAllUserTransactionsResponses[keyof GetAllUserTransactionsResponses];
+export type GetAllUserTransactionsByUserIdResponse = GetAllUserTransactionsByUserIdResponses[keyof GetAllUserTransactionsByUserIdResponses];
 
 export type UpdateUserTransactionData = {
     body: TransactionRequest;
@@ -459,6 +491,10 @@ export type UpdateUserTransactionData = {
 };
 
 export type UpdateUserTransactionErrors = {
+    /**
+     * Internal server error (no content)
+     */
+    500: TransactionResponse;
     /**
      * Basic Error Response
      */
@@ -489,6 +525,10 @@ export type CreateUserTransactionData = {
 };
 
 export type CreateUserTransactionErrors = {
+    /**
+     * Internal server error (no content)
+     */
+    500: TransactionResponse;
     /**
      * Basic Error Response
      */
@@ -577,13 +617,13 @@ export type RegisterByBasicData = {
 
 export type RegisterByBasicErrors = {
     /**
-     * Bad request - invalid input parameters
-     */
-    400: string;
-    /**
      * Conflict - user already exists or registration failed
      */
     409: string;
+    /**
+     * Bad request - invalid input parameters
+     */
+    500: string;
     /**
      * Basic Error Response
      */
@@ -648,6 +688,10 @@ export type DeleteUserByIdData = {
 
 export type DeleteUserByIdErrors = {
     /**
+     * User not found (no content)
+     */
+    404: unknown;
+    /**
      * Basic Error Response
      */
     default: ErrorModel;
@@ -657,7 +701,7 @@ export type DeleteUserByIdError = DeleteUserByIdErrors[keyof DeleteUserByIdError
 
 export type DeleteUserByIdResponses = {
     /**
-     * User successfully deleted
+     * User successfully deleted (no content)
      */
     204: void;
 };
@@ -677,6 +721,10 @@ export type GetUserdataByIdData = {
 };
 
 export type GetUserdataByIdErrors = {
+    /**
+     * User not found (no content)
+     */
+    404: User;
     /**
      * Basic Error Response
      */
@@ -708,6 +756,10 @@ export type UpdateUserdataByIdData = {
 
 export type UpdateUserdataByIdErrors = {
     /**
+     * User not found (no content)
+     */
+    404: User;
+    /**
      * Basic Error Response
      */
     default: ErrorModel;
@@ -737,6 +789,10 @@ export type GetUserTransactionByIdData = {
 };
 
 export type GetUserTransactionByIdErrors = {
+    /**
+     * Transaction not found (no content)
+     */
+    404: TransactionResponse;
     /**
      * Basic Error Response
      */
@@ -768,6 +824,10 @@ export type PatchTransactionByIdData = {
 
 export type PatchTransactionByIdErrors = {
     /**
+     * Internal server error (no content)
+     */
+    500: TransactionResponse;
+    /**
      * Basic Error Response
      */
     default: ErrorModel;
@@ -797,6 +857,10 @@ export type PatchTransactionStatusByIdData = {
 };
 
 export type PatchTransactionStatusByIdErrors = {
+    /**
+     * Internal server error (no content)
+     */
+    500: TransactionResponse;
     /**
      * Basic Error Response
      */
@@ -918,6 +982,10 @@ export type FindByEmailData = {
 
 export type FindByEmailErrors = {
     /**
+     * User not found (no content)
+     */
+    404: User;
+    /**
      * Basic Error Response
      */
     default: ErrorModel;
@@ -930,10 +998,6 @@ export type FindByEmailResponses = {
      * User found
      */
     200: User;
-    /**
-     * User not found (no content)
-     */
-    204: User;
 };
 
 export type FindByEmailResponse = FindByEmailResponses[keyof FindByEmailResponses];
@@ -987,6 +1051,60 @@ export type GetAllUniversitiesFacultiesResponses = {
 };
 
 export type GetAllUniversitiesFacultiesResponse = GetAllUniversitiesFacultiesResponses[keyof GetAllUniversitiesFacultiesResponses];
+
+export type GetAllUserTransactionsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/transactions/all';
+};
+
+export type GetAllUserTransactionsErrors = {
+    /**
+     * Transaction not found (no content)
+     */
+    404: Array<TransactionResponse>;
+    /**
+     * Basic Error Response
+     */
+    default: ErrorModel;
+};
+
+export type GetAllUserTransactionsError = GetAllUserTransactionsErrors[keyof GetAllUserTransactionsErrors];
+
+export type GetAllUserTransactionsResponses = {
+    /**
+     * Get all renting transaction
+     */
+    200: Array<TransactionResponse>;
+};
+
+export type GetAllUserTransactionsResponse = GetAllUserTransactionsResponses[keyof GetAllUserTransactionsResponses];
+
+export type GetAllCategoriesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/items/categories/all';
+};
+
+export type GetAllCategoriesErrors = {
+    /**
+     * Basic Error Response
+     */
+    default: ErrorModel;
+};
+
+export type GetAllCategoriesError = GetAllCategoriesErrors[keyof GetAllCategoriesErrors];
+
+export type GetAllCategoriesResponses = {
+    /**
+     * List of all item categories
+     */
+    200: Array<ItemCategory>;
+};
+
+export type GetAllCategoriesResponse = GetAllCategoriesResponses[keyof GetAllCategoriesResponses];
 
 export type GetItemsByCategoryData = {
     body?: never;

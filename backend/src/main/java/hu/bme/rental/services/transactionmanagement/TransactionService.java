@@ -106,4 +106,10 @@ public class TransactionService {
         transactionRepository.saveAndFlush(presTransaction.get());
         return transactionMapper.toApiDto(presTransaction.get());
     }
+
+    public List<TransactionResponse> getAllTransaction() {
+        List<RentingTransaction> presTransactions = transactionRepository.findAll();
+
+        return transactionMapper.toApiDtoList(presTransactions);
+    }
 }

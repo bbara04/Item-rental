@@ -94,7 +94,7 @@ public class UserManagementService {
             newAppUser.setFaculty(faculty);
             newAppUser.setUniversity(university);
 
-            jsonLogger.logAsJson("Wanna be saved AppUser", newAppUser);
+            //jsonLogger.logAsJson("Wanna be saved AppUser", newAppUser);
 
             // Save the AppUser
             userRepository.save(newAppUser);
