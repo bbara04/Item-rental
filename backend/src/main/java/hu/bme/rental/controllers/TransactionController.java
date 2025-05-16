@@ -32,7 +32,14 @@ public class TransactionController implements TransactionManagementApi {
     }
 
     @Override
-    public ResponseEntity<List<TransactionResponse>> getAllUserTransactions(String id) {
+    public ResponseEntity<List<TransactionResponse>> getAllUserTransactions() {
+        List<TransactionResponse> responses = transactionService.getAllTransaction();
+        return responses == null ?
+                ResponseEntity.internalServerError().build()
+                : ResponseEntity.ok(responses);
+    }
+
+    public ResponseEntity<List<TransactionResponse>> getAllUserTransactionsByUserId(String id) {
         List<TransactionResponse> apiTransactions = transactionService.getAllTransactionsByUserId(id);
         return apiTransactions == null ?
                 ResponseEntity.notFound().build()
