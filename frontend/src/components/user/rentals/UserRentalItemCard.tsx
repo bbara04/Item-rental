@@ -11,7 +11,7 @@ const getRemainingDays = (endDate: string): number | null => {
     try {
         const due = parseISO(endDate);
         const now = new Date();
-        const days = differenceInDays(due, now);
+        const days = differenceInDays(due, now) + 1; // +1 to include the due date itself
         return days > 0 ? days : 0;
     } catch (e) {
         console.error("Error parsing date:", e);
@@ -44,7 +44,7 @@ const UserRentalItemCard: React.FC<UserRentalItemCardProps> = ({ itemTransaction
             <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="text-lg font-semibold text-gray-800">{itemTransaction.item.name}</h3>
-                    <p className="text-sm text-gray-600">${itemTransaction.item.costPerDay}/day</p>
+                    <p className="text-sm text-gray-600">{itemTransaction.item.costPerDay}ft/day</p>
                 </div>
                 <div className="text-sm text-gray-600 space-y-1">
                      <p>

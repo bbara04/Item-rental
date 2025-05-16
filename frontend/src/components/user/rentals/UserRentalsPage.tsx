@@ -11,6 +11,10 @@ function isTransactionOverdue(transaction: TransactionResponse): boolean {
   return transaction.status === "OVERDUE";
 };
 
+function isTransactionPending(transaction: TransactionResponse): boolean {
+  return transaction.status === "STARTED";
+};
+
 function isTransactionOld(transaction: TransactionResponse): boolean {
   return transaction.status === "ARCHIVED" || transaction.status === "DECLINED";
 };
@@ -19,6 +23,7 @@ const UserRentalsPage: React.FC = () => {
   const { user } = useAppContext();
   const [activeTransactions, setActiveTransactions] = useState<TransactionResponse[]>([]);
   const [overdueTransactions, setOverdueTransactions] = useState<TransactionResponse[]>([]);
+  const [pendingTransactions, setPendingTransactions] = useState<TransactionResponse[]>([]);
   const [oldTransactions, setOldTransactions] = useState<TransactionResponse[]>([]);
 
   useEffect(() => {
@@ -39,9 +44,11 @@ const UserRentalsPage: React.FC = () => {
         }
         const active = data.filter(isTransactionActive);
         const overdue = data.filter(isTransactionOverdue);
+        const pending = data.filter(isTransactionPending);
         const old = data.filter(isTransactionOld);
         setActiveTransactions(active);
         setOverdueTransactions(overdue);
+        setPendingTransactions(pending);
         setOldTransactions(old);
       } else {
         console.log("user's id is undefined");
@@ -83,6 +90,23 @@ const UserRentalsPage: React.FC = () => {
           </div>
         ) : (
           <p className="text-gray-500 italic text-center">You have no active rentals.</p>
+        )}
+      </section>
+
+      {/* Pending Rentals Section */}
+      <section className="mb-10">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="inline-block w-2 h-6 bg-yellow-500 rounded-full"></span>
+          <h2 className="text-2xl font-semibold text-gray-800 tracking-tight">Pending Rentals</h2>
+        </div>
+        {pendingTransactions.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {pendingTransactions.map((item) => (
+              <UserRentalItemCard key={`${item.id}-pending`} itemTransaction={item} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 italic text-center">You have no pending rentals.</p>
         )}
       </section>
 
