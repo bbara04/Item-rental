@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../AppContextProvider";
 import BlankProfilePic from '../assets/blank_profile_pic.png';
-import Logo from "../assets/bme_logo_kicsi.jpg";
+import Logo from "../assets/bme_logo.png";
 import useResponsiveWidth from "../hooks/useResponsiveWidth";
 
 const pages = ['Renting', 'About Us', 'Contact Us'];
