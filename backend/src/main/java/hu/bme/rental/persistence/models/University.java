@@ -40,6 +40,9 @@ public class University {
     @JoinColumn(name = "image_id")
     private Image image;
 
+    @Column(name = "color_code")
+    private String colorCode;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

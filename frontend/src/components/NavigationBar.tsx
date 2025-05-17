@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../AppContextProvider";
 import BlankProfilePic from '../assets/blank_profile_pic.png';
-import Logo from "../assets/bme_logo_kicsi.jpg";
 import useResponsiveWidth from "../hooks/useResponsiveWidth";
 
 const pages = ['Renting', 'About Us', 'Contact Us'];
@@ -22,7 +21,7 @@ const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>
 export function NavigationBar() {
 
     const width = useResponsiveWidth();
-    const { setUser } = useAppContext();
+    const { user, setUser } = useAppContext();
     const navigate = useNavigate();
 
     const [showSettings, setShowSettings] = useState(false);
@@ -47,6 +46,11 @@ export function NavigationBar() {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
+    if (!user) {
+        navigate('/login');
+        return null;
+    }
 
 
     const handlePageClick = (route: string) => {
@@ -119,9 +123,9 @@ export function NavigationBar() {
             {/* Logo */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <img
-                    className="w-40"
-                    src={Logo}
-                    alt="Logo"
+                    className="h-14"
+                    src={user.university.image && user.university.image.imageData && user.university.image.contentType ? `data:${user.university.image.contentType};base64,${user.university.image.imageData}` : "https://placehold.co/600x400"}
+                    alt={user.university.image?.fileName ?? user.university.name ?? "Item image"}
                 />
             </div>
             {/* Profile Button and Settings Dropdown */}
