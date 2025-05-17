@@ -1362,6 +1362,10 @@ components:
           example: "bme.hu"
         image:
           $ref: '#/components/schemas/Image'
+        colorCode:
+          type: string
+          description: Main color of the university in hex code
+          example: "#880808"
 
     Faculty:
       type: object

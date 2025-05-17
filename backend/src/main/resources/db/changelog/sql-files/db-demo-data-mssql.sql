@@ -7,9 +7,9 @@ INSERT INTO images (entity_type, content_type, file_name) VALUES
                                                               ('item', 'image/jpeg', 'konyv.jpg'),
                                                               ('appuser', 'image/png', 'user1_avatar.png'),
                                                               ('appuser', 'image/png', 'user2_avatar.png');
-INSERT INTO universities (uni_code, name, address, website, description, image_id) VALUES
-                                                                                       ('BME', 'Budapesti Műszaki és Gazdaságtudományi Egyetem', '1111 Budapest, Műegyetem rkp. 3.', 'https://www.bme.hu', 'A BME Magyarország legrégebbi műszaki felsőoktatási intézménye.', 1),
-                                                                                       ('ELTE', 'Eötvös Loránd Tudományegyetem', '1053 Budapest, Egyetem tér 1-3.', 'https://www.elte.hu', 'Az ELTE Magyarország legrégebbi, folyamatosan működő egyeteme.', 2);
+INSERT INTO universities (uni_code, name, address, website, description, image_id, color_code) VALUES
+                                                                                       ('BME', 'Budapesti Műszaki és Gazdaságtudományi Egyetem', '1111 Budapest, Műegyetem rkp. 3.', 'https://www.bme.hu', 'A BME Magyarország legrégebbi műszaki felsőoktatási intézménye.', 1, '#880808'),
+                                                                                       ('ELTE', 'Eötvös Loránd Tudományegyetem', '1053 Budapest, Egyetem tér 1-3.', 'https://www.elte.hu', 'Az ELTE Magyarország legrégebbi, folyamatosan működő egyeteme.', 2, '#E1C16E');
 INSERT INTO faculties (university_id, name, code, description) VALUES
                                                                    (1, 'Villamosmérnöki és Informatikai Kar', 'VIK', 'A BME legnagyobb kara, villamosmérnöki és informatikai képzést nyújt.'),
                                                                    (1, 'Gépészmérnöki Kar', 'GPK', 'Gépészmérnöki képzést nyújtó kar.'),
