@@ -161,6 +161,10 @@ export type University = {
      */
     website?: string;
     image?: Image;
+    /**
+     * Main color of the university in hex code
+     */
+    colorCode?: string;
 };
 
 /**
