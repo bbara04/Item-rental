@@ -27,6 +27,7 @@ CREATE TABLE universities (
     name VARCHAR(255) NOT NULL,
     address VARCHAR(255),
     website VARCHAR(255),
+    color_code VARCHAR(255),
     description TEXT,
     image_id BIGINT REFERENCES images(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

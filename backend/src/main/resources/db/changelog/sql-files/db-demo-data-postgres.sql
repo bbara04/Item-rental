@@ -1,13 +1,14 @@
 -- Insert demo data (compatible with PostgreSQL)
 INSERT INTO images (entity_type, content_type, file_name) VALUES
-    ('university', 'image/jpeg', 'bme_logo.jpg'),
-    ('university', 'image/jpeg', 'elte_logo.jpg'),
+    ('university', 'image/png', 'bme_logo.png'), -- Corrected file name to .png and content_type to image/png
+    ('university', 'image/png', 'elte_logo.png'), -- Corrected file name to .png and content_type to image/png
     ('faculty', 'image/png', 'vik_logo.png'),
     ('faculty', 'image/png', 'ttk_logo.png'),
     ('item', 'image/jpeg', 'laptop.jpg'),
     ('item', 'image/jpeg', 'konyv.jpg'),
     ('appuser', 'image/png', 'user1_avatar.png'),
-    ('appuser', 'image/png', 'user2_avatar.png');
+    ('appuser', 'image/png', 'user2_avatar.png'), -- Added comma for the next line
+    ('university', 'image/png', 'corvinus_logo.png'); -- Added entry for corvinus_logo.png
 
 INSERT INTO universities (uni_code, name, address, website, description, image_id) VALUES
     ('BME', 'Budapesti Műszaki és Gazdaságtudományi Egyetem', '1111 Budapest, Műegyetem rkp. 3.', 'https://www.bme.hu', 'A BME Magyarország legrégebbi műszaki felsőoktatási intézménye.', 1),

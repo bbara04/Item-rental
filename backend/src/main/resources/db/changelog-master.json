@@ -4,6 +4,11 @@
       "include": {
         "file": "db/changelog/20250327-init-rental-api.json"
       }
+    },
+    {
+      "include": {
+        "file": "db/changelog/002_update_images_data.json"
+      }
     }
   ]
 }
