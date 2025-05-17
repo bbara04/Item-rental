@@ -32,6 +32,7 @@ CREATE TABLE universities (
                         website NVARCHAR(255)       NULL,
                         description NVARCHAR(MAX)   NULL,
                         image_id BIGINT             NULL,
+                        color_code NVARCHAR(255)    NULL,
 
 
 
