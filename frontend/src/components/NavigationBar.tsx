@@ -137,13 +137,18 @@ export function NavigationBar() {
                     ref={settingsButton}
                     onClick={() => setShowSettings(!showSettings)}
                     // Using rounded-full, changed focus ring for white nav
-                    className="flex items-center rounded-full hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-[var(--user-bg-color)] transition-opacity"
+                    className="flex items-center rounded-full hover:opacity-80 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-[var(--user-bg-color)] transition-opacity"
                     aria-expanded={showSettings}
                     aria-controls="settings-menu"
                     style={style} // Added style
                 >
                     {/* Profile pic with border, changed border color for white nav */}
-                    <img className="h-10 w-10 rounded-full border-2 border-[var(--user-bg-color)]" src={BlankProfilePic} alt="Profile" style={style} />
+                    <img 
+                        className="h-12 w-12 rounded-full border-1 border-[var(--user-bg-color)]" 
+                        src={user && user.image && user.image.imageData && user.image.contentType ? `data:${user.image.contentType};base64,${user.image.imageData}` : BlankProfilePic} 
+                        alt="Profile" 
+                        style={style} 
+                    />
                 </button>
                 {showSettings && (
                     <ul
