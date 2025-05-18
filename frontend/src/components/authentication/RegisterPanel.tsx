@@ -1,12 +1,14 @@
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../AppContextProvider";
+import { useAppContext } from '../../AppContextProvider';
 import { RegisterType, RegistrationInfo } from "../../dto/RegistrationInfo";
 import { SimpleUser } from "../../dto/SimpleUser";
 
 
 const RegisterPanel: FC = () => {
   const { setRegistrationInfo } = useAppContext();
+  const { baseColor } = useAppContext();
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties;
   const navigate = useNavigate();
 
   const [username, setUsername] = useState<string>('');
@@ -14,6 +16,8 @@ const RegisterPanel: FC = () => {
   const [firstName, setFirstName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleRegisterButton = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,9 +58,10 @@ const RegisterPanel: FC = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-[var(--user-bg-color)] focus:ring-1 focus:ring-[var(--user-bg-color)]"
               placeholder="Felhasználónév"
               required
+              style={style}
             />
           </div>
 
@@ -69,9 +74,10 @@ const RegisterPanel: FC = () => {
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-[var(--user-bg-color)] focus:ring-1 focus:ring-[var(--user-bg-color)]"
                 placeholder="Vezetéknév"
                 required
+                style={style}
               />
             </div>
             <div>
@@ -82,9 +88,10 @@ const RegisterPanel: FC = () => {
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-[var(--user-bg-color)] focus:ring-1 focus:ring-[var(--user-bg-color)]"
                 placeholder="Keresztnév"
                 required
+                style={style}
               />
             </div>
           </div>
@@ -97,9 +104,10 @@ const RegisterPanel: FC = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-[var(--user-bg-color)] focus:ring-1 focus:ring-[var(--user-bg-color)]"
               placeholder="pelda@email.com"
               required
+              style={style}
             />
           </div>
 
@@ -111,9 +119,10 @@ const RegisterPanel: FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-[var(--user-bg-color)] focus:ring-1 focus:ring-[var(--user-bg-color)]"
               placeholder="********"
               required
+              style={style}
             />
           </div>
 

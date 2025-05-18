@@ -1,8 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAppContext } from "../../../AppContextProvider";
 import { Item } from "../../../client";
 
 const RentalItemCard: React.FC<Item> = (item) => {
+  const { baseColor } = useAppContext();
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties;
+
   return (
     <div className="grid grid-rows-[auto_auto] grid-cols-1 bg-white shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 max-w-[300px] max-h-fit content-between">
       <div className="flex flex-col max-h-fit">
@@ -27,11 +31,14 @@ const RentalItemCard: React.FC<Item> = (item) => {
         </p>
         <div className="flex justify-evenly">
           <p className="text-sm text-center text-gray-600 mt-2 font-semibold">
-            Price/Day: <span className="font-bold text-blue-600">${item.costPerDay}</span>
+            Price/Day: <span 
+              className="font-bold text-[var(--user-bg-color)]"
+              style={style}>{item.costPerDay}ft</span>
           </p>
           <Link
             to={`/rent/${item.id}`}
-            className="mt-auto bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+            className="mt-auto bg-[var(--user-bg-color)] text-white text-center py-2 px-4 rounded-md transition duration-300"
+            style={style}
           >
             Rent Now
           </Link>

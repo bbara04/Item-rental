@@ -21,8 +21,9 @@ const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>
 export function NavigationBar() {
 
     const width = useResponsiveWidth();
-    const { user, setUser } = useAppContext();
+    const { user, setUser, baseColor } = useAppContext(); // Added baseColor from context
     const navigate = useNavigate();
+    const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
 
     const [showSettings, setShowSettings] = useState(false);
     const [showPages, setShowPages] = useState(false);
@@ -77,10 +78,11 @@ export function NavigationBar() {
                         <button
                             ref={menuButton}
                             // Increased rounding, changed text and hover background for white nav
-                            className="text-blue-600 p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
+                            className="text-[var(--user-bg-color)] p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--user-bg-color)] transition-colors"
                             onClick={() => setShowPages(!showPages)}
                             aria-expanded={showPages}
                             aria-controls="mobile-menu"
+                            style={style} // Added style
                         >
                             <span className="material-icons">menu</span>
                         </button>
@@ -113,7 +115,8 @@ export function NavigationBar() {
                                 key={page}
                                 onClick={() => handlePageClick(pageRoutes[index])}
                                 // Increased rounding, changed text and hover background for white nav
-                                className="text-blue-600 text-lg font-semibold px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
+                                className="text-[var(--user-bg-color)] text-lg font-semibold px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
+                                style={style} // Added style
                             >
                                 {page}
                             </a>
@@ -134,12 +137,13 @@ export function NavigationBar() {
                     ref={settingsButton}
                     onClick={() => setShowSettings(!showSettings)}
                     // Using rounded-full, changed focus ring for white nav
-                    className="flex items-center rounded-full hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500 transition-opacity"
+                    className="flex items-center rounded-full hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-[var(--user-bg-color)] transition-opacity"
                     aria-expanded={showSettings}
                     aria-controls="settings-menu"
+                    style={style} // Added style
                 >
                     {/* Profile pic with border, changed border color for white nav */}
-                    <img className="h-10 w-10 rounded-full border-2 border-blue-600" src={BlankProfilePic} alt="Profile" />
+                    <img className="h-10 w-10 rounded-full border-2 border-[var(--user-bg-color)]" src={BlankProfilePic} alt="Profile" style={style} />
                 </button>
                 {showSettings && (
                     <ul

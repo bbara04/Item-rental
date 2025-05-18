@@ -7,21 +7,24 @@ type AppContextType = {
     setUser: Dispatch<SetStateAction<User | undefined>>;
     registrationInfo: RegistrationInfo | undefined;
     setRegistrationInfo: Dispatch<SetStateAction<RegistrationInfo | undefined>>;
+    baseColor: string;
 };
 
 const AppContext = createContext<AppContextType>({
         user: undefined,
         setUser: () => {},
         registrationInfo: undefined,
-        setRegistrationInfo: () => {}  
+        setRegistrationInfo: () => {},  
+        baseColor: '#155dfc'
     });
 
 export function AppContextProvider({ children }: { children: React.ReactNode }) {
-
+    const [baseColor, setBaseColor] = useState<string>('#155dfc');
     const [user, setUser] = useState<User | undefined>(() => {
         const storedUser = sessionStorage.getItem('user');
         if (storedUser) {
             try {
+                setBaseColor(JSON.parse(storedUser).university.colorCode);
                 return JSON.parse(storedUser) as User;
             } catch (error) {
                 console.error("Error parsing user from sessionStorage:", error);
@@ -45,7 +48,8 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
         user,
         setUser,
         registrationInfo,
-        setRegistrationInfo
+        setRegistrationInfo,
+        baseColor
     };
 
     return <AppContext.Provider value={AppContextValue}>

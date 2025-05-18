@@ -1,6 +1,9 @@
 const colors = require('tailwindcss/colors')
 
 module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}", // Add this line to scan your source files
+  ],
   theme: {
     colors: {
       gray: colors.coolGray,

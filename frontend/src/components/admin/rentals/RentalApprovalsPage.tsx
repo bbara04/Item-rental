@@ -5,6 +5,7 @@ import {
   getAllUserTransactions, // Changed from getTransactions
   patchTransactionStatusById
 } from '../../../client/sdk.gen';
+import { useAppContext } from '../../../AppContextProvider';
 
 // Helper function to format date strings (assuming ISO format)
 const formatDate = (dateString: string | null | undefined) => {
@@ -21,6 +22,8 @@ const RentalApprovalsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { baseColor } = useAppContext(); // Added baseColor
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
   
   // Fetch pending rentals from API
   useEffect(() => {
@@ -129,8 +132,9 @@ const RentalApprovalsPage: React.FC = () => {
       <div className="mb-4">
         <button 
           onClick={fetchPendingRentals}
-          className="px-4 py-2 bg-blue-500 text-white font-medium rounded hover:bg-blue-600 transition"
+          className="px-4 py-2 bg-[var(--user-bg-color)] text-white font-medium rounded hover:bg-[var(--user-bg-color)] transition"
           disabled={loading}
+          style={style} // Added style
         >
           {loading ? 'Refreshing...' : 'Refresh List'}
         </button>

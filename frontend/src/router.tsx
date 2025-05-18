@@ -5,7 +5,7 @@ import ManageItemsPage from './components/admin/items/ManageItemsPage';
 import ModifyItemPage from './components/admin/items/ModifyItemPage'; // Import the new component
 import RentalApprovalsPage from './components/admin/rentals/RentalApprovalsPage';
 import UsersAdminPanel from './components/admin/users/UsersAdminPanel';
-import { AdditionalRegistration } from './components/authentication/AdditionalRegistration';
+import AdditionalRegistration from './components/authentication/AdditionalRegistration';
 import LoginPanel from './components/authentication/LoginPanel';
 import RegisterPanel from './components/authentication/RegisterPanel';
 import AboutUsPanel from './components/user/AboutUsPanel';

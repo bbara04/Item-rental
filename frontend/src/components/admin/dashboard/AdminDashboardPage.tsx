@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAppContext } from '../../../AppContextProvider'; // Added import
 
 interface DashboardStats {
   totalItems: number;
@@ -13,6 +14,8 @@ const AdminDashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { baseColor } = useAppContext(); // Added baseColor
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
   
   useEffect(() => {
     fetchDashboardData();
@@ -76,7 +79,7 @@ const AdminDashboardPage: React.FC = () => {
               <span className="text-sm text-gray-500">Pending Approvals</span>
             </div>
             <div className="mt-4 flex justify-between items-center">
-              <span className="text-xl font-semibold text-blue-500">{stats.activeRentals}</span>
+              <span className="text-xl font-semibold text-[var(--user-bg-color)]" style={style}>{stats.activeRentals}</span>
               <span className="text-sm text-gray-500">Active Rentals</span>
             </div>
           </div>

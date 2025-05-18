@@ -20,7 +20,8 @@ function isTransactionOld(transaction: TransactionResponse): boolean {
 };
 
 const UserRentalsPage: React.FC = () => {
-  const { user } = useAppContext();
+  const { user, baseColor } = useAppContext();
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties;
   const [activeTransactions, setActiveTransactions] = useState<TransactionResponse[]>([]);
   const [overdueTransactions, setOverdueTransactions] = useState<TransactionResponse[]>([]);
   const [pendingTransactions, setPendingTransactions] = useState<TransactionResponse[]>([]);
@@ -67,10 +68,14 @@ const UserRentalsPage: React.FC = () => {
     <div className="max-w-screen-lg mx-auto px-2 sm:px-4 py-4 md:py-8 overflow-x-hidden">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
         <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight flex items-center gap-2">
-          <span className="inline-block w-2 h-8 bg-blue-500 rounded-full mr-2"></span>
+          <span 
+            className="inline-block w-2 h-8 bg-[var(--user-bg-color)] rounded-full mr-2"
+            style={style}
+          ></span>
           My Rentals
         </h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center shadow hover:bg-blue-700 active:bg-blue-500 transition duration-200 ease-in-out"
+        <button className="bg-[var(--user-bg-color)] text-white px-4 py-2 rounded-lg flex items-center shadow transition duration-200 ease-in-out"
+            style={style}
             onClick={() => window.location.href = '/'}>
           <span className="mr-1 text-lg font-bold">+</span> New Rental
         </button>

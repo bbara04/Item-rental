@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useAppContext } from '../../AppContextProvider'; // Added import
 
 export default function ContactPanel() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const { baseColor } = useAppContext(); // Added baseColor
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,8 +37,9 @@ export default function ContactPanel() {
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-md px-4 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+                         focus:outline-none focus:ring-2 focus:ring-[var(--user-bg-color)]"
               placeholder="Your name"
+              style={style} // Added style
             />
           </div>
 
@@ -51,8 +55,9 @@ export default function ContactPanel() {
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-md px-4 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+                         focus:outline-none focus:ring-2 focus:ring-[var(--user-bg-color)]"
               placeholder="you@example.com"
+              style={style} // Added style
             />
           </div>
 
@@ -67,8 +72,9 @@ export default function ContactPanel() {
               value={form.subject}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-md px-4 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+                         focus:outline-none focus:ring-2 focus:ring-[var(--user-bg-color)]"
               placeholder="What’s this about?"
+              style={style} // Added style
             />
           </div>
 
@@ -84,15 +90,17 @@ export default function ContactPanel() {
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-md px-4 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+                         focus:outline-none focus:ring-2 focus:ring-[var(--user-bg-color)]"
               placeholder="Write your message here…"
+              style={style} // Added style
             />
           </div>
 
           <button
             type="submit"
-            className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium
+            className="mt-2 bg-[var(--user-bg-color)] hover:bg-blue-700 text-white font-medium
                        px-6 py-2 rounded-md transition"
+            style={style} // Added style
           >
             Send Message
           </button>

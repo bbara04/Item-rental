@@ -1,5 +1,6 @@
 import React from 'react';
-import { User, UserRequest } from '../../client/types.gen';
+import { useAppContext } from '../../AppContextProvider'; // Added import
+import { User, UserRequest } from '../../client'; // Assuming User and UserRequest types are from client
 
 // ProfileEdit komponens - a felhasználói adatok szerkesztéséért felelős
 interface ProfileEditProps {
@@ -23,6 +24,8 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({
   onSave, 
   onCancel 
 }) => {
+  const { baseColor } = useAppContext(); // Added baseColor
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
   return (
     <>
       <div className="flex justify-between items-center mb-4">
@@ -50,7 +53,8 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({
               name="userName"
               value={editData.userName !== undefined ? editData.userName : user.userName}
               onChange={onInputChange}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded focus:ring-[var(--user-bg-color)] focus:border-[var(--user-bg-color)]"
+              style={style} // Added style
             />
           </div>
           
@@ -61,7 +65,8 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({
               name="email"
               value={editData.email !== undefined ? editData.email : user.email}
               onChange={onInputChange}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded focus:ring-[var(--user-bg-color)] focus:border-[var(--user-bg-color)]"
+              style={style} // Added style
             />
           </div>
           
@@ -72,7 +77,8 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({
               name="lastName"
               value={editData.lastName !== undefined ? editData.lastName : user.lastName}
               onChange={onInputChange}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded focus:ring-[var(--user-bg-color)] focus:border-[var(--user-bg-color)]"
+              style={style} // Added style
             />
           </div>
           
@@ -83,7 +89,8 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({
               name="firstName"
               value={editData.firstName !== undefined ? editData.firstName : user.firstName}
               onChange={onInputChange}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded focus:ring-[var(--user-bg-color)] focus:border-[var(--user-bg-color)]"
+              style={style} // Added style
             />
           </div>
         </div>
@@ -95,7 +102,8 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({
             value={editData.description !== undefined ? editData.description : user.description || ''}
             onChange={onInputChange}
             rows={4}
-            className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2 border border-gray-300 rounded focus:ring-[var(--user-bg-color)] focus:border-[var(--user-bg-color)]"
+            style={style} // Added style
           />
         </div>
         
@@ -109,8 +117,9 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({
           </button>
           <button
             onClick={onSave}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            className="px-4 py-2 bg-[var(--user-bg-color)] text-white rounded hover:bg-[var(--user-bg-color)] transition"
             disabled={isLoading}
+            style={style} // Added style
           >
             {isLoading ? 'Mentés...' : 'Mentés'}
           </button>

@@ -4,14 +4,16 @@ import { useAppContext } from "../../AppContextProvider";
 import { Faculty, getAllUniversitiesFaculties, registerByBasic, UniversitiesResponse, University, User } from "../../client";
 import { RegisterType } from "../../dto/RegistrationInfo";
 
-export const AdditionalRegistration: React.FC = () => {
-    const { registrationInfo, setUser } = useAppContext();
+export default function AdditionalRegistration() {
+    const { user, setUser, registrationInfo, setRegistrationInfo } = useAppContext();
+    const { baseColor } = useAppContext(); // Added baseColor
+    const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
+    const navigate = useNavigate();
     const [allUniversitiesFaculties, setAllUniversitiesFaculties] = useState<UniversitiesResponse>();
     const [universities, setUniversities] = useState<University[]>([]);
     const [faculties, setFaculities] = useState<Faculty[]>([]);
     const [university, setUniversity] = useState<University>();
     const [faculty, setFaculity] = useState<Faculty>();
-    const navigate = useNavigate();
 
     const handleSubmitToBackend = async () => {
         if (registrationInfo == undefined) {
@@ -168,7 +170,7 @@ export const AdditionalRegistration: React.FC = () => {
                     <select
                         id="faculty"
                         name="faculty"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--user-bg-color)] focus:border-[var(--user-bg-color)]"
                         value={faculty?.id || ""}
                         onChange={(e) => {
                             const selectedFaculty = faculties.find((fac) => fac.id === parseInt(e.target.value, 10));
@@ -178,6 +180,7 @@ export const AdditionalRegistration: React.FC = () => {
                                 setFaculity(undefined);
                             }
                         }}
+                        style={style} // Added style
                     >
                         <option value="" disabled>Select Faculty</option>
                         {faculties.map((faculty) => (

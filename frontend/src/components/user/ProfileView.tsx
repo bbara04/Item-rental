@@ -1,5 +1,6 @@
 import React from 'react';
-import { User } from '../../client/types.gen';
+import { useAppContext } from '../../AppContextProvider'; // Added import
+import { User } from '../../client';
 
 // ProfileView komponens - a felhasználói adatok megjelenítéséért felelős
 interface ProfileViewProps {
@@ -8,18 +9,22 @@ interface ProfileViewProps {
 }
 
 const ProfileView: React.FC<ProfileViewProps> = ({ user, onEditClick }) => {
+  const { baseColor } = useAppContext(); // Added baseColor
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
+
   return (
-    <>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-700">Profil Információk</h2>
+    <div className="bg-white shadow-xl rounded-lg p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-gray-800">Profil</h2>
         <button 
           onClick={onEditClick}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          className="px-4 py-2 bg-[var(--user-bg-color)] text-white rounded hover:bg-[var(--user-bg-color)] transition"
+          style={style} // Added style
         >
           Szerkesztés
         </button>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex justify-between">
           <span className="text-gray-500 font-medium">Felhasználónév:</span>
           <span className="text-gray-800">@{user.userName}</span>
@@ -67,7 +72,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ user, onEditClick }) => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

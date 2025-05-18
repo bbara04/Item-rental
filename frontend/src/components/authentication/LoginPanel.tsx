@@ -6,13 +6,14 @@ import GoogleLoginComponent from "./GoogleLoginComponent";
 
 
 const LoginPanel: FC = () => {
-  const { setUser } = useAppContext();
-  const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { setUser } = useAppContext();
+  const { baseColor } = useAppContext(); // Added baseColor
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,11 +54,12 @@ const LoginPanel: FC = () => {
               name="username" // identify as the username/email field
               type="email"
               autoComplete="username" // helps the browser autofill with saved usernames
-              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-[var(--user-bg-color)] focus:ring-1 focus:ring-[var(--user-bg-color)]"
               placeholder="pelda@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              style={style} // Added style
             />
           </div>
 
@@ -70,18 +72,20 @@ const LoginPanel: FC = () => {
               name="current-password" // identify as the current password field
               type="password"
               autoComplete="current-password" // signals the browser that this is a password field
-              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-[var(--user-bg-color)] focus:ring-1 focus:ring-[var(--user-bg-color)]"
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              style={style} // Added style
             />
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-md bg-blue-600 p-3 text-white shadow-md transition hover:bg-blue-700 disabled:bg-gray-400"
+            className="w-full rounded-md bg-[var(--user-bg-color)] p-3 text-white shadow-md transition hover:bg-blue-700 disabled:bg-gray-400"
             disabled={loading}
+            style={style} // Added style
           >
             {loading ? "Bejelentkezés..." : "Bejelentkezés"}
           </button>

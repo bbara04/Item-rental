@@ -4,7 +4,7 @@ import { useAppContext } from "../../../AppContextProvider";
 import { createUserTransaction, getItemsById, Item } from "../../../client";
 
 const ItemRentalPage: React.FC = () => {
-  const { user } = useAppContext();
+  const { user, baseColor } = useAppContext(); // Added baseColor
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
   const [item, setItem] = useState<Item | null>(null);
@@ -14,6 +14,9 @@ const ItemRentalPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+
+  // Define style for CSS variable
+  const style = { '--user-bg-color': baseColor } as React.CSSProperties;
 
   useEffect(() => {
     async function fetchItem() {
@@ -171,14 +174,20 @@ const ItemRentalPage: React.FC = () => {
             <div className="mb-4">
               <h1 className="text-3xl font-bold text-gray-800 mb-2">{item.name}</h1>
               <div className="flex items-center mb-4">
-                <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded mr-2">
+                <span 
+                  className="bg-blue-100 text-[var(--user-bg-color)] text-xs font-semibold px-2.5 py-0.5 rounded mr-2"
+                  style={style} // Apply style
+                >
                   {item.categories}
                 </span>
                 <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                   {item.availability} available
                 </span>
               </div>
-              <div className="text-2xl font-bold text-blue-600 mb-4">
+              <div 
+                className="text-2xl font-bold text-[var(--user-bg-color)] mb-4"
+                style={style} // Apply style
+              >
                 ${item.costPerDay} / day
               </div>
               <p className="text-gray-600 mb-8">{item.description}</p>
@@ -240,11 +249,12 @@ const ItemRentalPage: React.FC = () => {
                 <button
                   onClick={handleRent}
                   disabled={success || item.availability === 0 || !startDate || !endDate} // Also disable if no items or dates not selected
-                  className={`px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-500 transition-colors ${
+                  className={`px-6 py-3 bg-[var(--user-bg-color)] text-white rounded-md font-semibold transition-colors ${ // Use var for bg, remove hover:bg-blue-500
                     success || item.availability === 0 || !startDate || !endDate
                       ? "opacity-50 cursor-not-allowed"
-                      : ""
+                      : "hover:brightness-90" // Added hover effect consistent with dynamic color
                   }`}
+                  style={style} // Apply style
                 >
                   Rent Now
                 </button>
