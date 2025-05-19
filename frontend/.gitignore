@@ -25,5 +25,5 @@ dist-ssr
 
 
 # Vite environment variables
-.env
+.env.development
 .env.production
