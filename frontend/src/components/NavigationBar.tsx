@@ -72,7 +72,7 @@ export function NavigationBar() {
         // Main nav bar with shadow
         <nav className="relative flex justify-between border-b-0.5 p-3 px-6 sm:px-16 items-center shadow-sm bg-white">
             {
-                width < 640 ?
+                width < 860 ?
                     // Mobile Menu
                     <div className="relative">
                         <button

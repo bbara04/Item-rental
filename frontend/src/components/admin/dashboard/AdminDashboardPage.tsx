@@ -27,12 +27,12 @@ const AdminDashboardPage: React.FC = () => {
     setTimeout(() => {
       // Use the existing fallback mock data directly
       setStats({
-        totalItems: 45,
-        availableItems: 32,
-        pendingRentals: 8,
-        activeRentals: 12,
-        totalUsers: 78,
-        totalRevenue: 245000
+        totalItems: 12,
+        availableItems: 6,
+        pendingRentals: 1,
+        activeRentals: 3,
+        totalUsers: 8,
+        totalRevenue: 5000
       });
       setError(null); // Clear any previous errors
       setLoading(false);
@@ -101,7 +101,7 @@ const AdminDashboardPage: React.FC = () => {
       {/* We could add charts and more detailed statistics here */}
       <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <button 
             onClick={() => window.location.href = '/admin/items'}
             className="bg-purple-100 hover:bg-purple-200 text-purple-800 font-medium py-3 px-4 rounded transition flex items-center justify-center"
@@ -119,12 +119,7 @@ const AdminDashboardPage: React.FC = () => {
             className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium py-3 px-4 rounded transition flex items-center justify-center"
           >
             Manage Users
-          </button>
-          <button 
-            className="bg-green-100 hover:bg-green-200 text-green-800 font-medium py-3 px-4 rounded transition flex items-center justify-center"
-          >
-            View Reports
-          </button>
+          </button> 
         </div>
       </div>
     </div>

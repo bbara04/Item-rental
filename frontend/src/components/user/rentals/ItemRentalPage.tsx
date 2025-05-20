@@ -188,7 +188,7 @@ const ItemRentalPage: React.FC = () => {
                 className="text-2xl font-bold text-[var(--user-bg-color)] mb-4"
                 style={style} // Apply style
               >
-                ${item.costPerDay} / day
+                {item.costPerDay}ft / day
               </div>
               <p className="text-gray-600 mb-8">{item.description}</p>
             </div>

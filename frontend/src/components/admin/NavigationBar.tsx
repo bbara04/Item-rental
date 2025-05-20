@@ -4,12 +4,12 @@ import { useAppContext } from "../../AppContextProvider";
 import BlankProfilePic from '../../assets/blank_profile_pic.png';
 import useResponsiveWidth from "../../hooks/useResponsiveWidth";
 
-// Admin-specific menu items
-const adminPages = ['Dashboard', 'Rental Approvals', 'Manage Items', 'Users'];
-const adminRoutes = ['/admin/dashboard', '/admin/approvals', '/admin/items', '/admin/users'];
-const settings = ['Profile', 'Logout'];
+const pages = ['Dashboard', 'Rental Approvals', 'Manage Items', 'Users'];
+const pageRoutes = ['/admin/dashboard', '/admin/approvals', '/admin/items', '/admin/users'];
+const settings = ['Profile', 'My Rentals', 'Logout'];
 const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>, setUser: ReturnType<typeof useAppContext>['setUser']) => void } = {
-    'Profile': (navigate) => navigate('/admin/profile'),
+    'Profile': (navigate) => navigate('/profile'),
+    'My Rentals': (navigate) => navigate('/my-rentals'),
     'Logout': (navigate, setUser) => {
         sessionStorage.removeItem('user');
         setUser(undefined);
@@ -17,10 +17,13 @@ const settingActions: { [key: string]: (navigate: ReturnType<typeof useNavigate>
     }
 };
 
+
 export function NavigationBar() {
+
     const width = useResponsiveWidth();
-    const { setUser } = useAppContext();
+    const { user, setUser, baseColor } = useAppContext(); // Added baseColor from context
     const navigate = useNavigate();
+    const style = { '--user-bg-color': baseColor } as React.CSSProperties; // Added style object
 
     const [showSettings, setShowSettings] = useState(false);
     const [showPages, setShowPages] = useState(false);
@@ -45,6 +48,12 @@ export function NavigationBar() {
         };
     }, []);
 
+    if (!user) {
+        navigate('/login');
+        return null;
+    }
+
+
     const handlePageClick = (route: string) => {
         setShowPages(false);
         navigate(route);
@@ -58,21 +67,22 @@ export function NavigationBar() {
         }
     }
 
+
     return (
-        <nav className="relative flex justify-between bg-purple-700 p-3 px-6 sm:px-16 items-center shadow-lg">
-            {/* "Admin Panel" text */}
-            <div className="flex items-center">
-                <span className="text-white font-bold text-xl mr-6">Admin Panel</span>
-                
-                {width < 640 ?
+        // Main nav bar with shadow
+        <nav className="relative flex justify-between border-b-0.5 p-3 px-6 sm:px-16 items-center shadow-sm bg-white">
+            {
+                width < 640 ?
                     // Mobile Menu
                     <div className="relative">
                         <button
                             ref={menuButton}
-                            className="text-white p-2 rounded-lg hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-colors"
+                            // Increased rounding, changed text and hover background for white nav
+                            className="text-[var(--user-bg-color)] p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--user-bg-color)] transition-colors"
                             onClick={() => setShowPages(!showPages)}
                             aria-expanded={showPages}
                             aria-controls="mobile-menu"
+                            style={style} // Added style
                         >
                             <span className="material-icons">menu</span>
                         </button>
@@ -80,12 +90,14 @@ export function NavigationBar() {
                             <div
                                 ref={menuRef}
                                 id="mobile-menu"
+                                // Increased rounding and shadow
                                 className="absolute z-20 top-full left-0 mt-2 w-48 origin-top-left rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                             >
-                                {adminPages.map((page, index) => (
+                                {pages.map((page, index) => (
                                     <a
                                         key={page}
-                                        onClick={() => handlePageClick(adminRoutes[index])}
+                                        onClick={() => handlePageClick(pageRoutes[index])}
+                                        // Added slight rounding on hover item potentially
                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-md mx-1 cursor-pointer"
                                         role="menuitem"
                                     >
@@ -98,41 +110,58 @@ export function NavigationBar() {
                     :
                     // Desktop Menu Links
                     <div className="flex gap-2 lg:gap-4">
-                        {adminPages.map((page, index) => (
+                        {pages.map((page, index) => (
                             <a
                                 key={page}
-                                onClick={() => handlePageClick(adminRoutes[index])}
-                                className="text-white text-lg px-3 py-2 rounded-lg hover:bg-purple-800 transition-colors duration-150 cursor-pointer"
+                                onClick={() => handlePageClick(pageRoutes[index])}
+                                // Increased rounding, changed text and hover background for white nav
+                                className="text-[var(--user-bg-color)] text-lg font-semibold px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
+                                style={style} // Added style
                             >
                                 {page}
                             </a>
                         ))}
                     </div>
-                }
+            }
+            {/* Logo */}
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <img
+                    className="h-14"
+                    src={user.university.image && user.university.image.imageData && user.university.image.contentType ? `data:${user.university.image.contentType};base64,${user.university.image.imageData}` : "https://placehold.co/600x400"}
+                    alt={user.university.image?.fileName ?? user.university.name ?? "Item image"}
+                />
             </div>
-            
             {/* Profile Button and Settings Dropdown */}
             <div className="relative">
                 <button
                     ref={settingsButton}
                     onClick={() => setShowSettings(!showSettings)}
-                    className="flex items-center rounded-full hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-purple-700 focus:ring-white transition-opacity"
+                    // Using rounded-full, changed focus ring for white nav
+                    className="flex items-center rounded-full hover:opacity-80 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-[var(--user-bg-color)] transition-opacity"
                     aria-expanded={showSettings}
                     aria-controls="settings-menu"
+                    style={style} // Added style
                 >
-                    {/* Profile pic with border */}
-                    <img className="h-10 w-10 rounded-full border-2 border-white" src={BlankProfilePic} alt="Admin Profile" />
+                    {/* Profile pic with border, changed border color for white nav */}
+                    <img 
+                        className="h-12 w-12 rounded-full border-1 border-[var(--user-bg-color)]" 
+                        src={user && user.image && user.image.imageData && user.image.contentType ? `data:${user.image.contentType};base64,${user.image.imageData}` : BlankProfilePic} 
+                        alt="Profile" 
+                        style={style} 
+                    />
                 </button>
                 {showSettings && (
                     <ul
                         ref={settingsRef}
                         id="settings-menu"
+                        // Increased rounding and shadow
                         className="absolute z-20 top-full right-0 mt-2 w-48 origin-top-right rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                     >
                         {settings.map(setting => (
                             <li
                                 key={setting}
                                 onClick={() => handleSettingClick(setting)}
+                                // Added slight rounding on hover item
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-md mx-1 cursor-pointer"
                                 role="menuitem"
                             >
