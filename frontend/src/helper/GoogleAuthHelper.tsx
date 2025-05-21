@@ -49,7 +49,7 @@ export class GoogleAuthHelper {
 
       if (user) {
         console.log("User found:", user);
-        this.handleLogin(setGlobalUser, navigate);
+        return this.handleLogin(setGlobalUser, navigate);
       } else {
         console.log("User not found, proceeding to registration.");
         return false;
@@ -61,7 +61,7 @@ export class GoogleAuthHelper {
     return false;
   }
 
-  private static async handleLogin(setGlobalUser: (user: User) => void, navigate: () => void): Promise<void> {
+  private static async handleLogin(setGlobalUser: (user: User) => void, navigate: () => void): Promise<boolean> {
     const { data, error } = await loginByGoogle({
       body: {
         email: this.email,
@@ -74,8 +74,10 @@ export class GoogleAuthHelper {
     if (data) {
       setGlobalUser(data);
       navigate();
+      return true;
     }
     console.error("login returned no User but wasn't error")
+    return false;
   }
 
 }

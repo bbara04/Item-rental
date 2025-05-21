@@ -12,7 +12,7 @@ const GoogleLoginComponent = () => {
 
     async function handleDecodedToken(token: DecodedGoogleToken) {
         const successful: boolean = await GoogleAuthHelper.authenticateUser(token, setRegistrationInfo, setUser, () => navigate('/'));
-        if (!successful) {
+        if (successful == false) {
             navigate("/register/additional")
         }
     }
